@@ -59,9 +59,28 @@ Feature pages end with `<MoreFeatures current="id" />`; marketing pages end with
   detect those keys; use checkboxes. Key demos elsewhere listen only while in view.
 - `localStorage` only for per-visitor conveniences, always in try/catch.
 
-## Testing
-- `npm run verify` = `astro check` + build + Playwright (desktop Chromium + mobile; axe a11y, console errors,
-  links, metadata, demos, waitlist). Quick: `npx astro check`. One test: `npx playwright test tests/x.spec.ts -g "name"`.
+## Dev server and previews
+- Start it with the preview tool (`.claude/launch.json`, `autoPort`): each worktree gets its own port through `PORT`
+  (`astro.config.mjs`). Several chats run at once, so **4321 is often another worktree's server, without this
+  branch's changes.** Check the preview tool's result or logs for the real port, and give the owner that exact URL.
+- Never stop the server the owner is looking at. If a restart is unavoidable, say so and give the new URL.
+- Tests serve the build on 4399 (`TEST_PORT` to change), so they never fight a dev server. No need to stop anything.
+
+## Testing: pick the smallest tier that proves the change
+| When | Run | Time |
+| --- | --- | --- |
+| Iterating on design or copy | nothing (owner verifies by looking; screenshot only if asked) | 0 |
+| Types or props changed | `npx astro check` | ~15s |
+| One area changed | `npx playwright test tests/features.spec.ts --project=chromium` (or `-g "name"`) | ~30s |
+| Broad change | `npm run build && npm run test:quick` (desktop only) | ~1m |
+| Before a PR (required) | `npm run verify`, once | ~1.5m (longer if other chats are busy) |
+
+- Tests run against `dist/`: **build first** or you test stale output (`verify` does it for you).
+- Run the full suite **once**, in the background, with output to a file, then read the file. Never rerun to see output:
+  `npm run verify > "$SCRATCH/verify.log" 2>&1; tail -40 "$SCRATCH/verify.log"` (`grep -B2 -A30 "✘"` for failures).
+- After a failure, rerun only the failures: `npm run test:failed`. Passes on rerun = flake: say so, don't loop.
+- `npm run verify` = `astro check` + build + Playwright (desktop Chromium + mobile Pixel; axe a11y, console errors,
+  no sideways scroll, CLS, links and assets, metadata, demos, waitlist). `WEBKIT=1` adds Safari and iPhone.
 - Ad hoc Playwright scripts: put them in the scratchpad and import
   `/Users/willherwig/hopper-web/node_modules/@playwright/test/index.mjs` (bare import fails outside the repo).
 - New interactive section: add a test that clicks it and checks the visible result, plus it's covered by axe.
