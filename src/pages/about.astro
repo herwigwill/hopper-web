@@ -136,27 +136,44 @@ const team = [
     height: auto;
     border-radius: 24px;
   }
-  /* The bunny on a rooftop (the tallest tower, x 110–156, top y 100 of 300). */
+  /* The bunny hiding behind a rooftop (the tallest tower, x 110–156, top y 100 of 300): its ears duck below the roof
+     and pop back up. The box clips at the roof line. */
   .bun {
     position: absolute;
     left: calc(133 / 520 * 100%);
     bottom: calc(200 / 300 * 100%);
-    width: 6%;
+    width: 7%;
     color: var(--white);
     transform: translateX(-50%);
+    clip-path: inset(-100% -100% 0 -100%);
   }
   .bun :global(svg) {
     display: block;
     width: 100%;
     height: auto;
-    transform-origin: 50% 100%;
-    animation: perch 3.2s var(--ease-out) infinite;
+    overflow: visible;
   }
-  @keyframes perch {
-    0%, 70%, 100% { transform: none; }
-    78% { transform: scale(1.1, 0.88); }
-    86% { transform: translateY(-35%) scale(0.95, 1.06); }
-    94% { transform: scale(1.08, 0.9); }
+  .bun :global(.ear) {
+    transform-box: view-box;
+    transform-origin: var(--pivot);
+    animation: peek 4.4s var(--ease-out) infinite;
+  }
+  .bun :global(.ear-r) {
+    translate: 0 14px;
+    animation-name: peek-r;
+  }
+  @keyframes peek {
+    0%, 58%, 100% { transform: none; }
+    64%, 74% { transform: translateY(185px); }
+    84% { transform: translateY(-12px); }
+    92% { transform: rotate(-3deg); }
+  }
+  @keyframes peek-r {
+    0%, 60%, 100% { transform: none; }
+    66%, 76% { transform: translateY(185px); }
+    86% { transform: translateY(-8px) rotate(-8deg); }
+    92% { transform: rotate(14deg); }
+    96% { transform: rotate(-4deg); }
   }
 
   h2 {
@@ -294,7 +311,7 @@ const team = [
     }
   }
   @media (prefers-reduced-motion: reduce) {
-    .bun :global(svg) {
+    .bun :global(.ear) {
       animation: none;
     }
   }

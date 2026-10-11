@@ -104,6 +104,7 @@ export function initHero(stage: HTMLElement) {
     stack(target, true);
     menubarApp.textContent = apps[place.app].short;
     live.textContent = `Opened ${place.title} in ${apps[place.app].name}.`;
+    document.dispatchEvent(new CustomEvent("hero:hop")); // the headline's ears hop along (ears.ts)
     if (from && !reducedMotion()) await drawArc(from, wins.get(target)!.getBoundingClientRect(), signal);
   };
 
