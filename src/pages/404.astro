@@ -1,14 +1,28 @@
 ---
 import Base from "../layouts/Base.astro";
+import Banner from "../components/Banner.astro";
 ---
 <Base title="Page not found · Hopper" path="/404" noindex>
-  <section class="wrap msg">
-    <h1>Lost your place?</h1>
-    <p>There’s nothing at this address. Hopper can’t help with that one yet.</p>
-    <a href="/">Go to the Hopper page</a>
+  <section class="lost">
+    <Banner name="wave" eager focus="center top" />
+    <div class="wrap msg">
+      <h1>Lost your place?</h1>
+      <p>There’s nothing at this address. Hopper can’t help with that one yet.</p>
+      <a href="/">Go to the Hopper page</a>
+    </div>
   </section>
 </Base>
 <style>
+  /* The wave's cream top melts into the page; the message sits on it, the blue fills the rest. */
+  .lost {
+    position: relative;
+    isolation: isolate;
+    min-height: clamp(30rem, 72vh, 48rem);
+  }
+  .lost :global(.banner) {
+    -webkit-mask-image: linear-gradient(to bottom, transparent, #000 18%);
+    mask-image: linear-gradient(to bottom, transparent, #000 18%);
+  }
   .msg { padding-block: 6rem 8rem; display: grid; gap: 1.25rem; justify-items: start; }
   h1 { font-size: var(--step-3); }
   p { font-size: var(--step-1); color: var(--ink-2); }

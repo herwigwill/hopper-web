@@ -40,6 +40,9 @@ description: Design and copy principles for the Hopper marketing site, including
   | `dunes` | Toolkit | layered folds, many tools in one |
   New art must match this set (same palette, grain, single light source), not a new style. To make web copies:
   `sharp(src).resize({ width: 720 }).webp({ quality: 74 })` (~10-18 KB each).
+- Banners: four wide pieces in the same style, three with a moving loop (`public/banners/`, notes in `ASSETS.md`).
+  Placed with `components/Banner.astro`. One moving banner per page; check white text against the loop's middle
+  frames, not just the still.
 - Page head pattern: breadcrumb (`.crumbs`), big h1 left, lede right (`.intro` 1.3fr / 1fr grid), aligned to the bottom.
 
 ## Reusable parts
