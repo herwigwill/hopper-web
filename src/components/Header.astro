@@ -3,6 +3,7 @@
 const path = Astro.url.pathname.replace(/(index)?\.html$/, "");
 const onHome = path === "/" || path === "";
 const onFeatures = path.startsWith("/features");
+const onCompare = path.startsWith("/compare");
 const onBlog = path.startsWith("/blog");
 ---
 <header class="site-header">
@@ -10,9 +11,10 @@ const onBlog = path.startsWith("/blog");
     <nav class="nav" aria-label="Main">
       <a class="link" href="/" aria-current={onHome ? "page" : undefined}>Home</a>
       <a class="link" href="/features" aria-current={onFeatures ? "page" : undefined}>Features</a>
+      <a class="link" href="/compare" aria-current={onCompare ? "page" : undefined}>Compare</a>
       <a class="link" href="/blog" aria-current={onBlog ? "page" : undefined}>Blog</a>
     </nav>
-    <a class="join" href="/#join">Join the waitlist</a>
+    <a class="join" href="/#join">Join<span class="join-more">&nbsp;the waitlist</span></a>
   </div>
 </header>
 
@@ -71,9 +73,19 @@ const onBlog = path.startsWith("/blog");
     font-weight: 600;
     font-size: var(--step--1);
     text-decoration: none;
+    white-space: nowrap;
     transition: background 150ms ease;
   }
   .join:hover {
     background: var(--blue);
+  }
+  /* Four nav links leave no room for the full label on phones. */
+  @media (max-width: 30rem) {
+    .join-more {
+      display: none;
+    }
+    .nav {
+      gap: 0;
+    }
   }
 </style>

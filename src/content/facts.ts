@@ -562,3 +562,93 @@ export const settingsPages = [
   { page: "Emoji & Symbols", rows: ["Skin Tone", "Show in Search", "Reset Frequently Used"] },
   { page: "Privacy", rows: ["Excluded Apps"] },
 ];
+
+/* ───────────────────────────── Compare page ───────────────────────────── */
+
+/**
+ * /compare: Hopper next to Raycast and Alfred. Hopper's column from STATUS.md (2026-10-10; Colors ADR-067). Raycast's
+ * from raycast.com/pricing (Free vs Pro) and its manual (Screenshots, Window Management); Color Picker and GIF Search are
+ * free store extensions. Alfred's from alfredapp.com/help/powerpack (Clipboard, File Navigation, Contacts, Music,
+ * Themes, Workflows are Powerpack) and /help/features/snippets (Powerpack); window management, colors, GIFs and AI
+ * come only from third-party workflows, which need the Powerpack. Recheck both pricing pages before changing a cell.
+ *
+ * `yes` is built into Hopper (its pricing isn't set, so Hopper's cells never say Free). `free` / `paid` are the rival's
+ * plans, `ext` a free add-on from the rival's store, `no` not available.
+ */
+export const compareChecked = "October 10, 2026";
+export type CompareStatus = "yes" | "free" | "paid" | "ext" | "no";
+export type CompareCell = { s: CompareStatus; note?: string };
+export const rivals = [
+  { id: "raycast", name: "Raycast", paid: "Pro", price: "Free; Pro is $8 a month, billed yearly ($10 monthly)" },
+  { id: "alfred", name: "Alfred", paid: "Powerpack", price: "Free; the Powerpack is £34 once (£59 with lifetime upgrades)" },
+] as const;
+export type RivalId = (typeof rivals)[number]["id"];
+
+const pw: CompareCell = { s: "paid", note: "Third-party workflow" };
+
+export const compareGroups: {
+  id: string;
+  title: string;
+  rows: { name: string; hopper: CompareCell; raycast: CompareCell; alfred: CompareCell }[];
+}[] = [
+  {
+    id: "get-back",
+    title: "Get back to where you were",
+    rows: [
+      { name: "Back and Forward across apps", hopper: { s: "yes", note: "To the tab or session, not just the app" }, raycast: { s: "no" }, alfred: { s: "no" } },
+      { name: "Toggle between your last two apps or tabs", hopper: { s: "yes", note: "Double tap ⌘ or ⌥" }, raycast: { s: "no" }, alfred: { s: "no" } },
+      { name: "Recently closed tabs and windows", hopper: { s: "yes" }, raycast: { s: "no" }, alfred: { s: "no" } },
+      { name: "Coding agents, sorted by who needs you", hopper: { s: "yes", note: "Claude Code, Codex, Cursor" }, raycast: { s: "no" }, alfred: { s: "no" } },
+      { name: "Jump to whatever’s making sound", hopper: { s: "yes", note: "Now Playing" }, raycast: { s: "no", note: "Music controls only" }, alfred: { s: "no", note: "Music controls, Powerpack" } },
+    ],
+  },
+  {
+    id: "search",
+    title: "Search",
+    rows: [
+      { name: "Apps, files and a calculator", hopper: { s: "yes" }, raycast: { s: "free" }, alfred: { s: "free" } },
+      { name: "Quicklinks and custom web searches", hopper: { s: "yes" }, raycast: { s: "free" }, alfred: { s: "free" } },
+      { name: "Open browser tabs", hopper: { s: "yes", note: "Chrome and Safari" }, raycast: { s: "free", note: "With its browser extension" }, alfred: pw },
+      { name: "Inside Slack, Notion, Notes and Messages", hopper: { s: "yes", note: "One search over all of them" }, raycast: { s: "ext", note: "One extension per app" }, alfred: pw },
+      { name: "Past coding sessions", hopper: { s: "yes", note: "Claude Code and Codex" }, raycast: { s: "no" }, alfred: { s: "no" } },
+      { name: "The app in front’s menu commands", hopper: { s: "yes" }, raycast: { s: "free" }, alfred: pw },
+      { name: "Screenshots, by the words in them", hopper: { s: "yes" }, raycast: { s: "free" }, alfred: { s: "no" } },
+      { name: "Search by meaning, on your Mac", hopper: { s: "yes", note: "Off until you turn it on" }, raycast: { s: "no" }, alfred: { s: "no" } },
+    ],
+  },
+  {
+    id: "toolkit",
+    title: "Toolkit",
+    rows: [
+      { name: "Clipboard history", hopper: { s: "yes" }, raycast: { s: "free", note: "3 months; unlimited on Pro" }, alfred: { s: "paid" } },
+      { name: "Snippets that expand as you type", hopper: { s: "yes" }, raycast: { s: "free" }, alfred: { s: "paid" } },
+      { name: "Emoji and symbols", hopper: { s: "yes" }, raycast: { s: "free" }, alfred: { s: "paid", note: "As a snippet pack" } },
+      { name: "Floating notes", hopper: { s: "yes", note: "Scratch Notes" }, raycast: { s: "free", note: "5 notes; unlimited on Pro" }, alfred: { s: "no" } },
+      { name: "Color picker", hopper: { s: "yes", note: "Pick, organize and convert" }, raycast: { s: "ext" }, alfred: pw },
+      { name: "GIF search", hopper: { s: "no", note: "Not yet" }, raycast: { s: "ext" }, alfred: pw },
+    ],
+  },
+  {
+    id: "windows",
+    title: "Windows",
+    rows: [
+      { name: "Halves, thirds, quarters and more", hopper: { s: "yes", note: "42 commands" }, raycast: { s: "free" }, alfred: pw },
+      { name: "Your own window sizes", hopper: { s: "yes" }, raycast: { s: "paid" }, alfred: pw },
+      { name: "Layouts of several apps on one key", hopper: { s: "yes" }, raycast: { s: "paid" }, alfred: pw },
+      { name: "Import Rectangle, Magnet or Spectacle keys", hopper: { s: "yes" }, raycast: { s: "no" }, alfred: { s: "no" } },
+    ],
+  },
+  {
+    id: "beyond",
+    title: "Beyond the launcher",
+    rows: [
+      { name: "AI chat and AI commands", hopper: { s: "no" }, raycast: { s: "paid" }, alfred: { s: "paid", note: "With your own OpenAI key" } },
+      { name: "Extension store", hopper: { s: "no", note: "Not yet" }, raycast: { s: "free", note: "Thousands of extensions" }, alfred: { s: "paid", note: "Workflows" } },
+      { name: "Sync between Macs", hopper: { s: "no" }, raycast: { s: "paid" }, alfred: { s: "paid", note: "Through your own Dropbox or iCloud" } },
+      { name: "Custom themes", hopper: { s: "no", note: "Light and dark" }, raycast: { s: "paid" }, alfred: { s: "paid" } },
+      { name: "Translator and dictation", hopper: { s: "no" }, raycast: { s: "paid" }, alfred: { s: "no" } },
+      { name: "Shared snippets and quicklinks for teams", hopper: { s: "no" }, raycast: { s: "free", note: "Up to 30 each; unlimited on Teams Pro" }, alfred: { s: "no" } },
+      { name: "Windows and iPhone apps", hopper: { s: "no", note: "Mac only" }, raycast: { s: "free" }, alfred: { s: "no", note: "Mac only" } },
+    ],
+  },
+];
