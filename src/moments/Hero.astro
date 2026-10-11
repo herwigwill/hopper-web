@@ -1,0 +1,814 @@
+---
+import Launcher from "../components/Launcher.astro";
+import WaitlistForm from "../components/WaitlistForm.astro";
+import HopperMark from "../components/HopperMark.astro";
+import { places, apps, site } from "../content/facts";
+---
+<section class="hero" aria-labelledby="hero-title">
+  <div class="wrap intro">
+    <h1 id="hero-title">Never lose your&nbsp;<span class="last">place.<span class="bun"><HopperMark /></span></span></h1>
+    <div class="pitch">
+      <p class="lede">Hopper takes you straight back to the tab, doc, chat or coding session you were in, whatever app it’s in. Just start typing.</p>
+      <WaitlistForm id="hero-join" />
+    </div>
+  </div>
+
+  <div class="wrap">
+    <div class="stage on-blue" data-stage data-front="chrome" data-open="true">
+      <p class="visually-hidden" id="stage-desc">
+        A demonstration of Hopper on a Mac desktop. The launcher searches across apps, and picking a result brings that
+        exact page, tab or session to the front. It plays on its own; click the search field to try your own search.
+      </p>
+      <div class="menubar" aria-hidden="true">
+        <span class="mb-app" data-menubar-app>Chrome</span>
+        <span>File</span><span>Edit</span><span>View</span><span class="mb-more">Window</span><span class="mb-more">Help</span>
+        <span class="mb-clock"><span class="mb-date">Sat Oct 10&ensp;</span>9:41 AM</span>
+      </div>
+
+      <div class="canvas" data-canvas aria-hidden="true">
+        <!-- Notion -->
+        <article class="win w-notion" data-win="notion">
+          <header class="tb"><i></i><i></i><i></i><span class="tb-title">Q4 Launch Plan</span></header>
+          <div class="notion">
+            <aside>
+              <p class="ws"><img src={apps.notion.icon} alt="" width="18" height="18" />Northwind</p>
+              <p>Roadmap</p><p class="on">Q4 Launch Plan</p><p>Meeting notes</p><p>Hiring</p><p>Design reviews</p>
+            </aside>
+            <div class="doc">
+              <h3>Q4 Launch Plan</h3>
+              <dl>
+                <dt>Owner</dt><dd>Priya Raman</dd>
+                <dt>Status</dt><dd><span class="pill">In progress</span></dd>
+                <dt>Launch</dt><dd>November 18</dd>
+              </dl>
+              <h4>Goals</h4>
+              <ul>
+                <li>Ship the new checkout to every plan</li>
+                <li>Lift paid conversion from 39% to 45%</li>
+                <li>Pricing page live a week before launch</li>
+              </ul>
+              <h4>Open questions</h4>
+              <ul><li>Do annual plans get the discount at launch?</li></ul>
+            </div>
+          </div>
+        </article>
+
+        <!-- Slack -->
+        <article class="win w-slack" data-win="slack">
+          <header class="tb"><i></i><i></i><i></i><span class="tb-title">#launch</span></header>
+          <div class="slack">
+            <aside>
+              <p class="ws">Northwind</p>
+              <p># general</p><p class="on"># launch</p><p># design</p><p># eng-api</p>
+            </aside>
+            <div class="msgs">
+              <p class="ch"># launch</p>
+              <div class="m"><b>Sam Ito</b><span>Can we ship the checkout fix before Thursday?</span></div>
+              <div class="m"><b>Priya Raman</b><span>Yes if the auth refresh bug is fixed. Funnel is in the Q4 dashboard.</span></div>
+              <div class="m"><b>Jules Park</b><span>Pricing copy is final. Doc is in the launch plan.</span></div>
+            </div>
+          </div>
+        </article>
+
+        <!-- Chrome -->
+        <article class="win w-chrome" data-win="chrome">
+          <header class="tabs">
+            <span class="dots"><i></i><i></i><i></i></span>
+            <span class="tab on">Checkout funnel, Q4</span>
+            <span class="tab">Pricing experiments: results</span>
+            <span class="tab">Pull request #482</span>
+          </header>
+          <div class="omni"><span>analytics.internal/checkout?range=q4</span></div>
+          <div class="dash">
+            <h3>Checkout funnel</h3>
+            <p class="range">Oct 1 – Oct 9, all plans</p>
+            <div class="bars">
+              <div style="--v:1"><b>12,480</b><span>Cart</span></div>
+              <div style="--v:.71"><b>8,902</b><span>Shipping</span></div>
+              <div style="--v:.49"><b>6,115</b><span>Payment</span></div>
+              <div style="--v:.39"><b>4,870</b><span>Paid</span></div>
+            </div>
+          </div>
+        </article>
+
+        <!-- Claude -->
+        <article class="win w-claude" data-win="claude">
+          <header class="tb"><i></i><i></i><i></i><span class="tb-title">Fix auth token refresh</span></header>
+          <div class="claude">
+            <aside>
+              <p class="ws"><img src={apps.claude.icon} alt="" width="18" height="18" />Code</p>
+              <p class="on">Fix auth token refresh</p><p>Write migration for teams table</p><p>Flaky signup test</p>
+            </aside>
+            <div class="chat">
+              <p class="you">Tokens expire mid-request on slow networks. Fix the refresh logic in src/auth.</p>
+              <p class="ai">Found it. The expiry check runs after the request starts, so a token can lapse in flight. I’ll refresh anything expiring in the next 30 seconds before sending.</p>
+              <pre><code><span class="del">- if (isExpired(token)) {'{'}</span>
+<span class="add">+ if (expiresWithin(token, 30_000)) {'{'}</span>
+    token = await refresh(token)</code></pre>
+              <p class="run">Running tests in api…</p>
+            </div>
+          </div>
+        </article>
+
+        <!-- Anything else in the demo: built from the place's own data. -->
+        <article class="win w-other" data-win="other">
+          <header class="tb"><i></i><i></i><i></i><span class="tb-title" data-other-title></span></header>
+          <div class="other">
+            <img data-other-icon src={apps.messages.icon} alt="" width="96" height="96" />
+            <p class="other-title" data-other-name></p>
+            <p class="other-sub" data-other-sub></p>
+          </div>
+        </article>
+      </div>
+
+      <svg class="arc" data-arc aria-hidden="true"><path pathLength="1" /><circle r="6" /></svg>
+
+      <div class="lx-wrap" data-lx-wrap>
+        <Launcher id="hero-lx" places={places} interactive />
+      </div>
+
+      <button type="button" class="pause" data-pause aria-pressed="false" aria-label="Pause demo">
+        <span class="ico" data-icon-pause><svg viewBox="0 0 16 16" aria-hidden="true"><rect x="3.5" y="3" width="3" height="10" rx="1"/><rect x="9.5" y="3" width="3" height="10" rx="1"/></svg></span>
+        <span class="ico" data-icon-play hidden><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M5 3v10l8-5z"/></svg></span>
+      </button>
+
+      <button class="reopen" type="button" data-reopen hidden>
+        <span class="keys"><span class="key">⌘</span><span class="key">Space</span></span>
+        <span>Search again</span>
+      </button>
+    </div>
+
+    <p class="shortcut"><span class="keys"><span class="key">{site.shortcut[0]}</span><span class="key">{site.shortcut[1]}</span></span> opens Hopper from anywhere.</p>
+    <p class="visually-hidden" aria-live="polite" data-hero-live></p>
+  </div>
+</section>
+
+<style>
+  .hero {
+    padding-top: clamp(2rem, 1.5rem + 3vw, 4.5rem);
+  }
+  .intro {
+    display: grid;
+    grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr);
+    gap: 2rem clamp(2rem, 5vw, 5rem);
+    align-items: end;
+  }
+  h1 {
+    max-width: 8.5ch;
+  }
+  /* The bunny hops in and sits beside the headline's last word; hover the headline and it hops again. */
+  .last {
+    position: relative;
+    white-space: nowrap;
+  }
+  .bun {
+    position: absolute;
+    left: 100%;
+    bottom: 0.1em;
+    margin-left: 0.12em;
+    width: 0.56em;
+    color: var(--blue);
+  }
+  .bun::after {
+    content: "";
+    position: absolute;
+    left: 50%;
+    bottom: -0.03em;
+    width: 0.5em;
+    height: 0.07em;
+    border-radius: 50%;
+    background: rgb(18 24 51 / 0.14);
+    transform: translateX(-50%);
+    animation: bun-shadow 900ms var(--ease-out) 350ms both;
+  }
+  .bun :global(svg) {
+    display: block;
+    width: 100%;
+    height: auto;
+    transform-origin: 50% 100%;
+    animation: bun-in 900ms var(--ease-out) 350ms both;
+  }
+  h1:hover .bun :global(svg) {
+    animation: bun-hop 620ms var(--ease-out);
+  }
+  h1:hover .bun::after {
+    animation: bun-shadow-hop 620ms var(--ease-out);
+  }
+  @keyframes bun-in {
+    0% { opacity: 0; transform: translate(-1.6em, 0) rotate(-14deg); }
+    18% { opacity: 1; }
+    45% { transform: translate(-0.7em, -0.75em) rotate(-4deg); }
+    70% { transform: translate(0, 0) scale(1.12, 0.84) rotate(0); }
+    84% { transform: translate(0, -0.08em) scale(0.96, 1.05); }
+    100% { opacity: 1; transform: none; }
+  }
+  @keyframes bun-shadow {
+    0%, 40% { opacity: 0; transform: translateX(-50%) scale(0.4); }
+    70% { opacity: 1; transform: translateX(-50%) scale(1.15); }
+    100% { opacity: 1; transform: translateX(-50%); }
+  }
+  @keyframes bun-hop {
+    0% { transform: none; }
+    20% { transform: scale(1.08, 0.88); }
+    50% { transform: translateY(-0.45em) scale(0.95, 1.06); }
+    80% { transform: scale(1.1, 0.86); }
+    100% { transform: none; }
+  }
+  @keyframes bun-shadow-hop {
+    50% { transform: translateX(-50%) scale(0.55); opacity: 0.5; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .bun :global(svg),
+    .bun::after,
+    h1:hover .bun :global(svg),
+    h1:hover .bun::after {
+      animation: none;
+    }
+  }
+  .pitch {
+    display: grid;
+    gap: 1.6rem;
+    padding-bottom: 0.4rem;
+  }
+  @media (max-width: 56rem) {
+    .intro {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  /* The stage: a Mac desktop in ultramarine. */
+  .stage {
+    position: relative;
+    margin-top: clamp(2rem, 1.5rem + 2.5vw, 3.5rem);
+    height: clamp(30rem, 54vw, 46rem);
+    border-radius: clamp(18px, 2vw, 28px);
+    background:
+      radial-gradient(120% 90% at 85% 0%, #4a58ff 0%, transparent 55%),
+      var(--blue);
+    overflow: hidden;
+    isolation: isolate;
+    contain: layout paint;
+    color: var(--white);
+  }
+  .menubar {
+    position: absolute;
+    inset: 0 0 auto;
+    z-index: 3;
+    display: flex;
+    gap: 1.1rem;
+    align-items: center;
+    height: 1.75rem;
+    padding: 0 1rem;
+    font-family: var(--mac);
+    font-size: 0.8rem;
+    background: rgb(12 18 90 / 0.28);
+    -webkit-backdrop-filter: blur(16px);
+    backdrop-filter: blur(16px);
+  }
+  .mb-app {
+    font-weight: 700;
+    min-width: 4.5rem;
+  }
+  .mb-clock {
+    margin-left: auto;
+  }
+
+  .canvas {
+    position: absolute;
+    left: 50%;
+    top: 1.75rem;
+    width: 1200px;
+    height: 720px;
+    transform-origin: top center;
+    transform: translateX(-50%) scale(var(--k, 0.9));
+    font-family: var(--mac);
+    font-size: 13px;
+    color: #1d1d1f;
+  }
+
+  /* Windows */
+  .win {
+    position: absolute;
+    border-radius: 12px;
+    background: #fff;
+    overflow: hidden;
+    box-shadow: 0 0 0 0.5px rgb(0 0 0 / 0.25), 0 22px 60px -12px rgb(6 10 60 / 0.55);
+    transition: filter 300ms ease, opacity 300ms ease;
+    z-index: var(--z, 1);
+  }
+  .stage:not([data-front]) .win,
+  .win:not(.is-front) {
+    filter: saturate(0.85) brightness(0.97);
+  }
+  .win.is-arriving {
+    animation: arrive 520ms var(--ease-hop) both;
+  }
+  @keyframes arrive {
+    from {
+      transform: translateY(14px) scale(0.965);
+    }
+  }
+  .tb {
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    height: 34px;
+    padding: 0 14px;
+    background: #f3f3f5;
+    border-bottom: 1px solid #e3e3e8;
+  }
+  .tb i,
+  .dots i {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background: #ff5f57;
+  }
+  .tb i:nth-child(2),
+  .dots i:nth-child(2) {
+    background: #febc2e;
+  }
+  .tb i:nth-child(3),
+  .dots i:nth-child(3) {
+    background: #28c840;
+  }
+  .tb-title {
+    position: absolute;
+    left: 0;
+    right: 0;
+    text-align: center;
+    font-weight: 600;
+    font-size: 13px;
+    color: #4a4a50;
+    pointer-events: none;
+  }
+  aside {
+    background: #f7f7f5;
+    border-right: 1px solid #ececea;
+    padding: 12px 10px;
+    font-size: 13px;
+    color: #55554f;
+  }
+  aside p {
+    padding: 5px 8px;
+    border-radius: 6px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  aside .on {
+    background: #ebebe8;
+    color: #1d1d1f;
+    font-weight: 500;
+  }
+  aside .ws {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    font-weight: 600;
+    color: #1d1d1f;
+    margin-bottom: 6px;
+  }
+  aside .ws img {
+    width: 18px;
+    height: 18px;
+  }
+
+  .w-notion {
+    left: 40px;
+    top: 70px;
+    width: 600px;
+    height: 500px;
+  }
+  .notion {
+    display: grid;
+    grid-template-columns: 180px 1fr;
+    height: calc(100% - 34px);
+  }
+  .doc {
+    padding: 34px 40px;
+    font-size: 14px;
+    line-height: 1.55;
+  }
+  .doc h3 {
+    font-size: 30px;
+    font-weight: 700;
+    letter-spacing: -0.01em;
+    margin: 0 0 14px;
+  }
+  .doc dl {
+    display: grid;
+    grid-template-columns: 90px 1fr;
+    gap: 6px 10px;
+    margin: 0 0 18px;
+    color: #37352f;
+  }
+  .doc dt {
+    color: #9b9a97;
+  }
+  .doc dd {
+    margin: 0;
+  }
+  .pill {
+    padding: 1px 8px;
+    border-radius: 4px;
+    background: #fbecdd;
+    color: #8a4a12;
+    font-size: 13px;
+  }
+  .doc h4 {
+    font-size: 17px;
+    margin: 14px 0 6px;
+  }
+  .doc ul {
+    margin: 0;
+    padding-left: 20px;
+  }
+
+  .w-slack {
+    left: 110px;
+    top: 260px;
+    width: 540px;
+    height: 400px;
+  }
+  .slack {
+    display: grid;
+    grid-template-columns: 160px 1fr;
+    height: calc(100% - 34px);
+  }
+  .slack aside {
+    background: #3f0e40;
+    color: #d6c4d6;
+    border: 0;
+  }
+  .slack aside .ws {
+    color: #fff;
+  }
+  .slack aside .on {
+    background: #1164a3;
+    color: #fff;
+  }
+  .msgs {
+    padding: 14px 18px;
+    display: grid;
+    align-content: start;
+    gap: 14px;
+    font-size: 14px;
+  }
+  .ch {
+    font-weight: 700;
+    padding-bottom: 10px;
+    border-bottom: 1px solid #eee;
+  }
+  .m {
+    display: grid;
+    gap: 2px;
+  }
+
+  .w-chrome {
+    left: 330px;
+    top: 40px;
+    width: 680px;
+    height: 470px;
+  }
+  .tabs {
+    display: flex;
+    align-items: end;
+    gap: 2px;
+    height: 40px;
+    padding: 0 10px;
+    background: #dfe3eb;
+  }
+  .dots {
+    display: flex;
+    gap: 8px;
+    align-self: center;
+    margin-right: 10px;
+  }
+  .tab {
+    width: 180px;
+    padding: 8px 12px;
+    border-radius: 9px 9px 0 0;
+    font-size: 12px;
+    color: #4b5160;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .tab.on {
+    background: #fff;
+    color: #1d1d1f;
+  }
+  .omni {
+    padding: 7px 12px;
+    border-bottom: 1px solid #eceef2;
+  }
+  .omni span {
+    display: block;
+    padding: 6px 14px;
+    border-radius: 999px;
+    background: #f0f2f6;
+    font-size: 13px;
+    color: #4b5160;
+  }
+  .dash {
+    padding: 26px 32px;
+  }
+  .dash h3 {
+    font-size: 24px;
+    margin: 0;
+  }
+  .range {
+    color: #6b7180;
+    margin-top: 2px;
+  }
+  .bars {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 18px;
+    align-items: end;
+    height: 250px;
+    margin-top: 22px;
+  }
+  .bars div {
+    display: flex;
+    flex-direction: column;
+    justify-content: end;
+    height: 100%;
+    font-size: 13px;
+  }
+  .bars div::before {
+    content: "";
+    order: 2;
+    height: calc(var(--v) * 190px);
+    border-radius: 8px 8px 3px 3px;
+    background: #5865f2;
+    margin: 4px 0 6px;
+  }
+  .bars b {
+    order: 1;
+    font-size: 16px;
+  }
+  .bars span {
+    order: 3;
+    color: #6b7180;
+  }
+
+  .w-claude {
+    left: 530px;
+    top: 150px;
+    width: 620px;
+    height: 500px;
+  }
+  .claude {
+    display: grid;
+    grid-template-columns: 190px 1fr;
+    height: calc(100% - 34px);
+    background: #faf9f5;
+  }
+  .claude aside {
+    background: #f0eee6;
+  }
+  .chat {
+    padding: 22px 26px;
+    display: grid;
+    gap: 14px;
+    align-content: start;
+    font-size: 14px;
+    line-height: 1.5;
+    color: #2b2a26;
+  }
+  .you {
+    justify-self: end;
+    max-width: 85%;
+    padding: 10px 14px;
+    border-radius: 14px;
+    background: #ece8dd;
+  }
+  .chat pre {
+    margin: 0;
+    padding: 12px 14px;
+    border-radius: 10px;
+    background: #1f1e1b;
+    color: #e8e6df;
+    font: 12.5px/1.6 ui-monospace, "SF Mono", Menlo, monospace;
+    white-space: pre;
+  }
+  .del {
+    color: #ff8f8f;
+  }
+  .add {
+    color: #8fe3a5;
+  }
+  .run {
+    color: #77756c;
+  }
+
+  .w-other {
+    left: 300px;
+    top: 120px;
+    width: 600px;
+    height: 440px;
+    display: none;
+  }
+  .w-other.is-front {
+    display: block;
+  }
+  .other {
+    display: grid;
+    place-items: center;
+    align-content: center;
+    gap: 10px;
+    height: calc(100% - 34px);
+    background: #fbfbfd;
+    text-align: center;
+  }
+  .other img {
+    width: 96px;
+    height: 96px;
+  }
+  .other-title {
+    font-size: 26px;
+    font-weight: 700;
+  }
+  .other-sub {
+    color: #6b7180;
+  }
+
+  /* The hop: a sun-coloured arc from the picked row to where you land. */
+  .arc {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 6;
+    pointer-events: none;
+    overflow: visible;
+  }
+  .arc path {
+    fill: none;
+    stroke: var(--sun);
+    stroke-width: 3;
+    stroke-linecap: round;
+    stroke-dasharray: 1;
+    stroke-dashoffset: 1;
+  }
+  .arc circle {
+    fill: var(--sun);
+    opacity: 0;
+  }
+
+  .lx-wrap {
+    position: absolute;
+    z-index: 5;
+    left: 50%;
+    top: calc(1.75rem + 70px * var(--k, 0.9));
+    transform: translateX(-50%);
+    transition: opacity 160ms ease, transform 200ms var(--ease-out);
+  }
+  .lx-wrap :global(.lx) {
+    --lx-size: calc(13px * var(--k, 0.9));
+  }
+  .lx-wrap :global(.lx-list) {
+    height: 24.6em;
+  }
+  .stage[data-open="false"] .lx-wrap {
+    opacity: 0;
+    transform: translateX(-50%) scale(0.97);
+    pointer-events: none;
+  }
+
+  .reopen {
+    position: absolute;
+    z-index: 7;
+    right: 1rem;
+    bottom: 1rem;
+    display: inline-flex;
+    gap: 0.75rem;
+    align-items: center;
+    padding: 0.5rem 0.9rem 0.5rem 0.5rem;
+    border: 0;
+    border-radius: 12px;
+    background: var(--white);
+    color: var(--ink);
+    font-weight: 600;
+    cursor: pointer;
+    box-shadow: 0 10px 30px -10px rgb(6 10 60 / 0.5);
+  }
+  .reopen .key {
+    font-size: 0.8rem;
+  }
+
+  .pause {
+    position: absolute;
+    z-index: 7;
+    left: 0.9rem;
+    bottom: 0.9rem;
+    display: grid;
+    place-items: center;
+    width: 2.25rem;
+    height: 2.25rem;
+    border: 0;
+    border-radius: 50%;
+    background: rgb(255 255 255 / 0.16);
+    color: var(--white);
+    cursor: pointer;
+    opacity: 0.7;
+    transition: opacity 150ms ease, background 150ms ease;
+  }
+  .pause:hover,
+  .pause:focus-visible {
+    opacity: 1;
+    background: rgb(255 255 255 / 0.26);
+  }
+  .pause svg {
+    width: 0.9rem;
+    height: 0.9rem;
+    fill: currentColor;
+  }
+  .shortcut {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    margin-top: 1rem;
+    font-size: var(--step--1);
+    color: var(--ink-2);
+  }
+  .shortcut .key {
+    font-size: 0.8rem;
+  }
+
+  /* Narrow screens: windows stack in the middle like a single screen; the launcher fills the width. */
+  @media (max-width: 52rem) {
+    .stage {
+      height: 34rem;
+    }
+    .canvas {
+      width: 640px;
+    }
+    .win,
+    .w-other {
+      left: 40px !important;
+      top: 60px !important;
+      width: 560px !important;
+      height: 560px !important;
+    }
+    .notion,
+    .slack,
+    .claude {
+      grid-template-columns: 1fr;
+    }
+    .win aside {
+      display: none;
+    }
+    .doc h3,
+    .other-title {
+      font-size: 34px;
+    }
+    .dash h3 {
+      font-size: 30px;
+    }
+    .bars {
+      height: 300px;
+    }
+    .tab:not(.on) {
+      display: none;
+    }
+    .lx-wrap {
+      left: 0.75rem;
+      right: 0.75rem;
+      top: 2.5rem;
+      transform: none;
+    }
+    .stage[data-open="false"] .lx-wrap {
+      transform: scale(0.97);
+    }
+    .lx-wrap :global(.lx) {
+      --lx-size: 12px;
+      width: 100%;
+    }
+    .lx-wrap :global(.lx-tabs),
+    .lx-wrap :global(.lx-sub),
+    .lx-wrap :global(.lx-foot .lx-sep),
+    .lx-wrap :global(.lx-foot .lx-sep ~ *) {
+      display: none;
+    }
+    .lx-wrap :global(.lx-list) {
+      height: 18.8em;
+    }
+    .mb-more,
+    .mb-date {
+      display: none;
+    }
+    .menubar {
+      gap: 0.8rem;
+    }
+  }
+</style>
+
+<script>
+  import { initHero } from "../scripts/hero";
+  const stage = document.querySelector<HTMLElement>("[data-stage]");
+  if (stage) initHero(stage);
+</script>

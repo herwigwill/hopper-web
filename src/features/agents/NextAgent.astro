@@ -1,0 +1,265 @@
+---
+/**
+ * Next Agent (⌥⌘]): jumps to the agent that has waited longest for you, Needs You before Done; pressed again it steps
+ * to the next. Each jump lands in the window the agent runs in.
+ */
+import { apps } from "../../content/facts";
+
+const queue = [
+  { app: "claude", title: "Fix auth token refresh", status: "Needs You", waited: "6 min", window: "Terminal · api — claude", body: ["Edit auth/refresh.ts?", "1. Yes", "2. Yes, and don’t ask again", "3. No"] },
+  { app: "claude", title: "Write migration for teams table", status: "Needs You", waited: "2 min", window: "Claude · Code", body: ["Should the old teams table be kept as a backup?"] },
+  { app: "codex", title: "Add rate limiting to signup", status: "Done", waited: "4 min", window: "Codex", body: ["Added a limit of 5 signups per minute per IP.", "3 files changed"] },
+] as const;
+---
+<section class="na on-dark" id="next-agent" aria-labelledby="na-title" data-na>
+  <div class="wrap grid">
+    <div class="copy">
+      <h2 id="na-title">One key to whoever’s waited longest.</h2>
+      <p class="lede">Next Agent jumps straight to the agent that needs you, then the ones that finished. Press it again for the next.</p>
+      <button type="button" class="go" data-na-go>
+        <span class="keys" aria-hidden="true"><span class="key">⌥</span><span class="key">⌘</span><span class="key">]</span></span>
+        <span>Next Agent</span>
+      </button>
+      <p class="say" role="status" data-na-say>Three agents are waiting on you.</p>
+    </div>
+
+    <div class="scene">
+      <ol class="queue" aria-label="Waiting, longest first">
+        {queue.map((q, i) => (
+          <li data-q={i}>
+            <img src={apps[q.app].icon} alt="" width="26" height="26" loading="lazy" />
+            <span class="t"><b>{q.title}</b><small>Waiting {q.waited}</small></span>
+            <span class="lx-status" data-s={q.status}>{q.status}</span>
+          </li>
+        ))}
+      </ol>
+      <div class="win" aria-hidden="true" data-win>
+        <header><i></i><i></i><i></i><span data-win-title>Your desk</span></header>
+        <div class="body" data-win-body><p class="muted">Press Next Agent.</p></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .na {
+    background: var(--night);
+    color: #eef0ff;
+    padding-block: clamp(5rem, 4rem + 6vw, 9rem);
+    scroll-margin-top: 4rem;
+  }
+  .grid {
+    display: grid;
+    grid-template-columns: minmax(0, 0.85fr) minmax(0, 1.15fr);
+    gap: 3rem clamp(2rem, 5vw, 5rem);
+    align-items: center;
+  }
+  h2 {
+    max-width: 12ch;
+  }
+  .lede {
+    margin-top: 1.5rem;
+    color: #b9bfe6;
+  }
+  .go {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin-top: 2rem;
+    min-height: 3.25rem;
+    padding: 0 1.4rem 0 0.8rem;
+    border: 0;
+    border-radius: 999px;
+    background: var(--white);
+    color: var(--ink);
+    font-weight: 700;
+    cursor: pointer;
+  }
+  .go:hover {
+    background: var(--sun);
+  }
+  .go .keys {
+    font-size: 0.8rem;
+  }
+  .say {
+    margin-top: 1rem;
+    min-height: 3em;
+    color: #b9bfe6;
+  }
+  .scene {
+    display: grid;
+    gap: 1rem;
+  }
+  .queue {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: 0.5rem;
+  }
+  .queue li {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.7rem 0.9rem;
+    border-radius: 14px;
+    background: var(--night-2);
+    box-shadow: inset 0 0 0 1px #2c3470;
+    font-family: var(--mac);
+    transition: opacity 300ms ease, transform 400ms var(--ease-hop), box-shadow 200ms ease;
+  }
+  .queue li.now {
+    box-shadow: inset 0 0 0 2px var(--sun);
+    transform: translateX(6px);
+  }
+  .queue li.seen {
+    opacity: 0.45;
+  }
+  .queue img {
+    width: 26px;
+    height: 26px;
+  }
+  .t {
+    flex: 1;
+    min-width: 0;
+    display: grid;
+  }
+  .t b {
+    font-weight: 600;
+    font-size: 0.95rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .t small {
+    color: #b9bfe6;
+    font-size: 0.8rem;
+  }
+  .lx-status {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4em;
+    padding: 0.2em 0.55em;
+    border-radius: 0.4em;
+    background: rgb(255 255 255 / 0.07);
+    font: 600 0.75rem var(--mac);
+    white-space: nowrap;
+  }
+  .lx-status::before {
+    content: "";
+    width: 0.55em;
+    height: 0.55em;
+    border-radius: 50%;
+    background: #4cc38a;
+  }
+  .lx-status[data-s="Needs You"] {
+    background: rgb(255 201 60 / 0.16);
+    color: var(--sun);
+  }
+  .lx-status[data-s="Needs You"]::before {
+    background: var(--sun);
+  }
+  .win {
+    border-radius: 12px;
+    overflow: hidden;
+    background: #16192e;
+    box-shadow: 0 0 0 1px #2c3470, 0 30px 60px -30px rgb(0 0 0 / 0.7);
+    font-family: var(--mac);
+  }
+  .win header {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    height: 2.2rem;
+    padding: 0 0.8rem;
+    background: #22263f;
+    font-size: 0.8rem;
+    color: #d6daf5;
+  }
+  .win header i {
+    width: 0.65rem;
+    height: 0.65rem;
+    border-radius: 50%;
+    background: #ff5f57;
+  }
+  .win header i:nth-child(2) {
+    background: #febc2e;
+  }
+  .win header i:nth-child(3) {
+    background: #28c840;
+    margin-right: 0.5rem;
+  }
+  .body {
+    display: grid;
+    align-content: start;
+    gap: 0.35rem;
+    min-height: 9.5rem;
+    padding: 1rem 1.1rem;
+    font: 0.85rem ui-monospace, SFMono-Regular, Menlo, monospace;
+    color: #e6e8ff;
+  }
+  .body.in {
+    animation: land 420ms var(--ease-hop);
+  }
+  @keyframes land {
+    from { opacity: 0; transform: translateY(10px); }
+  }
+  .body :global(.ask) {
+    color: var(--sun);
+  }
+  .body :global(.muted) {
+    color: #b9bfe6;
+    font-family: var(--text);
+  }
+  @media (max-width: 56rem) {
+    .grid {
+      grid-template-columns: 1fr;
+    }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .body.in {
+      animation: none;
+    }
+  }
+</style>
+
+<script>
+  import { escape } from "../../scripts/launcher";
+
+  const root = document.querySelector<HTMLElement>("[data-na]");
+  if (root) {
+    const items = [...root.querySelectorAll<HTMLElement>("[data-q]")];
+    const say = root.querySelector<HTMLElement>("[data-na-say]")!;
+    const title = root.querySelector<HTMLElement>("[data-win-title]")!;
+    const body = root.querySelector<HTMLElement>("[data-win-body]")!;
+    const wins = [
+      { title: "Terminal · api — claude", lines: ["Edit auth/refresh.ts?", "❯ 1. Yes", "  2. Yes, and don’t ask again", "  3. No"] },
+      { title: "Claude · Code", lines: ["Should the old teams table be kept as a backup?"] },
+      { title: "Codex", lines: ["Added a limit of 5 signups per minute per IP.", "3 files changed"] },
+    ];
+    let i = -1;
+    root.querySelector<HTMLButtonElement>("[data-na-go]")!.addEventListener("click", () => {
+      i++;
+      items.forEach((el, k) => {
+        el.classList.toggle("now", k === i);
+        el.classList.toggle("seen", k < i);
+      });
+      body.classList.remove("in");
+      void body.offsetWidth;
+      body.classList.add("in");
+      if (i >= wins.length) {
+        title.textContent = "Your desk";
+        body.innerHTML = `<p class="muted">Nobody’s waiting. Back to your own work.</p>`;
+        say.textContent = "That’s everyone. Press again to start over.";
+        i = -1;
+        items.forEach((el) => el.classList.remove("seen"));
+        return;
+      }
+      const w = wins[i];
+      const name = items[i].querySelector("b")!.textContent;
+      title.textContent = w.title;
+      body.innerHTML = w.lines.map((l, k) => `<p class="${k === 0 && i < 2 ? "ask" : ""}">${escape(l)}</p>`).join("");
+      say.textContent = `${i === 0 ? "Jumped" : "Then"} to “${name}”${i < 2 ? ", waiting on you" : ", finished"}${i < wins.length - 1 ? ". Press again for the next." : "."}`;
+    });
+  }
+</script>

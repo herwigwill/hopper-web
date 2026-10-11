@@ -1,0 +1,69 @@
+---
+import Base from "../layouts/Base.astro";
+import { site } from "../content/facts";
+const updated = "October 10, 2026";
+---
+<Base title="Privacy · Hopper" description="What the Hopper website collects, why, and how to have it deleted." path="/privacy">
+  <article class="wrap policy">
+    <h1>Privacy</h1>
+    <p class="updated">Last updated {updated}</p>
+
+    <p class="lead">This page covers this website and the Hopper waitlist. Hopper the app reads and keeps what it indexes on your Mac; the app will ship with its own privacy details.</p>
+
+    <h2>What we collect</h2>
+    <ul>
+      <li><b>Your email address</b>, when you join the waitlist.</li>
+      <li><b>Your answers</b> to the two optional questions after you join (what you use today, and whether you run AI coding agents), if you give them.</li>
+      <li><b>Anonymous page analytics</b>: page views and whether the waitlist form was submitted, counted without cookies and without identifying you. Your IP address is used briefly to limit repeated sign-ups and is not stored.</li>
+    </ul>
+
+    <h2>Why</h2>
+    <p>To email you when Hopper is ready, to invite some people to test it early, and to know whether the site is doing its job. We don't sell or share your email, and we don't send marketing beyond Hopper's launch and testing.</p>
+
+    <h2>Who handles it</h2>
+    <ul>
+      <li><b>Loops</b> stores the waitlist and sends its emails.</li>
+      <li><b>Vercel</b> hosts this site and provides the cookieless analytics.</li>
+    </ul>
+
+    <h2>How long we keep it</h2>
+    <p>Until Hopper launches publicly and for 12 months after, or until you ask us to delete it, whichever comes first. Every email has an unsubscribe link that removes you right away.</p>
+
+    <h2>Your choices</h2>
+    <p>Email <a href={`mailto:${site.contact}`}>{site.contact}</a> to see, correct or delete what we hold about you. We reply within 30 days.</p>
+  </article>
+</Base>
+
+<style>
+  .policy {
+    max-width: 44rem;
+    padding-block: 4rem 6rem;
+  }
+  h1 {
+    font-size: var(--step-3);
+  }
+  .updated {
+    margin-top: 1rem;
+    color: var(--ink-2);
+    font-size: var(--step--1);
+  }
+  .lead {
+    margin-top: 2rem;
+    font-size: var(--step-1);
+    line-height: 1.5;
+  }
+  h2 {
+    margin-top: 2.75rem;
+    font-size: var(--step-2);
+    line-height: 1.1;
+  }
+  p,
+  ul {
+    margin-top: 0.9rem;
+  }
+  ul {
+    padding-left: 1.2rem;
+    display: grid;
+    gap: 0.5rem;
+  }
+</style>

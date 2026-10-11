@@ -1,0 +1,439 @@
+---
+/**
+ * Three more ways back: History (⌃⌘ pressed and released, ADR-023; kept 30 days by default, ADR-019 / ADR-022),
+ * Recently Closed (a tab that vanished while its app kept running, reopened in its own browser, ADR-021) and Now
+ * Playing (whatever makes sound, and the last thing after it stops, tagged Paused; several → a list, ADR-036).
+ */
+import { apps, navPlaces } from "../../content/facts";
+
+const history = [...navPlaces].reverse();
+const ago = ["Now", "2 min ago", "9 min ago", "25 min ago", "1 hr ago", "Yesterday"];
+const openTabs = ["Pricing", "Q3 retro", "Flights"];
+---
+<section class="ways" aria-labelledby="mw-title" data-mw>
+  <div class="wrap">
+    <h2 id="mw-title">Three more ways back.</h2>
+
+    <div class="cards">
+      <!-- History -->
+      <article class="card" id="history" aria-labelledby="mw-history">
+        <header>
+          <h3 id="mw-history">History</h3>
+          <span class="keys"><span class="key" aria-hidden="true">⌃</span><span class="key" aria-hidden="true">⌘</span><span class="visually-hidden">Shortcut: Control Command, pressed and released</span></span>
+        </header>
+        <p class="line">Every place you visited, newest first. Pick one to go straight there.</p>
+        <ul class="list" aria-label="History">
+          {history.map((p, i) => (
+            <li><button type="button" data-hist={p.title} data-kind={p.kind}><img src={apps[p.app].icon} alt="" width="20" height="20" loading="lazy" /><span class="t">{p.title}</span><small>{ago[i]}</small></button></li>
+          ))}
+        </ul>
+        <p class="out" role="status" data-hist-out>Kept for 30 days, or as long as you choose. Clear it any time.</p>
+      </article>
+
+      <!-- Recently Closed -->
+      <article class="card" id="recently-closed" aria-labelledby="mw-closed">
+        <header><h3 id="mw-closed">Recently Closed</h3></header>
+        <p class="line">Close a tab by accident and it waits here, ready to reopen in its own browser.</p>
+        <div class="browser">
+          <ul class="strip" aria-label="Open Chrome tabs" data-open>
+            {openTabs.map((t) => (
+              <li><span><img src={apps.chrome.icon} alt="" width="14" height="14" />{t}</span><button type="button" class="x" aria-label={`Close ${t}`} data-close={t}>×</button></li>
+            ))}
+          </ul>
+        </div>
+        <p class="sub">Recently Closed</p>
+        <ul class="list" aria-label="Recently Closed" data-closed>
+          <li><button type="button" data-reopen="Hotel options, Lisbon"><img src={apps.chrome.icon} alt="" width="20" height="20" /><span class="t">Hotel options, Lisbon</span><small>Reopen</small></button></li>
+        </ul>
+        <p class="out" role="status" data-closed-out>Try closing a tab above.</p>
+      </article>
+
+      <!-- Now Playing -->
+      <article class="card" id="now-playing" aria-labelledby="mw-np">
+        <header><h3 id="mw-np">Now Playing</h3></header>
+        <p class="line">Jump to the tab or app that’s playing, even forty tabs deep, even after it stops.</p>
+        <ul class="list players" aria-label="Things that can play">
+          <li data-player="chrome"><img src={apps.chrome.icon} alt="" width="20" height="20" /><span class="t">Design review recording<small>Chrome tab</small></span><span class="eq" aria-hidden="true"><i></i><i></i><i></i></span><button type="button" class="pp" aria-label="Pause Design review recording" data-pp="chrome">Pause</button></li>
+          <li data-player="music"><img src={apps.music.icon} alt="" width="20" height="20" /><span class="t">Deep Focus<small>Music</small></span><span class="eq" aria-hidden="true"><i></i><i></i><i></i></span><button type="button" class="pp" aria-label="Play Deep Focus" data-pp="music">Play</button></li>
+        </ul>
+        <button type="button" class="np" data-np-go><span aria-hidden="true">▶</span> Now Playing</button>
+        <ul class="list pick" aria-label="Pick what to jump to" data-np-pick hidden></ul>
+        <p class="out" role="status" data-np-out>You’re in Notion. Something’s playing somewhere.</p>
+      </article>
+    </div>
+  </div>
+</section>
+
+<style>
+  .ways {
+    padding-block: clamp(5rem, 4rem + 6vw, 9rem);
+    background: var(--white);
+    border-top: 1px solid var(--line);
+  }
+  h2 {
+    max-width: 14ch;
+  }
+  .cards {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 1.25rem;
+    margin-top: clamp(2.5rem, 2rem + 2vw, 4rem);
+    align-items: start;
+  }
+  .card {
+    display: flex;
+    flex-direction: column;
+    gap: 0.9rem;
+    min-width: 0;
+    padding: clamp(1.25rem, 2vw, 1.6rem);
+    border-radius: 22px;
+    background: var(--paper);
+    border: 1px solid var(--line);
+    scroll-margin-top: 6rem;
+  }
+  header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1rem;
+  }
+  header .keys {
+    font-size: 0.8rem;
+  }
+  h3 {
+    font-family: var(--display);
+    font-stretch: 85%;
+    font-weight: 800;
+    font-size: var(--step-2);
+    line-height: 1;
+  }
+  .line {
+    color: var(--ink-2);
+  }
+  .list {
+    list-style: none;
+    margin: 0;
+    padding: 0.35rem;
+    display: grid;
+    gap: 0.15rem;
+    border-radius: 14px;
+    background: var(--white);
+    border: 1px solid var(--line);
+    font-family: var(--mac);
+    font-size: 0.875rem;
+  }
+  .list button:not(.pp),
+  .players li {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    width: 100%;
+    min-height: 2.6rem;
+    padding: 0.3rem 0.6rem;
+    border: 0;
+    border-radius: 9px;
+    background: transparent;
+    color: var(--ink);
+    font: inherit;
+    text-align: left;
+  }
+  .list button {
+    cursor: pointer;
+  }
+  .list button:not(.pp):hover,
+  .list button.on {
+    background: var(--blue-soft);
+  }
+  .list img {
+    width: 20px;
+    height: 20px;
+    flex: none;
+  }
+  .t {
+    flex: 1;
+    min-width: 0;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .list small {
+    color: var(--ink-2);
+    white-space: nowrap;
+  }
+  .players .t {
+    display: flex;
+    flex-direction: column;
+    line-height: 1.25;
+  }
+  .out {
+    min-height: 3em;
+    font-size: var(--step--1);
+    font-weight: 600;
+    color: var(--blue-deep);
+  }
+  .sub {
+    font-size: var(--step--1);
+    font-weight: 700;
+    margin-bottom: -0.5rem;
+  }
+
+  /* Recently Closed */
+  .browser {
+    border-radius: 12px;
+    background: #e8eaf0;
+    padding: 0.4rem 0.4rem 0;
+    min-height: 2.9rem;
+  }
+  .strip {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    gap: 0.25rem;
+    overflow: hidden;
+    font: 0.8rem var(--mac);
+  }
+  .strip li {
+    display: flex;
+    align-items: center;
+    gap: 0.2rem;
+    flex: none;
+    padding: 0.2rem 0.2rem 0.2rem 0.6rem;
+    border-radius: 8px 8px 0 0;
+    background: #f6f7fa;
+    animation: tab-in 320ms var(--ease-hop);
+  }
+  .strip li:first-child {
+    background: #fff;
+  }
+  .strip span {
+    display: flex;
+    align-items: center;
+    gap: 0.35rem;
+    flex: 1;
+    min-width: 0;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .strip img {
+    width: 14px;
+    height: 14px;
+  }
+  .x {
+    display: grid;
+    place-items: center;
+    width: 1.75rem;
+    height: 1.75rem;
+    flex: none;
+    border: 0;
+    border-radius: 50%;
+    background: transparent;
+    color: var(--ink-2);
+    font-size: 1.05rem;
+    cursor: pointer;
+  }
+  .x:hover {
+    background: #dfe2ea;
+    color: var(--ink);
+  }
+  @keyframes tab-in {
+    from { transform: translateY(40%); opacity: 0; }
+  }
+  .list :global(li.new) {
+    animation: tab-in 320ms var(--ease-hop);
+  }
+
+  /* Now Playing */
+  .players li {
+    padding-right: 0.3rem;
+  }
+  .players small {
+    font-size: 0.75rem;
+  }
+  .eq {
+    display: flex;
+    align-items: flex-end;
+    gap: 2px;
+    height: 14px;
+    width: 14px;
+    opacity: 0;
+  }
+  .eq i {
+    flex: 1;
+    height: 30%;
+    border-radius: 1px;
+    background: var(--blue);
+  }
+  li.playing .eq {
+    opacity: 1;
+  }
+  li.playing .eq i {
+    animation: eq 900ms ease-in-out infinite alternate;
+  }
+  li.playing .eq i:nth-child(2) {
+    animation-delay: -300ms;
+  }
+  li.playing .eq i:nth-child(3) {
+    animation-delay: -600ms;
+  }
+  @keyframes eq {
+    to { height: 100%; }
+  }
+  .pp {
+    min-width: 3.6rem;
+    min-height: 2rem;
+    padding: 0 0.6rem;
+    border: 1px solid var(--line);
+    border-radius: 999px;
+    background: var(--white);
+    font: 600 0.75rem var(--text);
+    color: var(--ink);
+    cursor: pointer;
+  }
+  .pp:hover {
+    border-color: var(--blue);
+  }
+  .np {
+    align-self: flex-start;
+    min-height: 2.75rem;
+    padding: 0 1.2rem;
+    border: 0;
+    border-radius: 999px;
+    background: var(--ink);
+    color: var(--white);
+    font-weight: 700;
+    cursor: pointer;
+  }
+  .np:hover {
+    background: var(--blue);
+  }
+  .pick[hidden] {
+    display: none;
+  }
+  @media (max-width: 75rem) {
+    .cards {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+  @media (max-width: 56rem) {
+    .cards {
+      grid-template-columns: 1fr;
+    }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    li.playing .eq i {
+      animation: none;
+      height: 70%;
+    }
+    .strip li,
+    .list :global(li.new) {
+      animation: none;
+    }
+  }
+</style>
+
+<script>
+  import { apps } from "../../content/facts";
+  import { escape } from "../../scripts/launcher";
+
+  const root = document.querySelector<HTMLElement>("[data-mw]");
+  if (root) {
+    /* History */
+    const histOut = root.querySelector<HTMLElement>("[data-hist-out]")!;
+    const histBtns = [...root.querySelectorAll<HTMLButtonElement>("[data-hist]")];
+    histBtns.forEach((b) =>
+      b.addEventListener("click", () => {
+        histBtns.forEach((x) => x.classList.toggle("on", x === b));
+        histOut.textContent = b === histBtns[0] ? `You’re already in ${b.dataset.hist}.` : `Jumped to ${b.dataset.hist}, the ${b.dataset.kind}, right where you left it.`;
+      }),
+    );
+
+    /* Recently Closed */
+    const open = root.querySelector<HTMLElement>("[data-open]")!;
+    const closed = root.querySelector<HTMLElement>("[data-closed]")!;
+    const closedOut = root.querySelector<HTMLElement>("[data-closed-out]")!;
+    const icon = apps.chrome.icon;
+    open.addEventListener("click", (e) => {
+      const b = (e.target as Element).closest<HTMLButtonElement>("[data-close]");
+      if (!b) return;
+      const t = b.dataset.close!;
+      const li = b.closest("li")!;
+      const next = (li.nextElementSibling ?? li.previousElementSibling)?.querySelector<HTMLButtonElement>("[data-close]");
+      li.remove();
+      const item = document.createElement("li");
+      item.className = "new";
+      item.innerHTML = `<button type="button" data-reopen="${escape(t)}"><img src="${icon}" alt="" width="20" height="20" /><span class="t">${escape(t)}</span><small>Reopen</small></button>`;
+      closed.prepend(item);
+      (next ?? item.querySelector("button"))!.focus();
+      closedOut.textContent = `Closed ${t}. It’s first in Recently Closed.`;
+    });
+    closed.addEventListener("click", (e) => {
+      const b = (e.target as Element).closest<HTMLButtonElement>("[data-reopen]");
+      if (!b) return;
+      const t = b.dataset.reopen!;
+      const li = b.closest("li")!;
+      const next = (li.nextElementSibling ?? li.previousElementSibling)?.querySelector<HTMLButtonElement>("button");
+      li.remove();
+      const tab = document.createElement("li");
+      tab.innerHTML = `<span><img src="${icon}" alt="" width="14" height="14" />${escape(t)}</span><button type="button" class="x" aria-label="Close ${escape(t)}" data-close="${escape(t)}">×</button>`;
+      open.prepend(tab);
+      (next ?? tab.querySelector("button"))!.focus();
+      closedOut.textContent = `Reopened ${t} in Chrome.`;
+    });
+
+    /* Now Playing */
+    type Player = "chrome" | "music";
+    const names: Record<Player, { title: string; where: string }> = {
+      chrome: { title: "Design review recording", where: "its Chrome tab" },
+      music: { title: "Deep Focus", where: "Music" },
+    };
+    // playing, or paused after playing (still openable), in the order they last played
+    const state: Record<Player, "playing" | "paused" | "idle"> = { chrome: "playing", music: "idle" };
+    let order: Player[] = ["chrome"];
+    const npOut = root.querySelector<HTMLElement>("[data-np-out]")!;
+    const pick = root.querySelector<HTMLElement>("[data-np-pick]")!;
+    const draw = () =>
+      (["chrome", "music"] as Player[]).forEach((p) => {
+        const li = root.querySelector<HTMLElement>(`[data-player="${p}"]`)!;
+        const b = li.querySelector<HTMLButtonElement>("[data-pp]")!;
+        const on = state[p] === "playing";
+        li.classList.toggle("playing", on);
+        b.textContent = on ? "Pause" : "Play";
+        b.setAttribute("aria-label", `${on ? "Pause" : "Play"} ${names[p].title}`);
+      });
+    root.querySelectorAll<HTMLButtonElement>("[data-pp]").forEach((b) =>
+      b.addEventListener("click", () => {
+        const p = b.dataset.pp as Player;
+        state[p] = state[p] === "playing" ? "paused" : "playing";
+        if (state[p] === "playing") order = [p, ...order.filter((x) => x !== p)];
+        pick.hidden = true;
+        draw();
+      }),
+    );
+    const jump = (p: Player) => {
+      pick.hidden = true;
+      npOut.textContent = `Jumped to ${names[p].title} in ${names[p].where}${state[p] === "paused" ? ", paused where you stopped it" : ""}.`;
+    };
+    root.querySelector<HTMLButtonElement>("[data-np-go]")!.addEventListener("click", () => {
+      const playing = order.filter((p) => state[p] === "playing");
+      if (playing.length > 1) {
+        pick.innerHTML = playing
+          .map((p) => `<li><button type="button" data-np-to="${p}"><img src="${apps[p].icon}" alt="" width="20" height="20" /><span class="t">${names[p].title}</span><small>Playing</small></button></li>`)
+          .join("");
+        pick.hidden = false;
+        pick.querySelector("button")!.focus();
+        npOut.textContent = "Two things are playing. Pick one.";
+        return;
+      }
+      const to = playing[0] ?? order.find((p) => state[p] === "paused");
+      if (to) jump(to);
+      else npOut.textContent = "Nothing is playing.";
+    });
+    pick.addEventListener("click", (e) => {
+      const b = (e.target as Element).closest<HTMLButtonElement>("[data-np-to]");
+      if (b) jump(b.dataset.npTo as Player);
+    });
+    draw();
+  }
+</script>

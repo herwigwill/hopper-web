@@ -1,0 +1,160 @@
+---
+import { personalSources } from "../content/facts";
+---
+<section class="privacy" aria-labelledby="privacy-title">
+  <div class="wrap grid">
+    <div>
+      <h2 id="privacy-title">It all stays on your Mac.</h2>
+      <ul class="promises">
+        <li>
+          <span class="mark" aria-hidden="true">
+            <svg viewBox="0 0 40 40"><rect x="7" y="9" width="26" height="17" rx="2.5" fill="none" stroke="currentColor" stroke-width="2.4"/><path d="M3 30h34" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/><path d="M15.5 17.5l3 3 6-6.5" fill="none" stroke="var(--blue)" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </span>
+          <span><b>Nothing gets uploaded</b>Your searches and history are kept on your Mac.</span>
+        </li>
+        <li>
+          <span class="mark" aria-hidden="true">
+            <svg viewBox="0 0 40 40"><path d="M5 20s5.5-9 15-9 15 9 15 9-5.5 9-15 9S5 20 5 20z" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linejoin="round"/><circle cx="20" cy="20" r="4.2" fill="currentColor"/><path d="M8 33L32 7" stroke="var(--blue)" stroke-width="2.8" stroke-linecap="round"/></svg>
+          </span>
+          <span><b>Private windows stay private</b>Incognito and private tabs are never seen.</span>
+        </li>
+        <li>
+          <span class="mark" aria-hidden="true">
+            <svg viewBox="0 0 40 40"><rect x="5" y="12" width="30" height="16" rx="8" fill="none" stroke="currentColor" stroke-width="2.4"/><circle cx="13" cy="20" r="4.6" fill="currentColor"/></svg>
+          </span>
+          <span><b>Personal apps start off</b>Messages, notes and history only when you switch them on.</span>
+        </li>
+      </ul>
+    </div>
+    <figure class="panel" aria-label="Hopper's setup screen, where personal sources start switched off">
+      <p class="panel-title">Personal sources</p>
+      <p class="panel-sub">These read your own content or history, so they’re off until you choose.</p>
+      <ul class="switches">
+        {personalSources.map((s) => (
+          <li><span>{s}</span><span class="switch"><span class="visually-hidden">Off</span></span></li>
+        ))}
+      </ul>
+      <figcaption>From Hopper’s first-run setup.</figcaption>
+    </figure>
+  </div>
+</section>
+
+<style>
+  .privacy {
+    padding-block: clamp(5rem, 4rem + 6vw, 9rem);
+    background: var(--white);
+    border-top: 1px solid var(--line);
+  }
+  .grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1.1fr) minmax(0, 0.9fr);
+    gap: 3rem clamp(2rem, 6vw, 7rem);
+    align-items: center;
+  }
+  h2 {
+    max-width: 9ch;
+  }
+  .promises {
+    list-style: none;
+    margin: 2.25rem 0 0;
+    padding: 0;
+    display: grid;
+    gap: 1.25rem;
+    max-width: 30rem;
+  }
+  .promises li {
+    display: grid;
+    grid-template-columns: 3.25rem 1fr;
+    gap: 1rem;
+    align-items: center;
+  }
+  .mark {
+    display: grid;
+    place-items: center;
+    width: 3.25rem;
+    height: 3.25rem;
+    border-radius: 14px;
+    background: var(--paper);
+    border: 1px solid var(--line);
+    color: var(--ink);
+  }
+  .mark svg {
+    width: 1.75rem;
+    height: 1.75rem;
+  }
+  .promises li > span:last-child {
+    display: grid;
+    gap: 0.1rem;
+    color: var(--ink-2);
+  }
+  .promises b {
+    color: var(--ink);
+    font-size: var(--step-1);
+    font-weight: 650;
+    font-stretch: 90%;
+    line-height: 1.2;
+  }
+  .panel {
+    margin: 0;
+    padding: 1.5rem;
+    border-radius: 14px;
+    background: #ececf0;
+    font-family: var(--mac);
+    color: #1d1d1f;
+    box-shadow: 0 0 0 0.5px rgb(0 0 0 / 0.12), 0 24px 50px -28px rgb(18 24 51 / 0.45);
+  }
+  .panel-title {
+    font-size: 1.5rem;
+    font-weight: 600;
+  }
+  .panel-sub {
+    margin-top: 0.4rem;
+    font-size: 0.9rem;
+    color: #55555b;
+  }
+  .switches {
+    list-style: none;
+    margin: 1.1rem 0 0;
+    padding: 0.25rem 0.9rem;
+    border-radius: 10px;
+    background: #fff;
+  }
+  .switches li {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.7rem 0;
+    font-size: 0.95rem;
+  }
+  .switches li + li {
+    border-top: 1px solid #ececf0;
+  }
+  .switch {
+    width: 2.4rem;
+    height: 1.4rem;
+    border-radius: 999px;
+    background: #e3e3e8;
+    position: relative;
+  }
+  .switch::after {
+    content: "";
+    position: absolute;
+    top: 2px;
+    left: 2px;
+    width: calc(1.4rem - 4px);
+    height: calc(1.4rem - 4px);
+    border-radius: 50%;
+    background: #fff;
+    box-shadow: 0 1px 3px rgb(0 0 0 / 0.25);
+  }
+  figcaption {
+    margin-top: 0.9rem;
+    font-size: 0.8rem;
+    color: #55555b;
+  }
+  @media (max-width: 56rem) {
+    .grid {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

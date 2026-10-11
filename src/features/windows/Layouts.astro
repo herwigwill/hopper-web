@@ -1,0 +1,452 @@
+---
+/**
+ * Window layouts (ADR-056): several apps' windows placed by one command, starting apps that aren't running and
+ * opening a URL first; windows a layout doesn't name are left alone. Save Current Layout keeps each app's window and
+ * where it is, never titles.
+ */
+import MacWindow from "../../components/MacWindow.astro";
+import { apps, windowLayouts } from "../../content/facts";
+import { layoutRect } from "../../scripts/windows";
+
+const wins = [
+  { app: "notion", title: "Q4 Launch Plan", at: { x: 0.04, y: 0.06, w: 0.46, h: 0.62 } },
+  { app: "slack", title: "#launch", at: { x: 0.5, y: 0.4, w: 0.42, h: 0.52 } },
+  { app: "chrome", title: "Checkout funnel, Q4", at: { x: 0.3, y: 0.12, w: 0.5, h: 0.55 } },
+  { app: "claude", title: "Fix auth token refresh", at: { x: 0.12, y: 0.42, w: 0.4, h: 0.5 } },
+  { app: "cursor", title: "webhooks.ts — web", at: { x: 0.2, y: 0.1, w: 0.55, h: 0.7 }, off: true },
+  { app: "terminal", title: "web — zsh", at: { x: 0.5, y: 0.3, w: 0.4, h: 0.5 }, off: true },
+] as const;
+const dockApps = ["notion", "chrome", "slack", "claude", "cursor", "terminal"] as const;
+---
+<section class="ly" id="layouts" aria-labelledby="ly-title" data-ly>
+  <div class="wrap">
+    <div class="head">
+      <p class="kicker">Window layouts</p>
+      <h2 id="ly-title">Your whole setup, one keystroke away.</h2>
+      <p class="lede">A layout puts several apps where they go. It starts the ones that aren’t open and can open a page or a file first. Everything else stays where it was.</p>
+    </div>
+
+    <div class="grid">
+      <div class="cards" role="group" aria-label="Run a layout">
+        {windowLayouts.map((l) => (
+          <button type="button" class="card" data-layout={l.id}>
+            <span class="map" aria-hidden="true">
+              {l.windows.map((w, i) => {
+                const r = layoutRect(w.at)!;
+                return (
+                  <span class="slot" style={`--x:${r.x};--y:${r.y};--w:${r.w};--h:${r.h};--i:${i}`}>
+                    <img src={apps[w.app].icon} alt="" width="20" height="20" loading="lazy" />
+                  </span>
+                );
+              })}
+            </span>
+            <span class="card-t">
+              <b>{l.name}</b>
+              <small>{l.windows.map((w) => apps[w.app].short).join(", ")}{l.windows.some((w) => "open" in w) && " · opens the dashboard"}</small>
+            </span>
+            <span class="keys">{[...l.hotkey].map((k) => <span class="key">{k}</span>)}</span>
+          </button>
+        ))}
+        <button type="button" class="card card-saved" data-layout="saved" hidden>
+          <span class="map" aria-hidden="true" data-saved-map></span>
+          <span class="card-t"><b>My Layout</b><small data-saved-sub>Saved just now</small></span>
+        </button>
+        <div class="actions">
+          <button type="button" class="act" data-save>Save Current Layout</button>
+          <button type="button" class="act ghost" data-scatter>Mess it up</button>
+        </div>
+        <p class="note">Saving keeps each app’s window and where it is. Never titles.</p>
+      </div>
+
+      <div class="scene" aria-hidden="true">
+        <div class="display">
+          <div class="desk" data-ly-desk>
+            {wins.map((w, i) => (
+              <div class:list={["slotwin", { off: "off" in w }]} data-app={w.app}>
+                <MacWindow app={w.app} title={w.title} at={w.at} z={i + 1} />
+              </div>
+            ))}
+            <p class="hud" data-ly-hud hidden></p>
+          </div>
+          <div class="dock">
+            {dockApps.map((a) => (
+              <span class:list={["dk", { running: !wins.find((w) => w.app === a && "off" in w) }]} data-dock={a}>
+                <img src={apps[a].icon} alt="" width="28" height="28" loading="lazy" />
+              </span>
+            ))}
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <p class="visually-hidden" aria-live="polite" data-ly-live></p>
+</section>
+
+<style>
+  .ly {
+    padding-block: clamp(5rem, 4rem + 6vw, 9rem);
+  }
+  .kicker {
+    font-size: var(--step--1);
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--blue);
+    margin-bottom: 1rem;
+  }
+  .head {
+    display: grid;
+    grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr);
+    gap: 1rem 4rem;
+    align-items: end;
+  }
+  .kicker {
+    grid-column: 1 / -1;
+  }
+  h2 {
+    max-width: 12ch;
+  }
+  .grid {
+    display: grid;
+    grid-template-columns: minmax(0, 0.7fr) minmax(0, 1.3fr);
+    gap: 2.5rem clamp(2rem, 4vw, 4rem);
+    margin-top: clamp(2.5rem, 2rem + 2vw, 4rem);
+    align-items: start;
+  }
+
+  .cards {
+    display: grid;
+    gap: 0.75rem;
+  }
+  .card {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr) auto;
+    align-items: center;
+    gap: 1rem;
+    padding: 0.85rem 1rem 0.85rem 0.85rem;
+    border: 1px solid var(--line);
+    border-radius: 16px;
+    background: var(--white);
+    text-align: left;
+    cursor: pointer;
+    transition: border-color 150ms ease, transform 300ms var(--ease-hop), box-shadow 200ms ease;
+  }
+  .card:hover {
+    border-color: var(--blue);
+  }
+  .card[aria-pressed="true"] {
+    border-color: var(--blue);
+    box-shadow: 0 0 0 3px var(--blue-soft);
+  }
+  .card.is-down {
+    transform: scale(0.98);
+  }
+  .map {
+    position: relative;
+    width: 5.4rem;
+    aspect-ratio: 1440 / 860;
+    border-radius: 6px;
+    background: var(--blue);
+    overflow: hidden;
+  }
+  .map :global(.slot) {
+    position: absolute;
+    left: calc(var(--x) * 100% + 1.5px);
+    top: calc(var(--y) * 100% + 1.5px);
+    width: calc(var(--w) * 100% - 3px);
+    height: calc(var(--h) * 100% - 3px);
+    display: grid;
+    place-items: center;
+    border-radius: 3px;
+    background: rgb(255 255 255 / 0.92);
+  }
+  .map :global(.slot img) {
+    width: 0.9rem;
+    height: 0.9rem;
+  }
+  .card-t {
+    display: grid;
+    gap: 0.1rem;
+    min-width: 0;
+  }
+  .card-t b {
+    font-size: var(--step-0);
+  }
+  .card-t small {
+    color: var(--ink-2);
+    font-size: var(--step--1);
+    line-height: 1.35;
+  }
+  .card .keys {
+    font-size: 0.8rem;
+  }
+  .actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-top: 0.5rem;
+  }
+  .act {
+    min-height: 2.75rem;
+    padding: 0 1.1rem;
+    border-radius: 999px;
+    border: 1px solid var(--ink);
+    background: var(--ink);
+    color: var(--white);
+    font-weight: 600;
+    font-size: var(--step--1);
+    cursor: pointer;
+  }
+  .act:hover {
+    background: var(--blue);
+    border-color: var(--blue);
+  }
+  .act.ghost {
+    background: transparent;
+    color: var(--ink);
+  }
+  .act.ghost:hover {
+    background: var(--white);
+    border-color: var(--blue);
+  }
+  .note {
+    font-size: var(--step--1);
+    color: var(--ink-2);
+  }
+
+  .display {
+    border-radius: 16px;
+    overflow: hidden;
+    background:
+      radial-gradient(90% 80% at 20% 100%, #6a3df0 0%, transparent 60%),
+      radial-gradient(80% 70% at 100% 0%, #31c0ff 0%, transparent 55%),
+      #2534c9;
+    box-shadow: 0 30px 60px -30px rgb(6 8 40 / 0.55);
+    padding-top: 1.2rem;
+  }
+  .slotwin {
+    display: contents;
+  }
+  .slotwin.off :global(.mw) {
+    transform: scale(0.6);
+    opacity: 0;
+    pointer-events: none;
+  }
+  .slotwin :global(.mw.is-opening .mw-omni) {
+    animation: opening 900ms ease;
+  }
+  @keyframes opening {
+    0%, 100% { background: #f0f2f6; }
+    30% { background: #ffe9a8; }
+  }
+  .dock {
+    display: flex;
+    justify-content: center;
+    gap: 0.45rem;
+    width: max-content;
+    margin: 0.5rem auto 0.55rem;
+    padding: 0.3rem 0.5rem 0.45rem;
+    border-radius: 0.9rem;
+    background: rgb(255 255 255 / 0.18);
+    box-shadow: inset 0 0 0 0.5px rgb(255 255 255 / 0.3);
+  }
+  .dk {
+    position: relative;
+    display: grid;
+  }
+  .dk img {
+    width: clamp(1.2rem, 2.2vw, 1.8rem);
+    height: auto;
+  }
+  .dk::after {
+    content: "";
+    position: absolute;
+    left: 50%;
+    bottom: -0.32rem;
+    width: 4px;
+    height: 4px;
+    margin-left: -2px;
+    border-radius: 50%;
+    background: rgb(255 255 255 / 0.85);
+    opacity: 0;
+    transition: opacity 200ms ease;
+  }
+  .dk.running::after {
+    opacity: 1;
+  }
+  .dk.bounce img {
+    animation: bounce 700ms var(--ease-out);
+  }
+  @keyframes bounce {
+    0%, 100% { transform: none; }
+    25% { transform: translateY(-45%); }
+    50% { transform: none; }
+    70% { transform: translateY(-18%); }
+  }
+  .hud {
+    position: absolute;
+    left: 50%;
+    bottom: 6%;
+    z-index: 50;
+    transform: translateX(-50%);
+    padding: 0.55em 1.1em;
+    border-radius: 0.8em;
+    background: rgb(28 28 34 / 0.88);
+    color: #fff;
+    font-family: var(--mac);
+    font-size: clamp(0.7rem, 1.2vw, 0.9rem);
+    white-space: nowrap;
+    animation: hud 2.2s ease both;
+  }
+  @keyframes hud {
+    0% { opacity: 0; transform: translate(-50%, 8px); }
+    10%, 85% { opacity: 1; transform: translate(-50%, 0); }
+    100% { opacity: 0; }
+  }
+
+  @media (max-width: 56rem) {
+    .head,
+    .grid {
+      grid-template-columns: 1fr;
+    }
+    .scene {
+      order: -1;
+    }
+  }
+</style>
+
+<script>
+  import { apps, windowLayouts, type WindowCommandId } from "../../content/facts";
+  import { apply, layoutRect, type Rect, type WinState } from "../../scripts/windows";
+  import { press } from "../../scripts/launcher";
+
+  const GAP = 10;
+  const root = document.querySelector<HTMLElement>("[data-ly]");
+  if (root) {
+    type App = keyof typeof apps;
+    type Slot = { app: App; rect: Rect; layout: WindowCommandId | null; open?: string };
+    const hud = root.querySelector<HTMLElement>("[data-ly-hud]")!;
+    const live = root.querySelector<HTMLElement>("[data-ly-live]")!;
+    const cards = [...root.querySelectorAll<HTMLButtonElement>("[data-layout]")];
+    const savedCard = root.querySelector<HTMLButtonElement>('[data-layout="saved"]')!;
+    const savedMap = root.querySelector<HTMLElement>("[data-saved-map]")!;
+    const savedSub = root.querySelector<HTMLElement>("[data-saved-sub]")!;
+    const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+    const wins = new Map<App, { wrap: HTMLElement; el: HTMLElement; state: WinState; initial: Rect; running: boolean }>();
+    root.querySelectorAll<HTMLElement>(".slotwin").forEach((wrap) => {
+      const el = wrap.querySelector<HTMLElement>(".mw")!;
+      const s = el.style;
+      const rect = { x: +s.getPropertyValue("--x"), y: +s.getPropertyValue("--y"), w: +s.getPropertyValue("--w"), h: +s.getPropertyValue("--h") };
+      wins.set(wrap.dataset.app as App, { wrap, el, state: { rect, layout: null, step: 0, before: null, gapped: false }, initial: rect, running: !wrap.classList.contains("off") });
+    });
+    let order: App[] = [...wins.keys()];
+    let saved: Slot[] | null = null;
+    const timers: number[] = [];
+
+    const stack = () => order.forEach((a, i) => wins.get(a)!.el.style.setProperty("--z", String(i + 1)));
+    const showHud = (msg: string) => {
+      hud.hidden = false;
+      hud.textContent = msg;
+      hud.style.animation = "none";
+      void hud.offsetWidth;
+      hud.style.animation = "";
+    };
+    const dock = (a: App) => root.querySelector<HTMLElement>(`[data-dock="${a}"]`)!;
+
+    const runSlots = (slots: Slot[], name: string) => {
+      timers.splice(0).forEach(clearTimeout);
+      slots.forEach((slot, i) => {
+        const go = () => {
+          const w = wins.get(slot.app)!;
+          if (!w.running) {
+            w.running = true;
+            dock(slot.app).classList.add("running", "bounce");
+            setTimeout(() => dock(slot.app).classList.remove("bounce"), 750);
+            w.wrap.classList.remove("off");
+          }
+          if (slot.open) {
+            w.el.classList.remove("is-opening");
+            void w.el.offsetWidth;
+            w.el.classList.add("is-opening");
+          }
+          w.state = { rect: slot.rect, layout: slot.layout, step: 0, before: w.state.before ?? w.state.rect, gapped: !!slot.layout };
+          apply(w.el, w.state, GAP);
+        };
+        if (reduce) go();
+        else timers.push(window.setTimeout(go, i * 140));
+      });
+      // Brought forward last to first, so the first window ends in front; the rest are left alone, behind.
+      const named = slots.map((s) => s.app);
+      order = [...order.filter((a) => !named.includes(a)), ...[...named].reverse()];
+      stack();
+      wins.forEach((w, a) => w.el.classList.toggle("is-front", a === named[0]));
+      const msg = `Placed ${slots.length} of ${slots.length} windows`;
+      showHud(msg);
+      const others = [...wins.entries()].filter(([a, w]) => w.running && !named.includes(a)).length;
+      live.textContent = `${name}: ${msg.toLowerCase()}.${others ? ` ${others} other window${others > 1 ? "s" : ""} left alone.` : ""}`;
+    };
+
+    const select = (card: HTMLButtonElement | null) => cards.forEach((c) => c.setAttribute("aria-pressed", String(c === card)));
+
+    const runLayout = (id: string) => {
+      const card = cards.find((c) => c.dataset.layout === id)!;
+      press(card, 160);
+      select(card);
+      if (id === "saved") {
+        if (saved) runSlots(saved, "My Layout");
+        return;
+      }
+      const l = windowLayouts.find((x) => x.id === id)!;
+      runSlots(
+        l.windows.map((w) => ({ app: w.app, rect: layoutRect(w.at)!, layout: w.at, open: "open" in w ? w.open : undefined })),
+        l.name,
+      );
+    };
+
+    cards.forEach((c) => c.addEventListener("click", () => runLayout(c.dataset.layout!)));
+
+    root.querySelector("[data-save]")!.addEventListener("click", () => {
+      // Each running app's front window, front to back: its built-in layout when it's in one, else fractions.
+      saved = [...order]
+        .reverse()
+        .filter((a) => wins.get(a)!.running)
+        .map((a) => {
+          const s = wins.get(a)!.state;
+          return { app: a, rect: s.rect, layout: s.layout };
+        });
+      savedMap.innerHTML = saved
+        .map((s) => `<span class="slot" style="--x:${s.rect.x};--y:${s.rect.y};--w:${s.rect.w};--h:${s.rect.h}"><img src="${apps[s.app].icon}" alt="" width="20" height="20" /></span>`)
+        .reverse()
+        .join("");
+      savedSub.textContent = `${saved.length} windows: ${saved.map((s) => apps[s.app].short).join(", ")}`;
+      savedCard.hidden = false;
+      select(savedCard);
+      live.textContent = `Saved My Layout with ${saved.length} windows.`;
+    });
+
+    root.querySelector("[data-scatter]")!.addEventListener("click", () => {
+      timers.splice(0).forEach(clearTimeout);
+      const jitter = () => (Math.random() - 0.5) * 0.12;
+      wins.forEach((w) => {
+        const r = w.initial;
+        w.state = { rect: { ...r, x: Math.min(Math.max(r.x + jitter(), 0), 1 - r.w), y: Math.min(Math.max(r.y + jitter(), 0), 1 - r.h) }, layout: null, step: 0, before: null, gapped: false };
+        apply(w.el, w.state, GAP);
+      });
+      select(null);
+      live.textContent = "Windows scattered.";
+    });
+
+    // The example hotkeys work while the section is on screen.
+    let onScreen = false;
+    new IntersectionObserver(([e]) => (onScreen = e.isIntersecting), { threshold: 0.3 }).observe(root);
+    document.addEventListener("keydown", (e) => {
+      if (!onScreen || !e.ctrlKey || !e.altKey || e.metaKey) return;
+      const n = ["Digit1", "Digit2", "Digit3"].indexOf(e.code);
+      if (n < 0) return;
+      e.preventDefault();
+      runLayout(windowLayouts[n].id);
+    });
+    cards.forEach((c) => c.setAttribute("aria-pressed", "false"));
+  }
+</script>

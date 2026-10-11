@@ -1,0 +1,24 @@
+---
+import Base from "../../layouts/Base.astro";
+import HubHero from "../../features/hub/HubHero.astro";
+import PSearch from "../../features/hub/PSearch.astro";
+// Back & Now Playing is hidden for now; uncomment here, its pillar in facts.ts and its test to bring it back.
+// import PBack from "../../features/hub/PBack.astro";
+import PAgents from "../../features/hub/PAgents.astro";
+import PWindows from "../../features/hub/PWindows.astro";
+import ToolkitGrid from "../../features/hub/ToolkitGrid.astro";
+import Join from "../../moments/Join.astro";
+---
+<Base
+  title="Features · Hopper"
+  description="Everything Hopper does on your Mac: search everything you had open, Back across apps, every coding agent in one list, 42 window commands, and a toolkit of clipboard, snippets, notes and more."
+  path="/features"
+>
+  <HubHero />
+  <PSearch />
+  {/* <PBack /> */}
+  <PAgents />
+  <PWindows />
+  <ToolkitGrid />
+  <Join />
+</Base>

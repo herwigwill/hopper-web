@@ -1,0 +1,19 @@
+---
+import Base from "../../layouts/Base.astro";
+import NavHero from "../../features/navigation/NavHero.astro";
+import Places from "../../features/navigation/Places.astro";
+import MoreWays from "../../features/navigation/MoreWays.astro";
+import MoreFeatures from "../../features/MoreFeatures.astro";
+import Join from "../../moments/Join.astro";
+---
+<Base
+  title="Navigation · Hopper"
+  description="Back and Forward across every app, Toggle between your last two apps, Toggle Tab between your last two tabs or sessions, plus History, Recently Closed and Now Playing."
+  path="/features/navigation"
+>
+  <NavHero />
+  <Places />
+  <MoreWays />
+  <MoreFeatures current="navigation" />
+  <Join />
+</Base>

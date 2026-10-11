@@ -1,0 +1,431 @@
+---
+/**
+ * Hotkey presets (ADR-057): import Rectangle's, Magnet's or Spectacle's keys for the window commands. Nothing is bound
+ * by default; Import says first which of Hopper's own hotkeys it takes (⌃⌥← from Back). Once imported here, the keys
+ * work on the page while the section is on screen.
+ */
+import MacWindow from "../../components/MacWindow.astro";
+import { hotkeyPresets } from "../../content/facts";
+import { glyphSVG, commandTitle } from "../../scripts/windows";
+---
+<section class="pr" id="presets" aria-labelledby="pr-title" data-pr>
+  <div class="wrap grid">
+    <div class="copy">
+      <p class="kicker">Hotkey presets</p>
+      <h2 id="pr-title">Bring the keys your fingers already know.</h2>
+      <p class="lede">Coming from Rectangle, Magnet or Spectacle? Import its shortcuts in one go. Hopper tells you first if one of them is already taken.</p>
+      <p class="sub">No window command has a hotkey until you give it one, so nothing changes unless you ask.</p>
+    </div>
+
+    <div class="panel">
+      <div class="tabs" role="radiogroup" aria-label="Preset" data-pr-tabs>
+        {hotkeyPresets.map((p, i) => (
+          <button type="button" role="radio" aria-checked={i === 0 ? "true" : "false"} tabindex={i === 0 ? 0 : -1} data-preset={p.id}>{p.name}</button>
+        ))}
+      </div>
+
+      <div class="body">
+        <div class="settings">
+          <div class="row-head">
+            <span><b data-pr-name>Rectangle</b><small data-pr-count>19 hotkeys</small></span>
+            <button type="button" class="import" data-import>Import…</button>
+          </div>
+
+          <div class="sheet" role="alertdialog" aria-modal="false" aria-labelledby="pr-sheet-t" aria-describedby="pr-sheet-m" data-sheet hidden>
+            <p class="sheet-t" id="pr-sheet-t" data-sheet-t></p>
+            <p class="sheet-m" id="pr-sheet-m" data-sheet-m></p>
+            <div class="sheet-b">
+              <button type="button" data-cancel>Cancel</button>
+              <button type="button" class="primary" data-confirm>Import</button>
+            </div>
+          </div>
+          <p class="done" role="status" data-done></p>
+
+          {hotkeyPresets.map((p, i) => (
+            <ul class="keys-list" data-list={p.id} hidden={i !== 0}>
+              {p.keys.map(([cmd, keys]) => (
+                <li>
+                  <button type="button" class="kr" data-run={cmd}>
+                    <span set:html={glyphSVG(cmd)} />
+                    <span class="kr-t">{commandTitle(cmd)}</span>
+                    <span class="keys">{[...keys].map((k) => <span class="key">{k}</span>)}</span>
+                  </button>
+                </li>
+              ))}
+            </ul>
+          ))}
+          <p class="pnote" data-pr-note>{hotkeyPresets[0].note}</p>
+        </div>
+
+        <div class="mini" aria-hidden="true">
+          <div class="desk" data-pr-desk>
+            <MacWindow app="cursor" title="webhooks.ts — web" at={{ x: 0.2, y: 0.15, w: 0.6, h: 0.7 }} front />
+          </div>
+          <p class="mini-l" data-mini-l>Click a command to try it</p>
+        </div>
+      </div>
+    </div>
+  </div>
+  <p class="visually-hidden" aria-live="polite" data-pr-live></p>
+</section>
+
+<style>
+  .pr {
+    padding-block: clamp(5rem, 4rem + 6vw, 9rem);
+    background: var(--white);
+    border-top: 1px solid var(--line);
+  }
+  .grid {
+    display: grid;
+    grid-template-columns: minmax(0, 0.75fr) minmax(0, 1.25fr);
+    gap: 2.5rem clamp(2rem, 5vw, 5rem);
+    align-items: start;
+  }
+  .kicker {
+    font-size: var(--step--1);
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--blue);
+    margin-bottom: 1rem;
+  }
+  h2 {
+    max-width: 11ch;
+  }
+  .lede {
+    margin-top: 1.5rem;
+  }
+  .sub {
+    margin-top: 1rem;
+    max-width: 36ch;
+    color: var(--ink-2);
+  }
+
+  .panel {
+    border-radius: 20px;
+    background: var(--paper);
+    border: 1px solid var(--line);
+    padding: clamp(0.75rem, 1.5vw, 1.25rem);
+  }
+  .tabs {
+    display: inline-flex;
+    gap: 0.25rem;
+    padding: 0.25rem;
+    border-radius: 12px;
+    background: var(--white);
+    border: 1px solid var(--line);
+  }
+  .tabs button {
+    min-height: 2.25rem;
+    padding: 0 1rem;
+    border: 0;
+    border-radius: 9px;
+    background: transparent;
+    font-weight: 600;
+    font-size: var(--step--1);
+    cursor: pointer;
+  }
+  .tabs button[aria-checked="true"] {
+    background: var(--ink);
+    color: var(--white);
+  }
+  .body {
+    display: grid;
+    grid-template-columns: minmax(0, 1.1fr) minmax(0, 0.9fr);
+    gap: 1.25rem;
+    margin-top: 1rem;
+    align-items: start;
+  }
+  .settings {
+    position: relative;
+    border-radius: 14px;
+    background: var(--white);
+    border: 1px solid var(--line);
+    padding: 0.5rem;
+  }
+  .row-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    padding: 0.5rem 0.5rem 0.75rem;
+    border-bottom: 1px solid var(--line);
+    margin-bottom: 0.35rem;
+  }
+  .row-head span {
+    display: grid;
+  }
+  .row-head small {
+    color: var(--ink-2);
+    font-size: var(--step--1);
+  }
+  .import {
+    min-height: 2.25rem;
+    padding: 0 1rem;
+    border-radius: 8px;
+    border: 1px solid var(--line);
+    background: var(--paper);
+    font-weight: 600;
+    font-size: var(--step--1);
+    cursor: pointer;
+  }
+  .import:hover {
+    border-color: var(--blue);
+  }
+  .import.is-done {
+    background: var(--blue-soft);
+    border-color: var(--blue-soft);
+    color: var(--blue-deep);
+  }
+  .sheet {
+    margin: 0.25rem 0.25rem 0.75rem;
+    padding: 1rem 1.1rem;
+    border-radius: 12px;
+    background: var(--night);
+    color: #eef0ff;
+    animation: sheet 320ms var(--ease-hop);
+  }
+  @keyframes sheet {
+    from {
+      opacity: 0;
+      transform: translateY(-8px) scale(0.98);
+    }
+  }
+  .sheet-t {
+    font-weight: 700;
+  }
+  .sheet-m {
+    margin-top: 0.35rem;
+    font-size: var(--step--1);
+    color: #b9bfe6;
+  }
+  .sheet-m :global(b) {
+    color: var(--sun);
+    font-weight: 600;
+  }
+  .sheet-b {
+    display: flex;
+    justify-content: flex-end;
+    gap: 0.5rem;
+    margin-top: 0.9rem;
+  }
+  .sheet-b button {
+    min-height: 2.25rem;
+    padding: 0 1rem;
+    border-radius: 8px;
+    border: 1px solid #3b437a;
+    background: transparent;
+    color: #eef0ff;
+    font-weight: 600;
+    font-size: var(--step--1);
+    cursor: pointer;
+  }
+  .sheet-b .primary {
+    background: var(--blue);
+    border-color: var(--blue);
+  }
+  .sheet :focus-visible {
+    outline-color: var(--sun);
+  }
+  .done {
+    padding: 0 0.6rem;
+    font-size: var(--step--1);
+    font-weight: 600;
+    color: var(--blue-deep);
+  }
+  .done:empty {
+    display: none;
+  }
+  .keys-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    max-height: 22rem;
+    overflow-y: auto;
+    /* Says there's more below. */
+    mask-image: linear-gradient(#000 calc(100% - 2.5rem), transparent);
+    padding-bottom: 1.5rem;
+  }
+  .kr {
+    display: flex;
+    align-items: center;
+    gap: 0.7rem;
+    width: 100%;
+    min-height: 2.6rem;
+    padding: 0 0.6rem;
+    border: 0;
+    border-radius: 8px;
+    background: transparent;
+    font-size: var(--step--1);
+    text-align: left;
+    cursor: pointer;
+  }
+  .kr:hover,
+  .kr.is-hit {
+    background: var(--blue-soft);
+  }
+  .kr :global(.glyph) {
+    width: 1.5rem;
+    color: var(--blue);
+  }
+  .kr-t {
+    font-weight: 600;
+    flex: 1;
+  }
+  .kr .keys {
+    font-size: 0.72rem;
+    gap: 0.2em;
+    opacity: 0.55;
+    transition: opacity 200ms ease;
+  }
+  .is-imported .kr .keys {
+    opacity: 1;
+  }
+  .pnote {
+    padding: 0.6rem 0.6rem 0.25rem;
+    font-size: 0.8rem;
+    color: var(--ink-2);
+  }
+  .mini {
+    position: sticky;
+    top: 6rem;
+  }
+  .mini .desk {
+    border-radius: 10px;
+    overflow: hidden;
+    background:
+      radial-gradient(90% 80% at 20% 100%, #6a3df0 0%, transparent 60%),
+      radial-gradient(80% 70% at 100% 0%, #31c0ff 0%, transparent 55%),
+      #2534c9;
+    box-shadow: 0 0 0 5px #15172a, 0 20px 40px -20px rgb(6 8 40 / 0.6);
+  }
+  .mini-l {
+    margin-top: 1rem;
+    text-align: center;
+    font-size: var(--step--1);
+    font-weight: 600;
+    color: var(--ink-2);
+  }
+  @media (max-width: 64rem) {
+    .grid,
+    .body {
+      grid-template-columns: 1fr;
+    }
+    .mini {
+      position: static;
+      order: -1;
+    }
+  }
+</style>
+
+<script>
+  import { hotkeyPresets, type WindowCommandId } from "../../content/facts";
+  import { run, apply, type WinState } from "../../scripts/windows";
+  import { check, radioKeys } from "../../scripts/controls";
+
+  /** "⌃⌥⇧↑" → the modifiers and the KeyboardEvent.code it's pressed with. */
+  const parseCombo = (s: string) => {
+    const chars = [...s];
+    const key = chars.pop()!;
+    const code = ({ "←": "ArrowLeft", "→": "ArrowRight", "↑": "ArrowUp", "↓": "ArrowDown", "↩": "Enter", "⌫": "Backspace" } as Record<string, string>)[key] ?? `Key${key}`;
+    return { ctrl: chars.includes("⌃"), alt: chars.includes("⌥"), shift: chars.includes("⇧"), meta: chars.includes("⌘"), code };
+  };
+
+  const root = document.querySelector<HTMLElement>("[data-pr]");
+  if (root) {
+    const tabs = [...root.querySelectorAll<HTMLButtonElement>("[data-preset]")];
+    const lists = [...root.querySelectorAll<HTMLElement>("[data-list]")];
+    const nameEl = root.querySelector<HTMLElement>("[data-pr-name]")!;
+    const countEl = root.querySelector<HTMLElement>("[data-pr-count]")!;
+    const noteEl = root.querySelector<HTMLElement>("[data-pr-note]")!;
+    const importBtn = root.querySelector<HTMLButtonElement>("[data-import]")!;
+    const sheet = root.querySelector<HTMLElement>("[data-sheet]")!;
+    const sheetT = root.querySelector<HTMLElement>("[data-sheet-t]")!;
+    const sheetM = root.querySelector<HTMLElement>("[data-sheet-m]")!;
+    const done = root.querySelector<HTMLElement>("[data-done]")!;
+    const settings = root.querySelector<HTMLElement>(".settings")!;
+    const miniL = root.querySelector<HTMLElement>("[data-mini-l]")!;
+    const live = root.querySelector<HTMLElement>("[data-pr-live]")!;
+    const win = root.querySelector<HTMLElement>("[data-pr-desk] .mw")!;
+    const s = win.style;
+    let state: WinState = { rect: { x: +s.getPropertyValue("--x"), y: +s.getPropertyValue("--y"), w: +s.getPropertyValue("--w"), h: +s.getPropertyValue("--h") }, layout: null, step: 0, before: null, gapped: false };
+    let preset: (typeof hotkeyPresets)[number] = hotkeyPresets[0];
+    let imported: string | null = null;
+
+    const perform = (cmd: WindowCommandId, how: string) => {
+      const out = run(cmd, state);
+      const btn = root.querySelector<HTMLElement>(`[data-list="${preset.id}"] [data-run="${cmd}"]`);
+      btn?.classList.add("is-hit");
+      setTimeout(() => btn?.classList.remove("is-hit"), 350);
+      if ("message" in out) {
+        miniL.textContent = out.message;
+        live.textContent = out.message + ".";
+        return;
+      }
+      state = out.state;
+      apply(win, state, 8);
+      miniL.textContent = `${how}${out.label}`;
+      live.textContent = `${out.label}.`;
+    };
+
+    const show = (id: string) => {
+      preset = hotkeyPresets.find((p) => p.id === id)!;
+      check(tabs, (b) => b.dataset.preset === id);
+      lists.forEach((l) => (l.hidden = l.dataset.list !== id));
+      nameEl.textContent = preset.name;
+      countEl.textContent = `${preset.keys.length} hotkeys`;
+      noteEl.textContent = preset.note;
+      sheet.hidden = true;
+      const isOn = imported === id;
+      settings.classList.toggle("is-imported", isOn);
+      importBtn.textContent = isOn ? "Imported" : "Import…";
+      importBtn.classList.toggle("is-done", isOn);
+      done.textContent = isOn ? "Imported. Press the keys to move the window." : "";
+    };
+
+    tabs.forEach((t) => t.addEventListener("click", () => show(t.dataset.preset!)));
+    root.querySelector<HTMLElement>("[data-pr-tabs]")!.addEventListener("keydown", (e) => radioKeys(e, tabs));
+
+    importBtn.addEventListener("click", () => {
+      if (imported === preset.id) return;
+      // HotkeyPresetRow's dialog, word for word.
+      sheetT.textContent = `Import ${preset.name}'s hotkeys?`;
+      sheetM.innerHTML = `Sets ${preset.keys.length} hotkeys for window commands, replacing theirs.${preset.takes.length ? ` Takes <b>${preset.takes.join(", ")}</b>.` : ""}`;
+      sheet.hidden = false;
+      sheet.querySelector<HTMLButtonElement>("[data-confirm]")!.focus();
+    });
+    sheet.querySelector("[data-cancel]")!.addEventListener("click", () => {
+      sheet.hidden = true;
+      importBtn.focus();
+    });
+    sheet.querySelector("[data-confirm]")!.addEventListener("click", () => {
+      imported = preset.id;
+      show(preset.id);
+      importBtn.focus();
+      live.textContent = `Imported ${preset.name}'s hotkeys.`;
+    });
+    sheet.addEventListener("keydown", (e) => {
+      if (e.key === "Escape") {
+        sheet.hidden = true;
+        importBtn.focus();
+      }
+    });
+
+    root.querySelectorAll<HTMLButtonElement>("[data-run]").forEach((b) => b.addEventListener("click", () => perform(b.dataset.run as WindowCommandId, "")));
+
+    // Once imported, the preset's keys move the window while the section is on screen.
+    let onScreen = false;
+    new IntersectionObserver(([e]) => (onScreen = e.isIntersecting), { threshold: 0.25 }).observe(root);
+    document.addEventListener("keydown", (e) => {
+      if (!onScreen || imported !== preset.id) return;
+      for (const [cmd, keys] of preset.keys) {
+        const c = parseCombo(keys);
+        if (e.code === c.code && e.ctrlKey === c.ctrl && e.altKey === c.alt && e.shiftKey === c.shift && e.metaKey === c.meta) {
+          e.preventDefault();
+          perform(cmd, `${keys} · `);
+          return;
+        }
+      }
+    });
+  }
+</script>

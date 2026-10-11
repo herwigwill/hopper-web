@@ -1,0 +1,363 @@
+/* A recreated Mac display for the window-management demos. `.desk` is the display's visible area (no menu bar or
+   Dock), 1440 × 860 points; windows (`.mw`) are placed in fractions of it plus gap insets in points
+   (scripts/windows.ts). Everything inside scales with the desk's width through --pt. */
+
+.desk {
+  position: relative;
+  container-type: inline-size;
+  aspect-ratio: 1440 / 860;
+  isolation: isolate;
+}
+
+.mw {
+  --pt: calc(100cqw / 1440);
+  position: absolute;
+  left: calc(var(--x) * 100% + var(--gl, 0) * var(--pt));
+  top: calc(var(--y) * 100% + var(--gt, 0) * var(--pt));
+  width: calc(var(--w) * 100% - (var(--gl, 0) + var(--gr, 0)) * var(--pt));
+  height: calc(var(--h) * 100% - (var(--gt, 0) + var(--gb, 0)) * var(--pt));
+  z-index: var(--z, 1);
+  display: flex;
+  flex-direction: column;
+  font-family: var(--mac);
+  font-size: calc(var(--pt) * 13);
+  line-height: 1.45;
+  color: #1d1d1f;
+  background: #fff;
+  border-radius: calc(var(--pt) * 12);
+  overflow: hidden;
+  box-shadow: 0 0 0 0.5px rgb(0 0 0 / 0.28), 0 calc(var(--pt) * 14) calc(var(--pt) * 40) calc(var(--pt) * -8) rgb(6 10 60 / 0.5);
+  transition:
+    left 480ms var(--ease-hop),
+    top 480ms var(--ease-hop),
+    width 480ms var(--ease-hop),
+    height 480ms var(--ease-hop),
+    transform 420ms var(--ease-hop),
+    opacity 300ms ease,
+    filter 250ms ease;
+  cursor: default;
+}
+
+.mw:not(.is-front) {
+  filter: saturate(0.82) brightness(0.96);
+}
+
+.mw.is-front {
+  box-shadow: 0 0 0 0.5px rgb(0 0 0 / 0.3), 0 calc(var(--pt) * 22) calc(var(--pt) * 60) calc(var(--pt) * -10) rgb(6 10 60 / 0.65);
+}
+
+.mw.is-min {
+  transform: translateY(70%) scale(0.06);
+  opacity: 0;
+  pointer-events: none;
+}
+
+.mw.is-hidden {
+  transform: scale(0.85);
+  opacity: 0;
+  pointer-events: none;
+}
+
+.mw-bar {
+  position: relative;
+  flex: none;
+  display: flex;
+  align-items: center;
+  gap: 0.6em;
+  height: 2.6em;
+  padding: 0 1em;
+  background: #f3f3f5;
+  border-bottom: 1px solid #e3e3e8;
+}
+
+.mw-bar i {
+  width: 0.92em;
+  height: 0.92em;
+  border-radius: 50%;
+  background: #ff5f57;
+  flex: none;
+}
+
+.mw-bar i:nth-child(2) {
+  background: #febc2e;
+}
+
+.mw-bar i:nth-child(3) {
+  background: #28c840;
+}
+
+.mw-title {
+  position: absolute;
+  left: 4.5em;
+  right: 1em;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 0.45em;
+  font-weight: 600;
+  color: #4a4a50;
+  white-space: nowrap;
+  overflow: hidden;
+}
+
+.mw-title img {
+  width: 1.25em;
+  height: 1.25em;
+  flex: none;
+}
+
+.mw-body {
+  flex: 1;
+  min-height: 0;
+  overflow: hidden;
+}
+
+.mw p,
+.mw ul,
+.mw h4,
+.mw pre {
+  margin: 0;
+}
+
+.mw-split {
+  display: grid;
+  grid-template-columns: minmax(0, 11em) minmax(0, 1fr);
+  height: 100%;
+}
+
+.mw aside {
+  padding: 0.9em 0.7em;
+  background: #f7f7f5;
+  border-right: 1px solid #ececea;
+  color: #55554f;
+  overflow: hidden;
+}
+
+.mw aside p {
+  padding: 0.35em 0.6em;
+  border-radius: 0.45em;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.mw aside .on {
+  background: #ebebe8;
+  color: #1d1d1f;
+  font-weight: 500;
+}
+
+.mw-doc {
+  padding: 2em 2.4em;
+  overflow: hidden;
+}
+
+.mw-doc h4 {
+  font-size: 2em;
+  line-height: 1.15;
+  letter-spacing: -0.01em;
+}
+
+.mw-meta {
+  margin-top: 0.8em !important;
+  color: #6b6a66;
+  white-space: nowrap;
+}
+
+.mw-h {
+  margin-top: 1.1em !important;
+  font-weight: 700;
+  font-size: 1.15em;
+}
+
+.mw ul {
+  padding-left: 1.4em;
+  margin-top: 0.3em;
+}
+
+.mw-web {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.mw-omni {
+  margin: 0.6em 0.9em !important;
+  padding: 0.45em 1em;
+  border-radius: 999px;
+  background: #f0f2f6;
+  color: #4b5160;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.mw-dash {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  padding: 0.6em 1.8em 1.6em;
+  min-height: 0;
+}
+
+.mw-bars {
+  flex: 1;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1.2em;
+  align-items: end;
+  margin-top: 1em;
+  min-height: 0;
+}
+
+.mw-bars span {
+  height: calc(var(--v) * 100%);
+  border-radius: 0.5em 0.5em 0.15em 0.15em;
+  background: #5865f2;
+}
+
+.mw-slack aside {
+  background: #3f0e40;
+  color: #d6c4d6;
+  border: 0;
+}
+
+.mw-slack aside .ws {
+  color: #fff;
+  font-weight: 700;
+}
+
+.mw-slack aside .on {
+  background: #1164a3;
+  color: #fff;
+}
+
+.mw-msgs {
+  padding: 1.1em 1.4em;
+  display: grid;
+  align-content: start;
+  gap: 1em;
+  overflow: hidden;
+}
+
+.mw-msgs b {
+  display: block;
+}
+
+.mw-dark {
+  background: #1e1e1e;
+  color: #d4d4d4;
+}
+
+.mw-dark .mw-bar {
+  background: #2a2a2e;
+  border-color: #111;
+}
+
+.mw-dark .mw-title {
+  color: #b8b8c0;
+}
+
+.mw-cursor aside {
+  background: #181818;
+  border-color: #111;
+  color: #9a9aa5;
+}
+
+.mw-cursor aside .on {
+  background: #2a2d3a;
+  color: #fff;
+}
+
+.mw-code,
+.mw-tty {
+  padding: 1.2em 1.4em;
+  font: 1em/1.6 ui-monospace, "SF Mono", Menlo, monospace;
+  white-space: pre;
+  overflow: hidden;
+}
+
+.mw-code .k {
+  color: #c586c0;
+}
+
+.mw-code .f {
+  color: #dcdcaa;
+}
+
+.mw-code .s {
+  color: #ce9178;
+}
+
+.mw-tty .d {
+  color: #7f8cff;
+}
+
+.mw-tty .g {
+  color: #8fe3a5;
+}
+
+.mw-tty .c {
+  color: var(--sun);
+}
+
+.mw-chat {
+  padding: 1.4em 1.8em;
+  display: grid;
+  align-content: start;
+  gap: 1em;
+  background: #faf9f5;
+  height: 100%;
+}
+
+.mw-chat .you {
+  justify-self: end;
+  max-width: 80%;
+  padding: 0.5em 0.9em;
+  border-radius: 1em;
+  background: #ece8dd;
+}
+
+.mw-run {
+  color: #66645a;
+}
+
+/* The command glyph (scripts/windows.ts glyphSVG): drawn in currentColor so it follows its row. */
+.glyph {
+  width: 1.85em;
+  height: auto;
+  flex: none;
+  overflow: visible;
+}
+
+.glyph .g-frame {
+  fill: none;
+  stroke: currentColor;
+  stroke-opacity: 0.55;
+  stroke-width: 1.3;
+}
+
+.glyph .g-fill {
+  fill: currentColor;
+}
+
+.glyph .g-back {
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.2;
+  stroke-opacity: 0.7;
+}
+
+.glyph .g-line {
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.6;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .mw {
+    transition: none !important;
+  }
+}

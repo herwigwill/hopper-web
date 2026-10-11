@@ -1,0 +1,108 @@
+---
+/** The way out of a feature page: the other features, each a hop back to its place on /features. */
+import { pillars } from "../content/facts";
+import { featureIcons } from "../scripts/icons";
+
+interface Props {
+  current: string;
+}
+const { current } = Astro.props;
+const others = pillars.filter((p) => p.id !== current);
+---
+<nav class="more" aria-labelledby="more-title">
+  <div class="wrap">
+    <div class="top">
+      <h2 id="more-title">There’s more where that came from.</h2>
+      <a class="all" href="/features">All features<span aria-hidden="true">←</span></a>
+    </div>
+    <ul>
+      {others.map((p) => (
+        <li>
+          <a href={"href" in p ? p.href : `/features#${p.id}`}>
+            <span class="ic" set:html={featureIcons[p.id]} />
+            <b>{p.name}</b>
+            <small>{p.line}</small>
+          </a>
+        </li>
+      ))}
+    </ul>
+  </div>
+</nav>
+
+<style>
+  .more {
+    padding-block: clamp(4rem, 3rem + 5vw, 7rem);
+    border-top: 1px solid var(--line);
+  }
+  .top {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: end;
+    gap: 1rem 2rem;
+  }
+  h2 {
+    font-size: var(--step-2);
+    line-height: 1.05;
+  }
+  .all {
+    display: inline-flex;
+    flex-direction: row-reverse;
+    gap: 0.5rem;
+    font-weight: 700;
+    color: var(--blue);
+    text-decoration: none;
+  }
+  .all:hover {
+    text-decoration: underline;
+  }
+  ul {
+    list-style: none;
+    margin: 2rem 0 0;
+    padding: 0;
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 1rem;
+  }
+  a:not(.all) {
+    display: grid;
+    align-content: start;
+    gap: 0.35rem;
+    height: 100%;
+    padding: 1.25rem;
+    border-radius: 18px;
+    border: 1px solid var(--line);
+    background: var(--white);
+    text-decoration: none;
+    transition: border-color 150ms ease, transform 300ms var(--ease-hop);
+  }
+  a:not(.all):hover {
+    border-color: var(--blue);
+    transform: translateY(-4px);
+  }
+  .ic {
+    display: grid;
+    place-items: center;
+    width: 2.25rem;
+    height: 2.25rem;
+    margin-bottom: 0.5rem;
+    border-radius: 10px;
+    background: var(--blue-soft);
+    color: var(--blue);
+  }
+  small {
+    color: var(--ink-2);
+    font-size: var(--step--1);
+    line-height: 1.4;
+  }
+  @media (max-width: 56rem) {
+    ul {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+  @media (max-width: 30rem) {
+    ul {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

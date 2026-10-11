@@ -1,0 +1,103 @@
+---
+/**
+ * The agents Hopper reads (ADR-060…063; herdr too). No hooks or plugins: status comes from each agent's own files,
+ * watched on the Mac (ADR-006).
+ */
+import { agentApps, apps } from "../../content/facts";
+---
+<section class="ww" id="works-with" aria-labelledby="ww-title">
+  <div class="wrap">
+    <div class="head">
+      <h2 id="ww-title">Works with the agents you already use.</h2>
+      <p class="lede">Nothing to install in them. No hooks, no plugins. Hopper reads each agent’s own files, right on your Mac.</p>
+    </div>
+    <ul class="cards">
+      {agentApps.map((a) => (
+        <li class="card" id={a.id}>
+          <img src={apps[a.app].icon} alt="" width="44" height="44" loading="lazy" />
+          <h3>{a.name}</h3>
+          <p>{a.line}</p>
+        </li>
+      ))}
+    </ul>
+    <p class="also">Plus agents running in herdr.</p>
+  </div>
+</section>
+
+<style>
+  .ww {
+    padding-block: clamp(5rem, 4rem + 6vw, 9rem);
+  }
+  .head {
+    display: grid;
+    grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr);
+    gap: 1rem 4rem;
+    align-items: end;
+  }
+  h2 {
+    max-width: 14ch;
+  }
+  .cards {
+    list-style: none;
+    margin: clamp(2.5rem, 2rem + 2vw, 4rem) 0 0;
+    padding: 0;
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 1.25rem;
+  }
+  .card {
+    display: grid;
+    align-content: start;
+    gap: 0.75rem;
+    padding: clamp(1.25rem, 2vw, 1.6rem);
+    border-radius: 22px;
+    background: var(--white);
+    border: 1px solid var(--line);
+    scroll-margin-top: 6rem;
+    transition: transform 300ms var(--ease-hop), box-shadow 200ms ease;
+  }
+  .card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 18px 40px -24px rgb(18 24 51 / 0.35);
+  }
+  .card img {
+    width: 44px;
+    height: 44px;
+  }
+  h3 {
+    font-family: var(--display);
+    font-stretch: 85%;
+    font-weight: 800;
+    font-size: var(--step-2);
+    line-height: 1;
+  }
+  .card p {
+    color: var(--ink-2);
+    font-size: var(--step--1);
+  }
+  .also {
+    margin-top: 1.25rem;
+    color: var(--ink-2);
+    font-size: var(--step--1);
+  }
+  @media (max-width: 75rem) {
+    .cards {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+  @media (max-width: 56rem) {
+    .head {
+      grid-template-columns: 1fr;
+    }
+  }
+  @media (max-width: 30rem) {
+    .cards {
+      grid-template-columns: 1fr;
+    }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .card:hover {
+      transform: none;
+    }
+  }
+</style>

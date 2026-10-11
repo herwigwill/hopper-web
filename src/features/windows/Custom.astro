@@ -1,0 +1,402 @@
+---
+/**
+ * Custom window commands (ADR-053): a size, one of nine anchors and an offset, in points or % of the display. The form
+ * is Create Window Command's fields; the preview places the window as CustomWindowCommand.frame does and shows the
+ * command as it lists in Search, with its summary ("60% × 100%, left center").
+ */
+import "../../styles/launcher.css";
+import MacWindow from "../../components/MacWindow.astro";
+import { anchors } from "../../content/facts";
+---
+<section class="cu on-dark" id="custom" aria-labelledby="cu-title" data-cu>
+  <div class="wrap">
+    <div class="head">
+      <p class="kicker">Custom window commands</p>
+      <h2 id="cu-title">Make the size you keep dragging to.</h2>
+      <p class="lede">Pick a size, pin it to a corner or an edge, nudge it. It becomes a command like any other, in Search and on a hotkey.</p>
+    </div>
+
+    <div class="grid">
+      <form class="form" data-cu-form novalidate>
+        <div class="presets" role="group" aria-label="Examples">
+          <button type="button" data-preset='{"name":"Writing column","w":"50%","h":"100%","a":"center","ox":"0","oy":"0"}'>Writing column</button>
+          <button type="button" data-preset='{"name":"Video corner","w":"480","h":"300","a":"bottom-right","ox":"-24","oy":"-24"}'>Video corner</button>
+          <button type="button" data-preset='{"name":"Sidebar","w":"25%","h":"100%","a":"right","ox":"0","oy":"0"}'>Sidebar</button>
+        </div>
+
+        <label class="field wide">
+          <span>Name</span>
+          <input name="name" type="text" value="Writing column" autocomplete="off" />
+        </label>
+        <label class="field">
+          <span>Width</span>
+          <input name="w" type="text" value="50%" inputmode="decimal" autocomplete="off" aria-describedby="cu-hint" />
+        </label>
+        <label class="field">
+          <span>Height</span>
+          <input name="h" type="text" value="100%" inputmode="decimal" autocomplete="off" aria-describedby="cu-hint" />
+        </label>
+
+        <fieldset class="anchor wide">
+          <legend>Position</legend>
+          <div class="anchor-grid">
+            {anchors.map((a) => (
+              <label title={a.title}>
+                <input type="radio" name="a" value={a.id} checked={a.id === "center"} aria-label={a.title} />
+                <span aria-hidden="true"></span>
+              </label>
+            ))}
+          </div>
+          <output class="anchor-name" data-anchor-name>Center</output>
+        </fieldset>
+
+        <label class="field">
+          <span>Horizontal Offset</span>
+          <input name="ox" type="text" value="0" inputmode="decimal" autocomplete="off" aria-describedby="cu-hint" />
+        </label>
+        <label class="field">
+          <span>Vertical Offset</span>
+          <input name="oy" type="text" value="0" inputmode="decimal" autocomplete="off" aria-describedby="cu-hint" />
+        </label>
+        <p class="hint wide" id="cu-hint">Points or a percentage of the display: “60%”, “800”, “-5%”. Offsets go right and down.</p>
+        <p class="problem wide" role="status" data-problem></p>
+      </form>
+
+      <div class="preview">
+        <div class="display" aria-hidden="true">
+          <div class="desk" data-cu-desk>
+            <MacWindow app="slack" title="#launch" at={{ x: 0.25, y: 0, w: 0.5, h: 1 }} front />
+          </div>
+        </div>
+        <div class="lx row-preview" aria-label="How it lists in Hopper" role="group">
+          <div class="lx-row">
+            <span class="lx-ico" data-cu-glyph aria-hidden="true"></span>
+            <span class="lx-title" data-cu-name>Writing column</span>
+            <span class="lx-sub" data-cu-summary>50% × 100%, center</span>
+            <span class="lx-acc"><span>Command</span></span>
+          </div>
+          <div class="lx-foot" aria-hidden="true">
+            <span>Window Management</span>
+            <span class="lx-primary">Run Command</span><span class="lx-kbd">↵</span>
+            <span class="lx-sep"></span>
+            <span>Edit</span><span class="lx-kbd">⌘E</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .cu {
+    background: var(--night);
+    color: #eef0ff;
+    padding-block: clamp(5rem, 4rem + 6vw, 9rem);
+  }
+  .kicker {
+    font-size: var(--step--1);
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--sun);
+    margin-bottom: 1rem;
+  }
+  .head {
+    display: grid;
+    grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr);
+    gap: 1rem 4rem;
+    align-items: end;
+  }
+  .kicker {
+    grid-column: 1 / -1;
+  }
+  h2 {
+    max-width: 13ch;
+  }
+  .lede {
+    color: #b9bfe6;
+  }
+  .grid {
+    display: grid;
+    grid-template-columns: minmax(0, 0.85fr) minmax(0, 1.15fr);
+    gap: 2.5rem clamp(2rem, 5vw, 4.5rem);
+    margin-top: clamp(2.5rem, 2rem + 2vw, 4rem);
+    align-items: start;
+  }
+
+  .form {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem 1rem;
+    padding: clamp(1.25rem, 2vw, 1.75rem);
+    border-radius: 18px;
+    background: var(--night-2);
+    box-shadow: inset 0 0 0 1px #2c3470;
+  }
+  .wide {
+    grid-column: 1 / -1;
+  }
+  .presets {
+    grid-column: 1 / -1;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+  .presets button {
+    min-height: 2.25rem;
+    padding: 0 0.9rem;
+    border-radius: 999px;
+    border: 1px solid #3b437a;
+    background: transparent;
+    color: #eef0ff;
+    font-size: var(--step--1);
+    font-weight: 600;
+    cursor: pointer;
+  }
+  .presets button:hover,
+  .presets button[aria-pressed="true"] {
+    border-color: var(--sun);
+    color: var(--sun);
+  }
+  .field {
+    display: grid;
+    gap: 0.35rem;
+    font-size: var(--step--1);
+    font-weight: 600;
+    color: #b9bfe6;
+  }
+  .field input {
+    min-height: 2.75rem;
+    padding: 0 0.85rem;
+    border-radius: 10px;
+    border: 1px solid #3b437a;
+    background: var(--night);
+    color: #fff;
+    font: 500 1rem var(--mac);
+  }
+  .field input:focus-visible {
+    outline: 2px solid var(--sun);
+    outline-offset: 1px;
+  }
+  .field input[aria-invalid="true"] {
+    border-color: #ff8f8f;
+  }
+  .anchor {
+    display: flex;
+    align-items: center;
+    gap: 1.25rem;
+    margin: 0;
+    padding: 0;
+    border: 0;
+  }
+  .anchor legend {
+    float: left;
+    padding: 0;
+    margin-right: 0.5rem;
+    font-size: var(--step--1);
+    font-weight: 600;
+    color: #b9bfe6;
+  }
+  .anchor-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 2.75rem);
+    grid-template-rows: repeat(3, 1.9rem);
+    gap: 4px;
+    padding: 6px;
+    border-radius: 10px;
+    background: var(--night);
+    box-shadow: inset 0 0 0 1px #3b437a;
+  }
+  .anchor-grid label {
+    position: relative;
+    display: grid;
+    cursor: pointer;
+  }
+  .anchor-grid input {
+    position: absolute;
+    inset: 0;
+    opacity: 0;
+    margin: 0;
+    cursor: pointer;
+  }
+  .anchor-grid span {
+    border-radius: 5px;
+    background: #2a3166;
+    transition: background 150ms ease, transform 200ms var(--ease-hop);
+  }
+  .anchor-grid label:hover span {
+    background: #3b437a;
+  }
+  .anchor-grid input:checked + span {
+    background: var(--sun);
+    transform: scale(1.04);
+  }
+  .anchor-grid input:focus-visible + span {
+    outline: 2px solid var(--sun);
+    outline-offset: 2px;
+  }
+  .anchor-name {
+    font-weight: 600;
+    color: #fff;
+  }
+  .hint {
+    font-size: var(--step--1);
+    color: #8f96c8;
+  }
+  .problem {
+    min-height: 1.4em;
+    font-size: var(--step--1);
+    font-weight: 600;
+    color: #ff8f8f;
+  }
+
+  .preview {
+    display: grid;
+    gap: 1.25rem;
+  }
+  .display {
+    padding: 8px;
+    border-radius: 14px;
+    background: #15172a;
+    box-shadow: 0 0 0 1px #2c3470, 0 30px 60px -30px rgb(0 0 0 / 0.8);
+  }
+  .display .desk {
+    border-radius: 8px;
+    overflow: hidden;
+    background:
+      radial-gradient(90% 80% at 20% 100%, #6a3df0 0%, transparent 60%),
+      radial-gradient(80% 70% at 100% 0%, #31c0ff 0%, transparent 55%),
+      #2534c9;
+  }
+  .row-preview {
+    --lx-size: clamp(11px, 1.15vw, 13.5px);
+    width: 100%;
+    padding-top: 0.46em;
+  }
+  .row-preview .lx-row {
+    margin: 0 0.46em 0.46em;
+    background: rgb(255 255 255 / 0.11);
+  }
+  .row-preview .lx-ico {
+    color: #fff;
+    display: grid;
+  }
+  .row-preview .lx-title {
+    font-weight: 500;
+  }
+
+  @media (max-width: 56rem) {
+    .head,
+    .grid {
+      grid-template-columns: 1fr;
+    }
+  }
+  @media (max-width: 30rem) {
+    .form {
+      grid-template-columns: 1fr;
+    }
+    .row-preview .lx-sub {
+      display: none;
+    }
+  }
+</style>
+
+<script>
+  import { anchors } from "../../content/facts";
+  import { DISPLAY } from "../../scripts/windows";
+
+  type Length = { value: number; unit: "pt" | "%" };
+  /** CustomWindowCommand.Length(parsing:): "50%", "800", "800 pt", "-10 %". */
+  const parse = (t: string): Length | null => {
+    let s = t.trim().toLowerCase();
+    let unit: Length["unit"] = "pt";
+    if (s.endsWith("%")) {
+      unit = "%";
+      s = s.slice(0, -1);
+    } else if (s.endsWith("pt") || s.endsWith("px")) s = s.slice(0, -2);
+    s = s.trim().replace(",", ".");
+    if (!/^-?\d*\.?\d+$/.test(s)) return null;
+    return { value: Number(s), unit };
+  };
+  const text = (l: Length) => (l.value === 0 ? "0" : `${+l.value.toFixed(2)}${l.unit === "%" ? "%" : " pt"}`);
+  const pts = (l: Length, extent: number) => (l.unit === "%" ? (extent * l.value) / 100 : l.value);
+
+  const root = document.querySelector<HTMLElement>("[data-cu]");
+  if (root) {
+    const form = root.querySelector<HTMLFormElement>("[data-cu-form]")!;
+    const win = root.querySelector<HTMLElement>("[data-cu-desk] .mw")!;
+    const problemEl = root.querySelector<HTMLElement>("[data-problem]")!;
+    const nameEl = root.querySelector<HTMLElement>("[data-cu-name]")!;
+    const summaryEl = root.querySelector<HTMLElement>("[data-cu-summary]")!;
+    const glyphEl = root.querySelector<HTMLElement>("[data-cu-glyph]")!;
+    const anchorName = root.querySelector<HTMLElement>("[data-anchor-name]")!;
+    const presetBtns = [...root.querySelectorAll<HTMLButtonElement>("[data-preset]")];
+    const field = (n: string) => form.elements.namedItem(n) as HTMLInputElement;
+
+    const update = () => {
+      const name = field("name").value;
+      const vals = { w: parse(field("w").value), h: parse(field("h").value), ox: parse(field("ox").value), oy: parse(field("oy").value) };
+      const anchor = anchors.find((a) => a.id === (form.querySelector<HTMLInputElement>('input[name="a"]:checked')?.value ?? "center"))!;
+      anchorName.textContent = anchor.title;
+
+      // CustomWindowCommand.problem, in its order and words.
+      let problem: string | null = null;
+      let bad: string | null = null;
+      if (!name.trim()) (problem = "Enter a name"), (bad = "name");
+      for (const [key, what] of [["w", "Width"], ["h", "Height"], ["ox", "Horizontal offset"], ["oy", "Vertical offset"]] as const) {
+        if (problem) break;
+        const l = vals[key];
+        if (!l) (problem = `${what} isn’t a size: try “50%” or “800”`), (bad = key);
+        else if (key === "w" || key === "h") {
+          if (l.value <= 0) (problem = `${what} must be more than 0`), (bad = key);
+          else if (l.unit === "%" && l.value > 100) (problem = `${what} can be at most 100%`), (bad = key);
+        } else if (l.unit === "%" && Math.abs(l.value) > 100) (problem = `${what} must be between -100% and 100%`), (bad = key);
+      }
+      ["name", "w", "h", "ox", "oy"].forEach((k) => field(k).setAttribute("aria-invalid", String(k === bad)));
+      problemEl.textContent = problem ?? "";
+      nameEl.textContent = name.trim() || "Untitled";
+      if (problem) return;
+
+      // CustomWindowCommand.frame(on:): the size (no bigger than the display) at the anchor, moved, kept inside.
+      const W = DISPLAY.w, H = DISPLAY.h;
+      const w = Math.min(Math.max(pts(vals.w!, W), 1), W), h = Math.min(Math.max(pts(vals.h!, H), 1), H);
+      let x = anchor.x * (W - w) + pts(vals.ox!, W);
+      let y = anchor.y * (H - h) + pts(vals.oy!, H);
+      x = Math.min(Math.max(x, 0), W - w);
+      y = Math.min(Math.max(y, 0), H - h);
+      const st = win.style;
+      st.setProperty("--x", (x / W).toFixed(4));
+      st.setProperty("--y", (y / H).toFixed(4));
+      st.setProperty("--w", (w / W).toFixed(4));
+      st.setProperty("--h", (h / H).toFixed(4));
+
+      let summary = `${text(vals.w!)} × ${text(vals.h!)}, ${anchor.title.toLowerCase()}`;
+      if (vals.ox!.value !== 0 || vals.oy!.value !== 0) summary += `, offset ${text(vals.ox!)}, ${text(vals.oy!)}`;
+      summaryEl.textContent = summary;
+      const f = (n: number, d: number) => (n / d).toFixed(3);
+      glyphEl.innerHTML = `<svg class="glyph" viewBox="0 0 24 18" aria-hidden="true"><rect x="0.75" y="0.75" width="22.5" height="16.5" rx="2.5" class="g-frame"/><rect x="${2 + +f(x, W) * 20}" y="${2 + +f(y, H) * 14}" width="${+f(w, W) * 20}" height="${+f(h, H) * 14}" rx="1.2" class="g-fill"/></svg>`;
+    };
+
+    form.addEventListener("input", () => {
+      presetBtns.forEach((b) => b.setAttribute("aria-pressed", "false"));
+      update();
+    });
+    form.addEventListener("submit", (e) => e.preventDefault());
+    presetBtns.forEach((b) => {
+      b.setAttribute("aria-pressed", "false");
+      b.addEventListener("click", () => {
+        const p = JSON.parse(b.dataset.preset!);
+        field("name").value = p.name;
+        field("w").value = p.w;
+        field("h").value = p.h;
+        field("ox").value = p.ox;
+        field("oy").value = p.oy;
+        form.querySelector<HTMLInputElement>(`input[name="a"][value="${p.a}"]`)!.checked = true;
+        presetBtns.forEach((x) => x.setAttribute("aria-pressed", String(x === b)));
+        update();
+      });
+    });
+    presetBtns[0].setAttribute("aria-pressed", "true");
+    update();
+  }
+</script>

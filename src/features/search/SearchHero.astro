@@ -1,0 +1,125 @@
+---
+/** The Search page's hero: a working search over the demo Mac. With nothing typed, the Recent list (ADR-030). */
+import Launcher from "../../components/Launcher.astro";
+import { places, site, sourceCount } from "../../content/facts";
+---
+<section class="sh" id="everything" aria-labelledby="sh-title" data-sh>
+  <div class="wrap intro">
+    <nav class="crumbs" aria-label="Breadcrumb">
+      <a href="/features">Features</a><span aria-hidden="true">/</span><span aria-current="page">Search</span>
+    </nav>
+    <h1 id="sh-title">Find anything you had&nbsp;open.</h1>
+    <p class="lede">Type a few letters of a tab, doc, chat or coding session and Hopper puts it first, from {sourceCount} places on your Mac.</p>
+  </div>
+
+  <div class="wrap">
+    <div class="stage on-blue">
+      <div class="lx-box">
+        <Launcher id="sh-lx" places={places} interactive />
+      </div>
+    </div>
+    <div class="under">
+      <p id="recent" class="recent"><b>Before you type,</b> Hopper shows where you’ve been, newest first.</p>
+      <p class="keys-line"><span class="keys" aria-hidden="true"><span class="key">{site.shortcut[0]}</span><span class="key">{site.shortcut[1]}</span></span> from anywhere. <span data-sh-status>Try “maya”, “launch” or “api”.</span></p>
+    </div>
+  </div>
+  <p class="visually-hidden" aria-live="polite" data-sh-live></p>
+</section>
+
+<style>
+  .sh {
+    padding-top: clamp(1.5rem, 1rem + 2.5vw, 3.5rem);
+    padding-bottom: clamp(4rem, 3rem + 5vw, 8rem);
+  }
+  .intro {
+    display: grid;
+    grid-template-columns: minmax(0, 1.3fr) minmax(0, 1fr);
+    gap: 1.5rem clamp(2rem, 5vw, 5rem);
+    align-items: end;
+  }
+  .crumbs {
+    grid-column: 1 / -1;
+    display: flex;
+    gap: 0.6rem;
+    font-size: var(--step--1);
+    font-weight: 600;
+    color: var(--ink-2);
+  }
+  .crumbs a {
+    color: var(--blue);
+    text-decoration: none;
+  }
+  .crumbs a:hover {
+    text-decoration: underline;
+  }
+  h1 {
+    max-width: 10ch;
+    font-size: clamp(3rem, 1.6rem + 5.2vw, 6.25rem);
+    view-transition-name: title-search;
+  }
+  .lede {
+    padding-bottom: 0.5rem;
+  }
+  .stage {
+    margin-top: clamp(2rem, 1.5rem + 2.5vw, 3.5rem);
+    padding: clamp(1.25rem, 4vw, 4rem) clamp(1rem, 6vw, 7rem);
+    border-radius: clamp(18px, 2vw, 28px);
+    background:
+      radial-gradient(120% 90% at 85% 0%, #4a58ff 0%, transparent 55%),
+      var(--blue);
+  }
+  .lx-box {
+    container-type: inline-size;
+    max-width: 58.5rem;
+    margin-inline: auto;
+    view-transition-name: stage-search;
+  }
+  .lx-box :global(.lx) {
+    --lx-size: clamp(10px, calc(100cqw / 58.5), 14px);
+    width: 100%;
+  }
+  .under {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: 0.75rem 2rem;
+    margin-top: 1.25rem;
+    color: var(--ink-2);
+    scroll-margin-top: 6rem;
+  }
+  .recent b {
+    color: var(--ink);
+  }
+  .keys-line {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.5rem;
+  }
+  .keys-line .key {
+    font-size: 0.8rem;
+  }
+  @media (max-width: 56rem) {
+    .intro {
+      grid-template-columns: 1fr;
+    }
+    .lx-box :global(.lx) {
+      --lx-size: 12px;
+    }
+    .lx-box :global(.lx-sub),
+    .lx-box :global(.lx-tabs) {
+      display: none;
+    }
+  }
+</style>
+
+<script>
+  import { initSearchDemo } from "../../scripts/searchdemo";
+  const root = document.querySelector<HTMLElement>("[data-sh]");
+  if (root)
+    initSearchDemo(root.querySelector<HTMLElement>("[data-launcher]")!, {
+      prefix: "sh-lx",
+      status: root.querySelector<HTMLElement>("[data-sh-status]")!,
+      live: root.querySelector<HTMLElement>("[data-sh-live]")!,
+    });
+</script>

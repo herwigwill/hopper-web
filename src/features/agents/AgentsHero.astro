@@ -1,0 +1,318 @@
+---
+/**
+ * The Agents page's hero: the Agents list (⌥Space), grouped Needs You / Done / Working / Idle and live. While it's on
+ * screen a Cursor agent finishes and a Claude Code session stops to ask something; clicking an agent goes to it, which
+ * answers a Needs You and marks a Done as seen.
+ */
+import "../../styles/launcher.css";
+import { agentGroups, agentList, apps } from "../../content/facts";
+
+const legend = [
+  { s: "Needs You", id: "needs-you", line: "Stopped to ask you something, like permission to run a command." },
+  { s: "Done", id: "done", line: "Finished since you last looked. Once you’ve seen it, it’s Idle." },
+  { s: "Working", id: "working", line: "Busy right now. Leave it be." },
+  { s: "Idle", id: "idle", line: "Nothing new to see." },
+];
+const badge = agentList.filter((a) => a.status === "Needs You").length;
+---
+<section class="ah" aria-labelledby="ah-title" data-ah>
+  <div class="wrap intro">
+    <nav class="crumbs" aria-label="Breadcrumb">
+      <a href="/features">Features</a><span aria-hidden="true">/</span><span aria-current="page">Agents</span>
+    </nav>
+    <h1 id="ah-title">Every agent, at a&nbsp;glance.</h1>
+    <p class="lede">Claude Code, Codex and Cursor in one list, sorted by who needs you. Press <span class="keys"><span class="key">⌥</span><span class="key">Space</span></span> from anywhere.</p>
+  </div>
+
+  <div class="wrap">
+    <div class="stage on-blue">
+      <div class="lx-box">
+        <div class="lx">
+          <div class="lx-head">
+            <span class="lx-placeholder ph">Search agents…</span>
+            <div class="lx-tabs" aria-hidden="true">
+              <span class="lx-tab">Search</span>
+              <span class="lx-tab" aria-current="true">Agents <b class="badge" data-badge hidden={badge === 0}>{badge}</b></span>
+            </div>
+          </div>
+          <div class="lx-rule"></div>
+          <ul class="lx-list" aria-label="Agents" data-list>
+            {agentGroups.map((g) => {
+              const items = agentList.filter((a) => a.status === g);
+              return items.length > 0 && (
+                <>
+                  <li class="lx-section">{g}</li>
+                  {items.map((a) => (
+                    <li>
+                      <button type="button" class="lx-row" data-agent={a.id}>
+                        <img src={apps[a.app].icon} alt="" width="22" height="22" />
+                        <span class="lx-title">{a.title}</span>
+                        <span class="lx-sub">{a.where}</span>
+                        <span class="lx-acc">{a.detail && <span class="det">{a.detail}</span>}<span class="lx-status" data-s={a.status}>{a.status}</span></span>
+                      </button>
+                    </li>
+                  ))}
+                </>
+              );
+            })}
+          </ul>
+          <div class="lx-foot"><span>Hopper</span><span class="lx-primary">Go to Agent</span><span class="lx-kbd">↵</span></div>
+        </div>
+      </div>
+    </div>
+    <p class="under" role="status" data-ah-say>Watch the list, or click an agent to go to it.</p>
+
+    <ul class="legend">
+      {legend.map((l) => (
+        <li id={l.id}><span class="lx-status" data-s={l.s}>{l.s}</span><span>{l.line}</span></li>
+      ))}
+    </ul>
+  </div>
+</section>
+
+<style>
+  .ah {
+    padding-top: clamp(1.5rem, 1rem + 2.5vw, 3.5rem);
+    padding-bottom: clamp(4rem, 3rem + 5vw, 8rem);
+  }
+  .intro {
+    display: grid;
+    grid-template-columns: minmax(0, 1.3fr) minmax(0, 1fr);
+    gap: 1.5rem clamp(2rem, 5vw, 5rem);
+    align-items: end;
+  }
+  .crumbs {
+    grid-column: 1 / -1;
+    display: flex;
+    gap: 0.6rem;
+    font-size: var(--step--1);
+    font-weight: 600;
+    color: var(--ink-2);
+  }
+  .crumbs a {
+    color: var(--blue);
+    text-decoration: none;
+  }
+  .crumbs a:hover {
+    text-decoration: underline;
+  }
+  h1 {
+    max-width: 10ch;
+    font-size: clamp(3rem, 1.6rem + 5.2vw, 6.25rem);
+    view-transition-name: title-agents;
+  }
+  .lede {
+    padding-bottom: 0.5rem;
+  }
+  .lede .key {
+    font-size: 0.8rem;
+  }
+  .stage {
+    margin-top: clamp(2rem, 1.5rem + 2.5vw, 3.5rem);
+    padding: clamp(1.25rem, 4vw, 4rem) clamp(1rem, 6vw, 7rem);
+    border-radius: clamp(18px, 2vw, 28px);
+    background:
+      radial-gradient(120% 90% at 85% 0%, #4a58ff 0%, transparent 55%),
+      var(--blue);
+  }
+  .lx-box {
+    container-type: inline-size;
+    max-width: 58.5rem;
+    margin-inline: auto;
+    view-transition-name: stage-agents;
+  }
+  .lx {
+    --lx-size: clamp(10px, calc(100cqw / 58.5), 14px);
+    width: 100%;
+    user-select: auto;
+  }
+  .ph {
+    flex: 1;
+    font-size: 1.55em;
+  }
+  .badge {
+    display: inline-grid;
+    place-items: center;
+    min-width: 1.4em;
+    height: 1.4em;
+    padding: 0 0.3em;
+    border-radius: 1em;
+    background: var(--sun);
+    color: var(--night);
+    font-size: 0.85em;
+  }
+  .badge[hidden] {
+    display: none;
+  }
+  .lx-list {
+    height: auto;
+    min-height: 24em;
+  }
+  .lx-list li {
+    list-style: none;
+  }
+  .lx-list :global(button.lx-row) {
+    width: 100%;
+    border: 0;
+    background: transparent;
+    color: inherit;
+    font: inherit;
+    text-align: left;
+    cursor: pointer;
+  }
+  .lx-list :global(button.lx-row:hover),
+  .lx-list :global(button.lx-row:focus-visible) {
+    background: rgb(255 255 255 / 0.11);
+  }
+  .lx-list :global(.lx-row.moved) {
+    animation: rise 520ms var(--ease-hop);
+  }
+  @keyframes rise {
+    0% { transform: translateY(1.2em); opacity: 0.2; background: rgb(255 201 60 / 0.2); }
+    60% { background: rgb(255 201 60 / 0.14); }
+  }
+  .lx-list :global(.det) {
+    color: rgb(235 235 245 / 0.75);
+  }
+  .lx-list :global(.lx-row:has([data-s="Needs You"]) .det) {
+    color: var(--sun);
+  }
+  .under {
+    margin-top: 1.25rem;
+    min-height: 1.5em;
+    color: var(--ink-2);
+  }
+  .legend {
+    list-style: none;
+    margin: 2rem 0 0;
+    padding: 0;
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 1rem 1.5rem;
+  }
+  .legend li {
+    display: grid;
+    justify-items: start;
+    gap: 0.5rem;
+    font-size: var(--step--1);
+    color: var(--ink-2);
+    scroll-margin-top: 6rem;
+  }
+  /* The launcher's status chips, on paper. */
+  .legend .lx-status {
+    font: 600 0.8rem var(--mac);
+    padding: 0.25rem 0.6rem;
+    border-radius: 0.4rem;
+    background: var(--night);
+    color: #eef0ff;
+  }
+  .legend .lx-status[data-s="Needs You"] {
+    background: var(--night);
+    color: var(--sun);
+  }
+  @media (max-width: 56rem) {
+    .intro {
+      grid-template-columns: 1fr;
+    }
+    .lx {
+      --lx-size: 12px;
+    }
+    .lx :global(.lx-sub),
+    .lx-tabs,
+    .lx-list :global(.det) {
+      display: none;
+    }
+    .legend {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .lx-list :global(.lx-row.moved) {
+      animation: none;
+    }
+  }
+</style>
+
+<script>
+  import { agentGroups, agentList, apps, type AgentGroup } from "../../content/facts";
+  import { escape, reducedMotion } from "../../scripts/launcher";
+
+  const root = document.querySelector<HTMLElement>("[data-ah]");
+  if (root) {
+    const list = root.querySelector<HTMLElement>("[data-list]")!;
+    const badge = root.querySelector<HTMLElement>("[data-badge]")!;
+    const say = root.querySelector<HTMLElement>("[data-ah-say]")!;
+    const agents = agentList.map((a) => ({ ...a, status: a.status as AgentGroup, detail: a.detail as string }));
+    const find = (id: string) => agents.find((a) => a.id === id)!;
+
+    const render = (moved?: string, focus?: string) => {
+      list.innerHTML = agentGroups
+        .map((g) => {
+          const items = agents.filter((a) => a.status === g);
+          if (!items.length) return "";
+          return (
+            `<li class="lx-section">${g}</li>` +
+            items
+              .map(
+                (a) => `<li><button type="button" class="lx-row${a.id === moved ? " moved" : ""}" data-agent="${a.id}">
+                  <img src="${apps[a.app].icon}" alt="" width="22" height="22" />
+                  <span class="lx-title">${escape(a.title)}</span><span class="lx-sub">${escape(a.where)}</span>
+                  <span class="lx-acc">${a.detail ? `<span class="det">${escape(a.detail)}</span>` : ""}<span class="lx-status" data-s="${a.status}">${a.status}</span></span>
+                </button></li>`,
+              )
+              .join("")
+          );
+        })
+        .join("");
+      const n = agents.filter((a) => a.status === "Needs You").length;
+      badge.textContent = String(n);
+      badge.hidden = n === 0;
+      if (focus) list.querySelector<HTMLElement>(`[data-agent="${focus}"]`)?.focus();
+    };
+
+    const set = (id: string, status: AgentGroup, detail = "") => {
+      const a = find(id);
+      a.status = status;
+      a.detail = detail;
+    };
+
+    list.addEventListener("click", (e) => {
+      const b = (e.target as Element).closest<HTMLButtonElement>("[data-agent]");
+      if (!b) return;
+      const a = find(b.dataset.agent!);
+      stop();
+      if (a.status === "Needs You") {
+        set(a.id, "Working");
+        say.textContent = `Jumped to “${a.title}” and answered it. It’s back to work.`;
+      } else if (a.status === "Done") {
+        set(a.id, "Idle");
+        say.textContent = `Jumped to “${a.title}”. Now that you’ve seen it, it’s Idle.`;
+      } else say.textContent = `Jumped to “${a.title}”, ${a.status === "Working" ? "still working" : "right where it was"}.`;
+      render(undefined, a.id);
+    });
+
+    /* Two things happen while you watch, once. */
+    const script: [string, AgentGroup, string, string][] = [
+      ["billing", "Done", "Finished just now", "Cursor finished “Refactor billing webhooks”. It moves to Done."],
+      ["teams", "Needs You", "Has a question", "Claude Code has a question about the teams migration. It rises to Needs You."],
+    ];
+    let timer = 0;
+    let step = 0;
+    const stop = () => clearTimeout(timer);
+    const next = () => {
+      const [id, status, detail, msg] = script[step++];
+      set(id, status, detail);
+      render(id);
+      say.textContent = msg;
+      if (step < script.length) timer = window.setTimeout(next, 3200);
+    };
+    if (!reducedMotion()) {
+      const io = new IntersectionObserver(([e]) => {
+        if (!e.isIntersecting) return;
+        io.disconnect();
+        timer = window.setTimeout(next, 1800);
+      }, { threshold: 0.5 });
+      io.observe(list);
+    }
+  }
+</script>

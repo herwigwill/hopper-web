@@ -1,0 +1,73 @@
+---
+/**
+ * Static first render of the launcher recreation. Scripts take it over (hero.ts, agents.ts); without JavaScript
+ * this is what shows, so it's a complete, meaningful frame.
+ */
+import "../styles/launcher.css";
+import { apps, type Place, type AppId } from "../content/facts";
+import { search } from "../scripts/launcher";
+
+interface Props {
+  id: string;
+  places: Place[];
+  query?: string;
+  tab?: "search" | "agents";
+  frontApp?: AppId;
+  section?: string;
+  primary?: string;
+  interactive?: boolean;
+  class?: string;
+}
+const { id, places, query = "", tab = "search", frontApp = "chrome", section = "Recent", primary = "Open", interactive = false, class: cls } = Astro.props;
+const rows = search(places, query).slice(0, 8);
+const front = apps[frontApp];
+---
+<div class:list={["lx", cls]} id={id} data-launcher>
+  <div class="lx-head">
+    <div class="lx-field">
+      {interactive && (
+        <>
+          <label class="visually-hidden" for={`${id}-q`}>Try a search in the demo</label>
+          <input
+            class="lx-input"
+            id={`${id}-q`}
+            type="text"
+            autocomplete="off"
+            spellcheck="false"
+            role="combobox"
+            aria-controls={`${id}-list`}
+            aria-expanded="true"
+            aria-autocomplete="list"
+            aria-activedescendant={rows[0] ? `${id}-${rows[0].id}` : undefined}
+            value={query}
+          />
+        </>
+      )}
+      <span class="lx-text" data-text>{query}</span><span class="lx-caret" aria-hidden="true"></span><span class="lx-placeholder" data-placeholder hidden={!!query}>Search anything…</span>
+    </div>
+    <div class="lx-tabs" aria-hidden="true">
+      <span class="lx-tab" aria-current={tab === "search" ? "true" : "false"}>Search</span>
+      <span class="lx-tab"><img src={front.icon} alt="" width="16" height="16" />{front.short}</span>
+      <span class="lx-tab" aria-current={tab === "agents" ? "true" : "false"}>Agents</span>
+    </div>
+  </div>
+  <div class="lx-rule"></div>
+  <p class="lx-section" data-section>{query ? "Results" : section}</p>
+  <ul class="lx-list" id={`${id}-list`} role="listbox" aria-label="Results" data-list>
+    {rows.map((p, i) => (
+      <li class="lx-row" role="option" id={`${id}-${p.id}`} data-id={p.id} aria-selected={i === 0 ? "true" : "false"}>
+        <img src={apps[p.app].icon} alt="" width="22" height="22" draggable="false" />
+        <span class="lx-title">{p.title}</span>
+        <span class="lx-sub">{p.subtitle}</span>
+        <span class="lx-acc">{p.status && <span class="lx-status" data-s={p.status}>{p.status}</span>}<span>{p.kind}</span></span>
+      </li>
+    ))}
+  </ul>
+  <div class="lx-rule"></div>
+  <div class="lx-foot" aria-hidden="true">
+    <span>Hopper</span>
+    <span class="lx-primary" data-primary>{primary}</span><span class="lx-kbd" data-enter>↵</span>
+    <span class="lx-sep"></span>
+    <span>Actions</span><span class="lx-kbd">⌘K</span>
+  </div>
+</div>

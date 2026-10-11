@@ -1,0 +1,91 @@
+---
+/**
+ * A recreated app window for the window-management demos. It sits on a `.desk` and is placed by CSS variables
+ * (scripts/windows.ts `apply`), so it can be any size: its contents are in em of a font-size that scales with the
+ * desk, and simply clip when the window is small, as real windows do.
+ */
+import "../styles/desk.css";
+import { apps, type AppId } from "../content/facts";
+
+interface Props {
+  app: AppId;
+  title: string;
+  /** Initial place, as fractions of the desk. */
+  at: { x: number; y: number; w: number; h: number };
+  z?: number;
+  front?: boolean;
+  id?: string;
+}
+const { app, title, at, z = 1, front = false, id } = Astro.props;
+const style = `--x:${at.x};--y:${at.y};--w:${at.w};--h:${at.h};--z:${z}`;
+const dark = app === "cursor" || app === "terminal";
+---
+<article class:list={["mw", `mw-${app}`, { "is-front": front, "mw-dark": dark }]} data-win={id ?? app} style={style}>
+  <header class="mw-bar">
+    <i></i><i></i><i></i>
+    <span class="mw-title"><img src={apps[app].icon} alt="" width="16" height="16" loading="lazy" />{title}</span>
+  </header>
+  <div class="mw-body">
+    {app === "notion" && (
+      <div class="mw-split">
+        <aside><p class="on">Q4 Launch Plan</p><p>Roadmap</p><p>Meeting notes</p><p>Hiring</p></aside>
+        <div class="mw-doc">
+          <h4>Q4 Launch Plan</h4>
+          <p class="mw-meta">Owner&ensp;Priya Raman&emsp;Launch&ensp;Nov 18</p>
+          <p class="mw-h">Goals</p>
+          <ul><li>Ship the new checkout to every plan</li><li>Lift paid conversion from 39% to 45%</li><li>Pricing page live a week before launch</li></ul>
+          <p class="mw-h">Open questions</p>
+          <ul><li>Do annual plans get the discount at launch?</li></ul>
+        </div>
+      </div>
+    )}
+    {app === "chrome" && (
+      <div class="mw-web">
+        <p class="mw-omni">analytics.internal/checkout?range=q4</p>
+        <div class="mw-dash">
+          <p class="mw-h">Checkout funnel</p>
+          <div class="mw-bars"><span style="--v:1"></span><span style="--v:.71"></span><span style="--v:.49"></span><span style="--v:.39"></span></div>
+        </div>
+      </div>
+    )}
+    {app === "slack" && (
+      <div class="mw-split">
+        <aside><p class="ws">Northwind</p><p># general</p><p class="on"># launch</p><p># design</p></aside>
+        <div class="mw-msgs">
+          <p><b>Sam Ito</b>Can we ship the checkout fix before Thursday?</p>
+          <p><b>Priya Raman</b>Yes if the auth refresh bug is fixed.</p>
+          <p><b>Jules Park</b>Pricing copy is final.</p>
+        </div>
+      </div>
+    )}
+    {app === "cursor" && (
+      <div class="mw-split">
+        <aside><p>billing</p><p class="on">webhooks.ts</p><p>invoices.ts</p><p>plans.ts</p></aside>
+        <pre class="mw-code"><code><span class="k">export async function</span> <span class="f">onEvent</span>(e: Event) {"{"}
+  <span class="k">if</span> (e.type === <span class="s">"invoice.paid"</span>) {"{"}
+    <span class="k">await</span> <span class="f">markPaid</span>(e.data.invoice)
+  {"}"}
+  <span class="k">if</span> (e.type === <span class="s">"invoice.failed"</span>) {"{"}
+    <span class="k">await</span> <span class="f">notifyOwner</span>(e.data)
+  {"}"}
+{"}"}</code></pre>
+      </div>
+    )}
+    {app === "terminal" && (
+      <pre class="mw-tty"><code><span class="d">~/code/web</span> npm test
+<span class="g">✓</span> billing/webhooks (12)
+<span class="g">✓</span> billing/invoices (8)
+<span class="g">✓</span> auth/refresh (5)
+
+Tests  25 passed
+<span class="d">~/code/web</span> <span class="c">▌</span></code></pre>
+    )}
+    {app === "claude" && (
+      <div class="mw-chat">
+        <p class="you">Tokens expire mid-request on slow networks.</p>
+        <p>Found it. I’ll refresh anything expiring in the next 30 seconds before sending.</p>
+        <p class="mw-run">Running tests in api…</p>
+      </div>
+    )}
+  </div>
+</article>

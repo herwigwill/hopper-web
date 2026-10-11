@@ -1,0 +1,275 @@
+---
+/**
+ * A blog post's cover, drawn in HTML from its frontmatter (`cover` in content.config.ts) so every post gets a picture
+ * in the site's own style without anyone making an image. Always 1200×630 in proportion: the same drawing is
+ * screenshotted to public/blog/<slug>.png for social cards and search (npm run blog:covers).
+ *
+ * Four kinds: `keys` (big keycaps), `launcher` (a Hopper search with results), `windows` (a screen with windows laid
+ * out, x/y/w/h as fractions of the screen) and `mac` (a Mac with app icons on it).
+ */
+import "../../styles/launcher.css";
+import type { CollectionEntry } from "astro:content";
+import HopperMark from "../HopperMark.astro";
+
+interface Props {
+  cover: CollectionEntry<"blog">["data"]["cover"];
+  alt: string;
+  class?: string;
+}
+const { cover, alt, class: cls } = Astro.props;
+const icon = (n: string) => `/icons/${n}.webp`;
+---
+<figure class:list={["cover", `tone-${cover.tone}`, `kind-${cover.kind}`, cls]} role="img" aria-label={alt}>
+  <div class="art" aria-hidden="true">
+    {cover.kind === "keys" && (
+      <div class="keys-art">
+        <div class="caps">{cover.keys.map((k) => <span class="cap">{k}</span>)}</div>
+        <p class="caption">{cover.caption}</p>
+      </div>
+    )}
+
+    {cover.kind === "launcher" && (
+      <div class="lx-wrap">
+        <div class="lx">
+          <div class="lx-head">
+            <span class="lx-text q">{cover.query}</span><span class="lx-caret"></span>
+            {cover.tab && <div class="lx-tabs"><span class="lx-tab">Search</span><span class="lx-tab" aria-current="true">{cover.tab}</span></div>}
+          </div>
+          <div class="lx-rule"></div>
+          <ul class="lx-list">
+            {cover.rows.map((r, i) => (
+              <li class:list={["lx-row", { on: i === 0 }]}>
+                <img src={icon(r.icon)} alt="" width="22" height="22" />
+                <span class="lx-title">{r.title}</span>
+                <span class="lx-sub">{r.sub}</span>
+                <span class="lx-acc">{r.status ? <span class="lx-status" data-s={r.status}>{r.status}</span> : r.acc}</span>
+              </li>
+            ))}
+          </ul>
+        </div>
+      </div>
+    )}
+
+    {cover.kind === "windows" && (
+      <div class="win-art">
+        <div class="screen">
+          {cover.layout.map((w) => (
+            <div class="win" style={`left:${w.x * 100}%;top:${w.y * 100}%;width:${w.w * 100}%;height:${w.h * 100}%`}>
+              <div class="bar"><i></i><i></i><i></i></div>
+              <div class="body"><img src={icon(w.icon)} alt="" width="40" height="40" /><span>{w.label}</span></div>
+            </div>
+          ))}
+        </div>
+        <p class="caption small">{cover.caption}</p>
+      </div>
+    )}
+
+    {cover.kind === "mac" && (
+      <div class="mac-art">
+        <div class="display">
+          <div class="grid">{cover.icons.map((n) => <img src={icon(n)} alt="" width="64" height="64" />)}</div>
+        </div>
+        <div class="stand"></div>
+        <p class="caption small">{cover.caption}</p>
+      </div>
+    )}
+
+    <span class="brand"><HopperMark /></span>
+  </div>
+</figure>
+
+<style>
+  .cover {
+    position: relative;
+    margin: 0;
+    aspect-ratio: 1200 / 630;
+    overflow: hidden;
+    border-radius: clamp(14px, 2cqw, 28px);
+    container-type: inline-size;
+    color: #fff;
+  }
+  .tone-blue {
+    background:
+      radial-gradient(120% 90% at 85% 0%, #4a58ff 0%, transparent 55%),
+      var(--blue);
+  }
+  .tone-night {
+    background:
+      radial-gradient(110% 90% at 15% 0%, #26306b 0%, transparent 60%),
+      var(--night);
+  }
+  .tone-sun {
+    background:
+      radial-gradient(110% 90% at 85% 0%, #ffe08a 0%, transparent 55%),
+      var(--sun);
+    color: var(--night);
+  }
+  .art {
+    position: absolute;
+    inset: 0;
+    display: grid;
+    place-items: center;
+  }
+  .brand {
+    position: absolute;
+    left: 4.5cqw;
+    bottom: 4.5cqw;
+    width: 3.4cqw;
+  }
+  .brand :global(svg) {
+    display: block;
+    width: 100%;
+    height: auto;
+  }
+  .caption {
+    margin: 0;
+    font-family: var(--display);
+    font-weight: 800;
+    font-stretch: 80%;
+    font-size: 5cqw;
+    line-height: 1;
+    letter-spacing: -0.02em;
+    text-align: center;
+  }
+  .caption.small {
+    font-size: 2.6cqw;
+    font-weight: 700;
+    letter-spacing: 0;
+    opacity: 0.85;
+  }
+
+  /* keys */
+  .keys-art {
+    display: grid;
+    justify-items: center;
+    gap: 5cqw;
+  }
+  .caps {
+    display: flex;
+    gap: 2.2cqw;
+  }
+  .cap {
+    display: grid;
+    place-items: center;
+    min-width: 14cqw;
+    height: 14cqw;
+    padding: 0 3cqw;
+    border-radius: 2.6cqw;
+    font: 500 6.4cqw var(--mac);
+    color: var(--ink);
+    background: linear-gradient(#fff, #eef0f7);
+    box-shadow:
+      0 1cqw 0 #b9bfd8,
+      0 2.4cqw 4cqw -1cqw rgb(6 8 30 / 0.45);
+  }
+  .tone-sun .cap {
+    box-shadow:
+      0 1cqw 0 #c99a1c,
+      0 2.4cqw 4cqw -1cqw rgb(60 40 0 / 0.35);
+  }
+
+  /* launcher */
+  .lx-wrap {
+    width: 76cqw;
+    container-type: inline-size;
+  }
+  .lx {
+    --lx-size: calc(100cqw / 52);
+    width: 100%;
+  }
+  .q {
+    font-size: 1.55em;
+  }
+  .lx-list {
+    height: auto;
+    list-style: none;
+    padding-bottom: 0.7em;
+  }
+  .lx-row.on {
+    background: rgb(255 255 255 / 0.11);
+    box-shadow: 0 0 0 0.2em var(--sun);
+  }
+
+  /* windows */
+  .win-art {
+    display: grid;
+    justify-items: center;
+    gap: 2.6cqw;
+  }
+  .screen {
+    position: relative;
+    width: 78cqw;
+    height: 38cqw;
+    border-radius: 1.6cqw;
+    background: linear-gradient(160deg, #2b3bf5, #1b26b5);
+    box-shadow: 0 0 0 0.5cqw rgb(255 255 255 / 0.12);
+  }
+  .win {
+    position: absolute;
+    padding: 0.6cqw;
+  }
+  .win > * {
+    background: #f6f7fb;
+  }
+  .bar {
+    display: flex;
+    gap: 0.5cqw;
+    height: 2.2cqw;
+    align-items: center;
+    padding: 0 1cqw;
+    border-radius: 0.9cqw 0.9cqw 0 0;
+    background: #e3e6f0 !important;
+  }
+  .bar i {
+    width: 0.8cqw;
+    height: 0.8cqw;
+    border-radius: 50%;
+    background: #c3c8d8;
+  }
+  .body {
+    height: calc(100% - 2.2cqw);
+    display: grid;
+    place-content: center;
+    justify-items: center;
+    gap: 1cqw;
+    border-radius: 0 0 0.9cqw 0.9cqw;
+    color: var(--ink);
+    font: 600 1.7cqw var(--mac);
+  }
+  .body img {
+    width: 4.4cqw;
+    height: 4.4cqw;
+  }
+
+  /* mac */
+  .mac-art {
+    display: grid;
+    justify-items: center;
+  }
+  .display {
+    width: 60cqw;
+    height: 34cqw;
+    display: grid;
+    place-items: center;
+    border-radius: 2cqw;
+    border: 1.4cqw solid #10163f;
+    background: linear-gradient(160deg, #eef0ff, #d9ddf7);
+    box-shadow: 0 3cqw 6cqw -2cqw rgb(6 8 30 / 0.5);
+  }
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(6, 6.4cqw);
+    gap: 2cqw 2.6cqw;
+  }
+  .grid img {
+    width: 100%;
+    height: auto;
+  }
+  .stand {
+    width: 12cqw;
+    height: 3cqw;
+    background: linear-gradient(#10163f, #263070);
+    clip-path: polygon(15% 0, 85% 0, 100% 100%, 0 100%);
+    margin-bottom: 2.4cqw;
+  }
+</style>

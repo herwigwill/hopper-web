@@ -1,0 +1,205 @@
+---
+/**
+ * Places, not apps (ADR-021): Hopper records visits at the most specific place (tab, page, window, session), so Back
+ * steps through places where ⌘Tab steps through apps. The same visits drawn both ways; one button steps both.
+ */
+import { apps, navPlaces } from "../../content/facts";
+
+const placesNewest = [...navPlaces].reverse();
+const appsNewest = [...new Set(placesNewest.map((p) => p.app))];
+---
+<section class="pl" id="places" aria-labelledby="pl-title" data-pl>
+  <div class="wrap">
+    <div class="head">
+      <h2 id="pl-title">Your Mac remembers apps. Hopper remembers places.</h2>
+      <p class="lede">A place is a tab, a doc, a window or a coding session, so Back lands exactly where you were, not just in the right app.</p>
+    </div>
+
+    <div class="rows">
+      <div class="row">
+        <p class="label"><span class="keys" aria-hidden="true"><span class="key">⌘</span><span class="key">⇥</span></span><span>steps through apps</span></p>
+        <ol class="chips" aria-label="⌘Tab, newest first" data-row="apps">
+          {appsNewest.map((a, i) => (
+            <li class:list={{ here: i === 0 }} data-i={i}><img src={apps[a].icon} alt="" width="26" height="26" loading="lazy" /><span>{apps[a].short}</span></li>
+          ))}
+        </ol>
+        <p class="lands" data-lands="apps"></p>
+      </div>
+      <div class="row hopper">
+        <p class="label"><span class="keys" aria-hidden="true"><span class="key">⌃</span><span class="key">⌥</span><span class="key">←</span></span><span>steps through places</span></p>
+        <ol class="chips" aria-label="Hopper’s Back, newest first" data-row="places">
+          {placesNewest.map((p, i) => (
+            <li class:list={{ here: i === 0 }} data-i={i}><img src={apps[p.app].icon} alt="" width="26" height="26" loading="lazy" /><span>{p.title}</span></li>
+          ))}
+        </ol>
+        <p class="lands" data-lands="places"></p>
+      </div>
+    </div>
+
+    <div class="go">
+      <button type="button" class="btn" data-pl-go>Press both once</button>
+      <p role="status" data-pl-say>You’re in the session “Write onboarding copy”.</p>
+    </div>
+  </div>
+</section>
+
+<style>
+  .pl {
+    padding-block: clamp(5rem, 4rem + 6vw, 9rem);
+    scroll-margin-top: 4rem;
+  }
+  .head {
+    display: grid;
+    grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr);
+    gap: 1rem 4rem;
+    align-items: end;
+  }
+  h2 {
+    max-width: 17ch;
+  }
+  .rows {
+    display: grid;
+    gap: 1rem;
+    margin-top: clamp(2.5rem, 2rem + 2vw, 4rem);
+  }
+  .row {
+    display: grid;
+    grid-template-columns: 13rem minmax(0, 1fr);
+    gap: 0.75rem 1.5rem;
+    align-items: center;
+    padding: clamp(1rem, 2vw, 1.5rem);
+    border-radius: 22px;
+    background: var(--white);
+    border: 1px solid var(--line);
+  }
+  .row.hopper {
+    border-color: var(--blue);
+    box-shadow: 0 0 0 1px var(--blue) inset;
+  }
+  .label {
+    display: grid;
+    gap: 0.5rem;
+    font-weight: 700;
+  }
+  .label .keys {
+    font-size: 0.85rem;
+  }
+  .chips {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+  .chips li {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    min-height: 2.75rem;
+    padding: 0.35rem 0.85rem 0.35rem 0.4rem;
+    border-radius: 999px;
+    background: var(--paper);
+    border: 1px solid var(--line);
+    font-size: var(--step--1);
+    font-weight: 600;
+    transition: background 200ms ease, color 200ms ease, transform 300ms var(--ease-hop);
+  }
+  .chips li.here {
+    background: var(--blue);
+    border-color: var(--blue);
+    color: #fff;
+    transform: translateY(-3px);
+  }
+  .chips img {
+    width: 26px;
+    height: 26px;
+  }
+  .lands {
+    grid-column: 2;
+    min-height: 1.5em;
+    font-size: var(--step--1);
+    color: var(--ink-2);
+  }
+  .lands :global(b) {
+    color: var(--ink);
+  }
+  .go {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 1rem 1.5rem;
+    margin-top: 1.5rem;
+  }
+  .btn {
+    min-height: 3rem;
+    padding: 0 1.4rem;
+    border: 0;
+    border-radius: 999px;
+    background: var(--ink);
+    color: var(--white);
+    font-weight: 700;
+    cursor: pointer;
+  }
+  .btn:hover {
+    background: var(--blue);
+  }
+  .go p {
+    color: var(--ink-2);
+  }
+  @media (max-width: 56rem) {
+    .head,
+    .row {
+      grid-template-columns: 1fr;
+    }
+    .lands {
+      grid-column: 1;
+    }
+  }
+</style>
+
+<script>
+  import { apps, navPlaces } from "../../content/facts";
+
+  const root = document.querySelector<HTMLElement>("[data-pl]");
+  if (root) {
+    const placesNewest = [...navPlaces].reverse();
+    const appsNewest = [...new Set(placesNewest.map((p) => p.app))];
+    const rows = {
+      apps: [...root.querySelectorAll<HTMLElement>('[data-row="apps"] li')],
+      places: [...root.querySelectorAll<HTMLElement>('[data-row="places"] li')],
+    };
+    const lands = {
+      apps: root.querySelector<HTMLElement>('[data-lands="apps"]')!,
+      places: root.querySelector<HTMLElement>('[data-lands="places"]')!,
+    };
+    const say = root.querySelector<HTMLElement>("[data-pl-say]")!;
+    const go = root.querySelector<HTMLButtonElement>("[data-pl-go]")!;
+    let n = 0;
+
+    const draw = () => {
+      rows.apps.forEach((li, i) => li.classList.toggle("here", i === Math.min(n, appsNewest.length - 1)));
+      rows.places.forEach((li, i) => li.classList.toggle("here", i === n));
+      if (n === 0) {
+        lands.apps.textContent = lands.places.textContent = "";
+        return;
+      }
+      // An app comes forward on whatever it last showed: its newest place.
+      const app = appsNewest[Math.min(n, appsNewest.length - 1)];
+      const appPlace = placesNewest.find((p) => p.app === app)!;
+      const p = placesNewest[n];
+      lands.apps.innerHTML = `Lands in ${apps[app].short}, on <b>${appPlace.title}</b>.`;
+      lands.places.innerHTML = `Lands on <b>${p.title}</b>, the ${p.kind} you were in.`;
+    };
+
+    go.addEventListener("click", () => {
+      n = (n + 1) % placesNewest.length;
+      draw();
+      if (n === 0) say.textContent = "Back to the start. You’re in the session “Write onboarding copy”.";
+      else if (n === 1) say.textContent = "One press. ⌘Tab left Claude; Back stayed in Claude and went to the session before.";
+      else say.textContent = `${n} presses. Back has visited ${n} places, ⌘Tab ${Math.min(n, appsNewest.length - 1)} apps.`;
+      go.textContent = n === placesNewest.length - 1 ? "Start over" : "Press both again";
+    });
+    draw();
+  }
+</script>

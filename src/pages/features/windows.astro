@@ -1,0 +1,25 @@
+---
+import Base from "../../layouts/Base.astro";
+import WinHero from "../../features/windows/WinHero.astro";
+import Repeat from "../../features/windows/Repeat.astro";
+import Custom from "../../features/windows/Custom.astro";
+import Layouts from "../../features/windows/Layouts.astro";
+import Extras from "../../features/windows/Extras.astro";
+import Presets from "../../features/windows/Presets.astro";
+import MoreFeatures from "../../features/MoreFeatures.astro";
+import Join from "../../moments/Join.astro";
+---
+<Base
+  title="Window management · Hopper"
+  description="42 window commands in Hopper’s launcher: halves that step ½ → ⅔ → ⅓, a window gap, custom sizes, layouts that open the apps they need, and your Rectangle, Magnet or Spectacle shortcuts."
+  path="/features/windows"
+>
+  <WinHero />
+  <Repeat />
+  <Custom />
+  <Layouts />
+  <Extras />
+  <Presets />
+  <MoreFeatures current="windows" />
+  <Join />
+</Base>
