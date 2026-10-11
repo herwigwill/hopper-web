@@ -11,6 +11,7 @@ const pages = [
   { loc: "https://addhopper.com/features/privacy-controls", priority: "0.5" },
   { loc: "https://addhopper.com/features/on-device", priority: "0.5" },
   { loc: "https://addhopper.com/features/windows", priority: "0.7" },
+  { loc: "https://addhopper.com/compare", priority: "0.6" },
   { loc: "https://addhopper.com/getting-started", priority: "0.6" },
   { loc: "https://addhopper.com/help", priority: "0.6" },
   { loc: "https://addhopper.com/blog", priority: "0.6" },

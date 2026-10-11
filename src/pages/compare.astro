@@ -1,0 +1,608 @@
+---
+/**
+ * Compare: Hopper next to Raycast and Alfred, feature by feature, with what each charges for. Data and sources in
+ * content/facts.ts (compareGroups). The footer's "Compare to Raycast" / "Compare to Alfred" links land here with
+ * #raycast / #alfred, which picks the column (no element has those ids, so anchors.ts leaves the scroll alone).
+ */
+import Base from "../layouts/Base.astro";
+import Join from "../moments/Join.astro";
+import { compareGroups, compareChecked, rivals, type CompareCell } from "../content/facts";
+
+const cols = [{ id: "hopper", name: "Hopper", paid: "" }, ...rivals] as const;
+
+function label(c: CompareCell, paid: string) {
+  if (c.s === "yes") return "Built in";
+  if (c.s === "free") return "Free";
+  if (c.s === "paid") return paid;
+  if (c.s === "ext") return "Free extension";
+  return c.note === "Not yet" ? "Not yet" : "No";
+}
+const shownNote = (c: CompareCell) => (c.s === "no" && c.note === "Not yet" ? undefined : c.note);
+
+/** Where Raycast or Alfred has something Hopper doesn't. */
+const missing = compareGroups.flatMap((g) => g.rows).filter((r) => r.hopper.s === "no");
+
+const legend = [
+  { s: "yes", text: "Built into Hopper" },
+  { s: "free", text: "Free" },
+  { s: "ext", text: "Free extension from their store" },
+  { s: "paid", text: "Raycast Pro or Alfred’s Powerpack" },
+  { s: "no", text: "Not available" },
+];
+---
+<Base
+  title="Hopper vs Raycast and Alfred · Hopper"
+  description={`Hopper, Raycast and Alfred side by side: every feature, and which ones are free or paid. Raycast's and Alfred's plans as of ${compareChecked}.`}
+  path="/compare"
+>
+  <section class="cmp" data-cmp>
+    <div class="wrap">
+      <nav class="crumbs" aria-label="Breadcrumb">
+        <a href="/">Home</a><span aria-hidden="true">/</span><span aria-current="page">Compare</span>
+      </nav>
+      <div class="intro">
+        <h1>Side by side, no&nbsp;spin.</h1>
+        <p class="lede">What Hopper, Raycast and Alfred each do, and what they charge for. Where they’re ahead, we say so.</p>
+      </div>
+
+      <div class="cmp-tools">
+        <div class="vs" role="radiogroup" aria-label="Compare Hopper with">
+          <span class="vs-label" aria-hidden="true">Hopper vs</span>
+          <button type="button" role="radio" aria-checked="false" data-vs="raycast">Raycast</button>
+          <button type="button" role="radio" aria-checked="false" data-vs="alfred">Alfred</button>
+          <button type="button" role="radio" aria-checked="true" data-vs="both">Both</button>
+        </div>
+        <button type="button" class="diff" role="switch" aria-checked="false" data-diff>
+          <span class="diff-track" aria-hidden="true"><span></span></span>
+          Only where they differ
+        </button>
+      </div>
+
+      <ul class="legend" aria-label="Key">
+        {legend.map((l) => (
+          <li><span class={`ic ic-${l.s}`} aria-hidden="true"></span>{l.text}</li>
+        ))}
+      </ul>
+
+      <table class="grid" data-vs-table="both">
+        <caption class="visually-hidden">Hopper, Raycast and Alfred, feature by feature</caption>
+        <thead>
+          <tr>
+            <th scope="col" class="feat-h">Feature</th>
+            {cols.map((c) => (
+              <th scope="col" class={`col-h col-${c.id}`} data-col={c.id}>
+                {c.name}
+              </th>
+            ))}
+          </tr>
+        </thead>
+        {compareGroups.map((g) => (
+          <tbody>
+            <tr class="group-row">
+              <th scope="colgroup" colspan="4" id={`g-${g.id}`}>{g.title}</th>
+            </tr>
+            {g.rows.map((r) => (
+              <tr data-row>
+                <th scope="row" class="feat">{r.name}</th>
+                {cols.map((c) => {
+                  const cell = r[c.id];
+                  const note = shownNote(cell);
+                  return (
+                    <td class={`col-${c.id}`} data-col={c.id} data-s={cell.s}>
+                      <span class="cell">
+                        <span class={`ic ic-${cell.s}`} aria-hidden="true"></span>
+                        <span class="lab">{label(cell, c.paid)}</span>
+                      </span>
+                      {note && <small>{note}</small>}
+                    </td>
+                  );
+                })}
+              </tr>
+            ))}
+          </tbody>
+        ))}
+        <tfoot>
+          <tr>
+            <th scope="row" class="feat">Price</th>
+            <td class="col-hopper" data-col="hopper"><span class="lab">Not set yet</span><small>In private testing</small></td>
+            {rivals.map((r) => (
+              <td class={`col-${r.id}`} data-col={r.id}><span class="lab">Free + {r.paid}</span><small>{r.price.replace(/^Free; /, "")}</small></td>
+            ))}
+          </tr>
+        </tfoot>
+      </table>
+      <p class="empty" data-empty hidden>They match on everything here.</p>
+      <p class="checked">Raycast’s and Alfred’s features and prices from their own sites, checked {compareChecked}. Spot something out of date? <a href="mailto:hello@addhopper.com">Tell us</a>.</p>
+
+      <div class="gaps">
+        <h2>What Hopper doesn’t do&nbsp;yet.</h2>
+        <p>If one of these is why you’d stay where you are, we’d like to&nbsp;know.</p>
+        <ul>
+          {missing.map((r) => <li>{r.name}</li>)}
+        </ul>
+      </div>
+    </div>
+  </section>
+  <Join />
+</Base>
+
+<style>
+  .cmp {
+    padding-block: clamp(1.5rem, 1rem + 2.5vw, 3.5rem) clamp(4rem, 3rem + 5vw, 7rem);
+  }
+  .crumbs {
+    display: flex;
+    gap: 0.6rem;
+    font-size: var(--step--1);
+    font-weight: 600;
+    color: var(--ink-2);
+  }
+  .crumbs a {
+    color: var(--blue);
+    text-decoration: none;
+  }
+  .intro {
+    display: grid;
+    grid-template-columns: minmax(0, 1.3fr) minmax(0, 1fr);
+    gap: 1.5rem clamp(2rem, 5vw, 5rem);
+    align-items: end;
+    margin-top: 1.5rem;
+  }
+  h1 {
+    max-width: 11ch;
+    font-size: clamp(2.75rem, 1.6rem + 4.4vw, 5.5rem);
+  }
+
+  /* Toolbar: which rival, and the differences switch. Sticks under the header with the table's head under it. */
+  .cmp-tools {
+    position: sticky;
+    top: 4rem;
+    z-index: 6;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.75rem 1.5rem;
+    margin-top: clamp(2rem, 1.5rem + 2vw, 3rem);
+    padding: 0.75rem 0;
+    background: var(--paper);
+  }
+  .vs {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25rem;
+    padding: 0.3rem;
+    border-radius: 999px;
+    background: var(--white);
+    border: 1px solid var(--line);
+  }
+  .vs-label {
+    padding: 0 0.6rem 0 0.7rem;
+    font-weight: 700;
+    font-size: var(--step--1);
+    color: var(--ink-2);
+  }
+  .vs button {
+    min-height: 2.5rem;
+    padding: 0 1.05rem;
+    border: 0;
+    border-radius: 999px;
+    background: transparent;
+    font: inherit;
+    font-weight: 650;
+    color: var(--ink);
+    cursor: pointer;
+    transition: background 200ms var(--ease-out), color 200ms var(--ease-out);
+  }
+  .vs button:hover {
+    color: var(--blue);
+  }
+  .vs button[aria-checked="true"] {
+    background: var(--blue);
+    color: var(--white);
+  }
+  .vs button:focus-visible,
+  .diff:focus-visible {
+    outline: 2px solid var(--blue);
+    outline-offset: 2px;
+  }
+  .diff {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.6rem;
+    min-height: 2.75rem;
+    padding: 0;
+    border: 0;
+    background: none;
+    font: inherit;
+    font-weight: 600;
+    color: var(--ink);
+    cursor: pointer;
+  }
+  .diff-track {
+    position: relative;
+    width: 2.6rem;
+    height: 1.5rem;
+    border-radius: 999px;
+    background: var(--line);
+    transition: background 200ms var(--ease-out);
+  }
+  .diff-track span {
+    position: absolute;
+    top: 0.2rem;
+    left: 0.2rem;
+    width: 1.1rem;
+    height: 1.1rem;
+    border-radius: 50%;
+    background: var(--white);
+    box-shadow: 0 1px 3px rgb(18 24 51 / 0.25);
+    transition: transform 300ms var(--ease-hop);
+  }
+  .diff[aria-checked="true"] .diff-track {
+    background: var(--blue);
+  }
+  .diff[aria-checked="true"] .diff-track span {
+    transform: translateX(1.1rem);
+  }
+
+  .legend {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem 1.25rem;
+    margin: 0.25rem 0 0;
+    padding: 0;
+    list-style: none;
+    font-size: var(--step--1);
+    color: var(--ink-2);
+  }
+  .legend li {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45rem;
+  }
+
+  /* Status icons, drawn in CSS so the same marks serve the legend and the cells. */
+  .ic {
+    position: relative;
+    flex: none;
+    display: inline-grid;
+    place-items: center;
+    width: 1.35rem;
+    height: 1.35rem;
+    border-radius: 50%;
+  }
+  .ic::after {
+    content: "";
+    display: block;
+  }
+  .ic-yes,
+  .ic-free {
+    background: var(--blue);
+  }
+  .ic-free {
+    background: var(--blue-soft);
+  }
+  .ic-yes::after,
+  .ic-free::after,
+  .ic-ext::after {
+    width: 0.32rem;
+    height: 0.6rem;
+    margin-top: -0.12rem;
+    border: solid var(--white);
+    border-width: 0 2.5px 2.5px 0;
+    transform: rotate(45deg);
+  }
+  .ic-free::after {
+    border-color: var(--blue);
+  }
+  .ic-ext {
+    border: 1.5px dashed var(--blue);
+  }
+  .ic-ext::after {
+    border-color: var(--blue);
+  }
+  .ic-paid {
+    background: var(--sun);
+  }
+  .ic-paid::after {
+    content: "$";
+    font-size: 0.75rem;
+    font-weight: 800;
+    line-height: 1;
+    color: var(--ink);
+  }
+  .ic-no {
+    background: #eceef5;
+  }
+  .ic-no::after {
+    width: 0.55rem;
+    height: 2px;
+    border-radius: 2px;
+    background: #9aa0bd;
+  }
+
+  /* The table. */
+  .grid {
+    width: 100%;
+    margin-top: 1.25rem;
+    border-collapse: separate;
+    border-spacing: 0;
+    table-layout: fixed;
+  }
+  .feat-h {
+    width: 34%;
+  }
+  thead th {
+    position: sticky;
+    top: var(--cmp-head, 8.25rem);
+    z-index: 5;
+    padding: 1rem 1rem 0.9rem;
+    background: var(--paper);
+    border-bottom: 2px solid var(--ink);
+    text-align: left;
+    font-family: var(--display);
+    font-size: var(--step-1);
+    font-weight: 800;
+    font-stretch: 85%;
+  }
+  thead .feat-h {
+    padding-left: 0;
+    font-family: var(--text);
+    font-size: var(--step--1);
+    font-weight: 600;
+    font-stretch: 100%;
+    color: var(--ink-2);
+    vertical-align: bottom;
+  }
+  thead .col-hopper {
+    background: var(--blue);
+    color: var(--white);
+    border-radius: 16px 16px 0 0;
+    border-bottom-color: var(--blue);
+  }
+  .group-row th {
+    padding: 2.25rem 0 0.7rem;
+    text-align: left;
+    font-family: var(--display);
+    font-size: var(--step-2);
+    font-weight: 800;
+    font-stretch: 85%;
+    line-height: 1.05;
+    border-bottom: 1px solid var(--line);
+  }
+  tbody tr[data-row] th,
+  tbody tr[data-row] td {
+    padding: 0.85rem 1rem;
+    border-bottom: 1px solid var(--line);
+    vertical-align: top;
+    text-align: left;
+  }
+  tbody .feat {
+    padding-left: 0 !important;
+    font-weight: 600;
+  }
+  tbody tr[data-row]:hover th,
+  tbody tr[data-row]:hover td:not(.col-hopper) {
+    background: var(--white);
+  }
+  td.col-hopper {
+    background: var(--blue-soft);
+  }
+  tbody tr[data-row]:hover td.col-hopper {
+    background: #d9dcff;
+  }
+  .cell {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+  .lab {
+    font-weight: 600;
+  }
+  td[data-s="no"] .lab {
+    color: var(--ink-2);
+    font-weight: 500;
+  }
+  td small {
+    display: block;
+    margin-top: 0.2rem;
+    padding-left: 1.85rem;
+    color: var(--ink-2);
+    font-size: 0.8125rem;
+    line-height: 1.35;
+  }
+  tfoot th,
+  tfoot td {
+    padding: 1.25rem 1rem;
+    vertical-align: top;
+    text-align: left;
+    border-top: 2px solid var(--ink);
+  }
+  tfoot .feat {
+    padding-left: 0;
+    font-family: var(--display);
+    font-size: var(--step-2);
+    font-weight: 800;
+    font-stretch: 85%;
+  }
+  tfoot td small {
+    padding-left: 0;
+  }
+  tfoot td.col-hopper {
+    border-radius: 0 0 16px 16px;
+    border-top-color: var(--blue);
+  }
+
+  /* Which rival is showing. */
+  .grid[data-vs-table="raycast"] [data-col="alfred"],
+  .grid[data-vs-table="alfred"] [data-col="raycast"] {
+    display: none;
+  }
+  .grid[data-vs-table="raycast"] .feat-h,
+  .grid[data-vs-table="alfred"] .feat-h {
+    width: 44%;
+  }
+  .grid [data-row][hidden],
+  .grid tbody[hidden],
+  .empty[hidden] {
+    display: none;
+  }
+  .empty {
+    margin-top: 1.5rem;
+    color: var(--ink-2);
+  }
+  .checked {
+    margin-top: 1.5rem;
+    font-size: var(--step--1);
+    color: var(--ink-2);
+  }
+  .checked a {
+    color: var(--blue);
+  }
+
+  .gaps {
+    margin-top: clamp(3rem, 2rem + 4vw, 5rem);
+    padding: clamp(1.5rem, 1rem + 2vw, 2.5rem);
+    border-radius: 22px;
+    background: var(--white);
+    border: 1px solid var(--line);
+  }
+  .gaps h2 {
+    font-size: var(--step-3);
+    line-height: 1;
+    max-width: 14ch;
+  }
+  .gaps p {
+    margin-top: 0.9rem;
+    color: var(--ink-2);
+  }
+  .gaps ul {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin: 1.25rem 0 0;
+    padding: 0;
+    list-style: none;
+  }
+  .gaps li {
+    padding: 0.45rem 0.9rem;
+    border-radius: 12px;
+    background: var(--paper);
+    border: 1px solid var(--line);
+    font-weight: 600;
+    font-size: var(--step--1);
+  }
+
+  @media (max-width: 60rem) {
+    .intro {
+      grid-template-columns: 1fr;
+    }
+  }
+  /* Phones: one rival at a time reads best, but Both still fits; notes stay, smaller. */
+  @media (max-width: 40rem) {
+    .vs-label {
+      display: none;
+    }
+    .vs button {
+      padding: 0 0.85rem;
+    }
+    thead th {
+      padding: 0.75rem 0.5rem;
+      font-size: var(--step-0);
+    }
+    .feat-h,
+    .grid[data-vs-table="raycast"] .feat-h,
+    .grid[data-vs-table="alfred"] .feat-h {
+      width: 34%;
+    }
+    tbody tr[data-row] th,
+    tbody tr[data-row] td,
+    tfoot th,
+    tfoot td {
+      padding: 0.7rem 0.5rem;
+      font-size: 0.875rem;
+    }
+    .cell {
+      display: grid;
+      justify-items: start;
+      gap: 0.3rem;
+    }
+    td small {
+      padding-left: 0;
+      font-size: 0.75rem;
+    }
+    tfoot .feat {
+      font-size: var(--step-1);
+    }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .vs button,
+    .diff-track,
+    .diff-track span {
+      transition: none;
+    }
+  }
+</style>
+
+<script>
+  import { check, radioKeys } from "../scripts/controls";
+
+  const root = document.querySelector<HTMLElement>("[data-cmp]");
+  if (root) {
+    const table = root.querySelector<HTMLTableElement>("[data-vs-table]")!;
+    const radios = [...root.querySelectorAll<HTMLButtonElement>("[data-vs]")];
+    const diff = root.querySelector<HTMLButtonElement>("[data-diff]")!;
+    const empty = root.querySelector<HTMLElement>("[data-empty]")!;
+    const views = ["raycast", "alfred", "both"];
+
+    // Built in, free and a free extension count as having it; paid and missing are their own.
+    const kind = (s: string) => (s === "paid" ? "paid" : s === "no" ? "no" : "has");
+
+    function apply() {
+      const vs = table.dataset.vsTable!;
+      const cols = vs === "both" ? ["hopper", "raycast", "alfred"] : ["hopper", vs];
+      const only = diff.getAttribute("aria-checked") === "true";
+      let any = false;
+      table.querySelectorAll<HTMLElement>("tbody").forEach((body) => {
+        let shown = 0;
+        body.querySelectorAll<HTMLElement>("[data-row]").forEach((row) => {
+          const kinds = cols.map((c) => kind(row.querySelector<HTMLElement>(`[data-col="${c}"]`)!.dataset.s!));
+          row.hidden = only && kinds.every((k) => k === kinds[0]);
+          if (!row.hidden) shown++;
+        });
+        body.hidden = shown === 0;
+        any ||= shown > 0;
+      });
+      empty.hidden = any;
+    }
+
+    function choose(vs: string, write: boolean) {
+      table.dataset.vsTable = vs;
+      check(radios, (b) => b.dataset.vs === vs);
+      if (write) history.replaceState(null, "", vs === "both" ? location.pathname : `#${vs}`);
+      apply();
+    }
+
+    radios.forEach((b) => b.addEventListener("click", () => choose(b.dataset.vs!, true)));
+    root.querySelector(".vs")!.addEventListener("keydown", (e) => radioKeys(e as KeyboardEvent, radios));
+    diff.addEventListener("click", () => {
+      diff.setAttribute("aria-checked", String(diff.getAttribute("aria-checked") !== "true"));
+      apply();
+    });
+
+    // The column heads stick right under the toolbar, whose height depends on how it wraps.
+    const tools = root.querySelector<HTMLElement>(".cmp-tools")!;
+    const stick = () => {
+      const top = parseFloat(getComputedStyle(tools).top) || 0;
+      table.style.setProperty("--cmp-head", `${top + tools.offsetHeight}px`);
+    };
+    new ResizeObserver(stick).observe(tools);
+
+    const fromHash = () => {
+      const h = location.hash.slice(1);
+      choose(views.includes(h) ? h : "both", false);
+    };
+    addEventListener("hashchange", fromHash);
+    fromHash();
+  }
+</script>

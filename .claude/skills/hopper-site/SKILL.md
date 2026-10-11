@@ -28,7 +28,7 @@ Feature pages end with `<MoreFeatures current="id" />`; marketing pages end with
 
 **New page checklist:** footer link in `components/Footer.astro` (drop `soon: true`) or `featureIndex` in facts.ts;
 `src/pages/sitemap.xml.ts`; `src/pages/llms.txt.ts`; `tests/page.spec.ts` link list (feature pages also
-`tests/features.spec.ts` `pages`); README page list if structural. Header nav is Home / Features / Blog only.
+`tests/features.spec.ts` `pages`); README page list if structural. Header nav is Home / Features / Compare / Blog only.
 
 ## Techniques
 - **Product recreations, not videos**: `styles/launcher.css` (`.lx*` classes) recreates Hopper's launcher. Wrap in

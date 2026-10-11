@@ -27,6 +27,7 @@ ${pillars.map((p) => `- [${p.name}](${u("href" in p ? p.href : `/features#${p.id
 - [Hotkeys & Gestures](${u("/features/hotkeys")}): every default shortcut.
 - [On-Device Only](${u("/features/on-device")}): what stays on your Mac, and the one exception.
 - [Privacy Controls](${u("/features/privacy-controls")}): what Hopper reads and how to turn it off.
+- [Compare](${u("/compare")}): Hopper next to Raycast and Alfred, feature by feature, with what each charges for.
 
 ## Blog
 

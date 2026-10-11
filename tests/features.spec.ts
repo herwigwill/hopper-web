@@ -2,7 +2,7 @@ import { test, expect } from "@playwright/test";
 import AxeBuilder from "@axe-core/playwright";
 import { watchConsole } from "./helpers";
 
-const pages = ["/features", "/features/search", "/features/navigation", "/features/agents", "/features/windows", "/features/hotkeys", "/features/privacy-controls", "/features/on-device"];
+const pages = ["/features", "/features/search", "/features/navigation", "/features/agents", "/features/windows", "/features/hotkeys", "/features/privacy-controls", "/features/on-device", "/compare"];
 
 test.describe("features pages", () => {
   for (const path of pages) {
@@ -424,5 +424,24 @@ test.describe("agents page", () => {
     const hrefs = await page.getByRole("navigation", { name: "All features" }).locator('a[href^="/features/agents"]').evaluateAll((as) => as.map((a) => (a as HTMLAnchorElement).hash));
     expect(hrefs.length).toBeGreaterThanOrEqual(7);
     for (const h of hrefs.filter(Boolean)) expect(await page.locator(h).count(), h).toBe(1);
+  });
+});
+
+test.describe("compare page", () => {
+  test("compare: the footer's rival link picks the column, and Only where they differ hides matching rows", async ({ page }) => {
+    await page.goto("/");
+    await page.getByRole("navigation", { name: "Main" }).getByRole("link", { name: "Compare" }).click();
+    await expect(page.getByRole("navigation", { name: "Main" }).getByRole("link", { name: "Compare" })).toHaveAttribute("aria-current", "page");
+    await page.goto("/compare#alfred");
+    await expect(page.getByRole("radio", { name: "Alfred" })).toHaveAttribute("aria-checked", "true");
+    await expect(page.getByRole("columnheader", { name: "Raycast" })).toBeHidden();
+    await expect(page.getByRole("columnheader", { name: "Alfred" })).toBeVisible();
+    await page.getByRole("radio", { name: "Raycast" }).click();
+    await expect(page).toHaveURL(/#raycast$/);
+    const same = page.getByRole("row", { name: /Apps, files and a calculator/ });
+    await expect(same).toBeVisible();
+    await page.getByRole("switch", { name: "Only where they differ" }).click();
+    await expect(same).toBeHidden();
+    await expect(page.getByRole("row", { name: /Back and Forward across apps/ })).toBeVisible();
   });
 });
