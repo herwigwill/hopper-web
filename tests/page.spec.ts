@@ -56,7 +56,7 @@ test.describe("landing page", () => {
   });
 
   test("every internal link and asset resolves", async ({ page, request }) => {
-    for (const path of ["/", "/features", "/features/search", "/features/navigation", "/features/agents", "/features/windows", "/features/hotkeys", "/features/privacy-controls", "/features/on-device", "/getting-started", "/compare", "/help", "/about", "/blog", "/privacy", "/terms", "/waitlist/joined", "/waitlist/try-again"]) {
+    for (const path of ["/", "/features", "/features/search", "/features/navigation", "/features/agents", "/features/windows", "/features/hotkeys", "/features/privacy-controls", "/features/on-device", "/getting-started", "/compare", "/help", "/about", "/blog", "/privacy", "/terms"]) {
       await page.goto(path);
       const urls = await page.evaluate(() => [
         ...[...document.querySelectorAll("a[href]")].map((a) => (a as HTMLAnchorElement).href),

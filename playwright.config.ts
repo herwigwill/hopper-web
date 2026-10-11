@@ -1,6 +1,6 @@
 import { defineConfig, devices } from "@playwright/test";
 
-/** Tests run against the production build served like Vercel serves it (scripts/serve.mjs). */
+/** Tests run against the production build served like GitHub Pages serves it (scripts/serve.mjs). */
 export default defineConfig({
   testDir: "tests",
   timeout: 30_000,
@@ -11,7 +11,6 @@ export default defineConfig({
     command: "node scripts/serve.mjs",
     url: "http://localhost:4322",
     reuseExistingServer: false,
-    env: { WAITLIST_SECRET: "test-secret", WAITLIST_RATE_LIMIT: "1000", LOOPS_API_KEY: "" },
   },
   projects: [
     { name: "chromium", use: { ...devices["Desktop Chrome"] } },

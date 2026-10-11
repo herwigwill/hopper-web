@@ -1,7 +1,7 @@
 ---
 import Base from "../layouts/Base.astro";
 import { site } from "../content/facts";
-const updated = "October 10, 2026";
+const updated = "October 11, 2026";
 ---
 <Base title="Privacy · Hopper" description="What the Hopper website collects, why, and how to have it deleted." path="/privacy">
   <article class="wrap policy">
@@ -12,22 +12,21 @@ const updated = "October 10, 2026";
 
     <h2>What we collect</h2>
     <ul>
-      <li><b>Your email address</b>, when you join the waitlist.</li>
-      <li><b>Your answers</b> to the two optional questions after you join (what you use today, and whether you run AI coding agents), if you give them.</li>
-      <li><b>Anonymous page analytics</b>: page views and whether the waitlist form was submitted, counted without cookies and without identifying you. Your IP address is used briefly to limit repeated sign-ups and is not stored.</li>
+      <li><b>Your email</b>, when you join the waitlist: your address and anything you write in it.</li>
+      <li>Nothing else. This site has no analytics and no cookies.</li>
     </ul>
 
     <h2>Why</h2>
-    <p>To email you when Hopper is ready, to invite some people to test it early, and to know whether the site is doing its job. We don't sell or share your email, and we don't send marketing beyond Hopper's launch and testing.</p>
+    <p>To email you when Hopper is ready and to invite some people to test it early. We don't sell or share your email, and we don't send marketing beyond Hopper's launch and testing.</p>
 
     <h2>Who handles it</h2>
     <ul>
-      <li><b>Loops</b> stores the waitlist and sends its emails.</li>
-      <li><b>Vercel</b> hosts this site and provides the cookieless analytics.</li>
+      <li><b>Our email inbox</b> ({site.contact}) holds the waitlist.</li>
+      <li><b>GitHub Pages</b> hosts this site. Like any web host, it may log visits for security.</li>
     </ul>
 
     <h2>How long we keep it</h2>
-    <p>Until Hopper launches publicly and for 12 months after, or until you ask us to delete it, whichever comes first. Every email has an unsubscribe link that removes you right away.</p>
+    <p>Until Hopper launches publicly and for 12 months after, or until you ask us to delete it, whichever comes first. Reply to any email from us to be removed right away.</p>
 
     <h2>Your choices</h2>
     <p>Email <a href={`mailto:${site.contact}`}>{site.contact}</a> to see, correct or delete what we hold about you. We reply within 30 days.</p>

@@ -1,5 +1,5 @@
 ---
-import WaitlistForm from "../components/WaitlistForm.astro";
+import Waitlist from "../components/Waitlist.astro";
 import { site } from "../content/facts";
 ---
 <section class="join on-blue" id="join" aria-labelledby="join-title">
@@ -10,7 +10,7 @@ import { site } from "../content/facts";
     </div>
     <div class="form">
       <p class="press" aria-hidden="true"><span class="keys"><span class="key">{site.shortcut[0]}</span><span class="key">{site.shortcut[1]}</span></span></p>
-      <WaitlistForm id="join-join" tone="blue" />
+      <Waitlist tone="blue" />
     </div>
   </div>
 </section>

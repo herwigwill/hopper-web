@@ -36,7 +36,7 @@ description: Design and copy principles for the Hopper marketing site, including
 | App UI | `launcher.css` `.lx` panel; `components/Launcher.astro`; `MacWindow.astro`; `desk.css` |
 | Simple feature page | `NotePage.astro` |
 | End of feature page | `features/MoreFeatures.astro` |
-| Waitlist | `moments/Join.astro`, `WaitlistForm.astro` |
+| Waitlist | `moments/Join.astro`, `Waitlist.astro` |
 | Brand mark | `HopperMark.astro` (inherits color) |
 | Picture for a post | `components/blog/Cover.astro` (keys, launcher, windows, mac) |
 | Line icons | `scripts/icons.ts` (`featureIcons`) |

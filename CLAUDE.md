@@ -1,6 +1,6 @@
 # hopper-web (addhopper.com)
 
-Marketing site for Hopper, a Mac app (source: `~/hopper-native`). Astro static + one Vercel Function (waitlist).
+Marketing site for Hopper, a Mac app (source: `~/hopper-native`). Astro static, hosted on GitHub Pages (waitlist is an email link).
 
 - Node 22: prefix commands with `PATH=/opt/homebrew/bin:$PATH`. Dev: `npm run dev` (port 4321). Full check: `npm run verify`.
 - Every product claim must be true in hopper-native. Claims live in `src/content/facts.ts`.
