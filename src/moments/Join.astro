@@ -1,8 +1,10 @@
 ---
 import Waitlist from "../components/Waitlist.astro";
+import Banner from "../components/Banner.astro";
 import { site } from "../content/facts";
 ---
 <section class="join on-blue" id="join" aria-labelledby="join-title">
+  <Banner name="capsule" focus="right center" />
   <div class="wrap grid">
     <div>
       <h2 id="join-title">Be the first to try Hopper.</h2>
@@ -17,6 +19,9 @@ import { site } from "../content/facts";
 
 <style>
   .join {
+    position: relative;
+    isolation: isolate;
+    overflow: hidden;
     background: var(--blue);
     color: var(--white);
     padding-block: clamp(5rem, 4rem + 6vw, 9rem);
@@ -48,6 +53,12 @@ import { site } from "../content/facts";
   @media (max-width: 56rem) {
     .grid {
       grid-template-columns: 1fr;
+    }
+    /* Stacked, the light would sit behind the headline; keep it down behind the button. */
+    .join :global(.banner) {
+      top: 38%;
+      -webkit-mask-image: linear-gradient(to bottom, transparent, #000 35%);
+      mask-image: linear-gradient(to bottom, transparent, #000 35%);
     }
   }
 </style>

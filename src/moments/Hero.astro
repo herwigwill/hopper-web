@@ -2,6 +2,7 @@
 import Launcher from "../components/Launcher.astro";
 import Waitlist from "../components/Waitlist.astro";
 import HopperMark from "../components/HopperMark.astro";
+import Banner from "../components/Banner.astro";
 import { places, apps, site } from "../content/facts";
 ---
 <section class="hero" aria-labelledby="hero-title">
@@ -15,6 +16,7 @@ import { places, apps, site } from "../content/facts";
 
   <div class="wrap">
     <div class="stage on-blue" data-stage data-front="chrome" data-open="true">
+      <Banner name="subtle" motion eager focus="70% 30%" />
       <p class="visually-hidden" id="stage-desc">
         A demonstration of Hopper on a Mac desktop. The launcher searches across apps, and picking a result brings that
         exact page, tab or session to the front. It plays on its own; click the search field to try your own search.
@@ -224,7 +226,7 @@ import { places, apps, site } from "../content/facts";
     }
   }
 
-  /* The stage: a Mac desktop in ultramarine. */
+  /* The stage: a Mac desktop with a live wallpaper (the gradient shows until it loads). */
   .stage {
     position: relative;
     margin-top: clamp(2rem, 1.5rem + 2.5vw, 3.5rem);

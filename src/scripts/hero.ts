@@ -189,9 +189,13 @@ export function initHero(stage: HTMLElement) {
     pauseBtn.querySelector<HTMLElement>("[data-icon-play]")!.toggleAttribute("hidden", !paused);
   };
   let pausedByButton = false;
+  const wallpaper = stage.querySelector<HTMLVideoElement>("[data-banner-video]");
   pauseBtn.addEventListener("click", () => {
     paused = !paused;
     pausedByButton = paused;
+    /* The button stops all the stage's motion, the moving wallpaper too. */
+    wallpaper?.toggleAttribute("data-hold", paused);
+    wallpaper?.dispatchEvent(new Event("banner:hold"));
     if (!paused) {
       mode = "auto";
       reopen.hidden = true;

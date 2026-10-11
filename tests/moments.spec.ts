@@ -34,12 +34,23 @@ test.describe("hero demo", () => {
     await expect(page.getByRole("button", { name: "Play demo" })).toHaveAttribute("aria-pressed", "true");
   });
 
+  test("the moving wallpaper loads in view and holds when the demo is paused", async ({ page }) => {
+    await page.goto("/");
+    const wallpaper = page.locator("[data-stage] [data-banner-video]");
+    await expect.poll(() => wallpaper.evaluate((v: HTMLVideoElement) => v.src)).toContain("/banners/subtle.mp4");
+    await page.getByRole("button", { name: "Pause demo" }).click();
+    await expect(wallpaper).toHaveAttribute("data-hold");
+    expect(await wallpaper.evaluate((v: HTMLVideoElement) => v.paused)).toBe(true);
+  });
+
   test("with reduced motion it doesn't autoplay and shows a complete frame", async ({ page }) => {
     await page.emulateMedia({ reducedMotion: "reduce" });
     await page.goto("/");
     await page.waitForTimeout(3000);
     await expect(page.locator("#hero-lx [data-text]")).toHaveText("q4 plan");
     await expect(page.locator('[data-stage]')).toHaveAttribute("data-open", "true");
+    // The wallpaper stays a still: the loop isn't even downloaded.
+    expect(await page.locator("[data-stage] [data-banner-video]").evaluate((v: HTMLVideoElement) => v.src)).toBe("");
   });
 });
 
