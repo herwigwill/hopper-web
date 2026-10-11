@@ -6,7 +6,7 @@ import { places, apps, site } from "../content/facts";
 ---
 <section class="hero" aria-labelledby="hero-title">
   <div class="wrap intro">
-    <h1 id="hero-title">Never lose your&nbsp;<span class="last">place.<span class="bun"><HopperMark /></span></span></h1>
+    <h1 id="hero-title">Never lose your&nbsp;<span class="last">place.<span class="bun" data-ears><HopperMark /></span></span></h1>
     <div class="pitch">
       <p class="lede">Hopper takes you straight back to the tab, doc, chat or coding session you were in, whatever app it’s in. Just start typing.</p>
       <Waitlist />
@@ -156,7 +156,8 @@ import { places, apps, site } from "../content/facts";
   h1 {
     max-width: 8.5ch;
   }
-  /* The bunny hops in and sits beside the headline's last word; hover the headline and it hops again. */
+  /* The bunny's ears poke up out of the baseline beside the headline's last word, as if it's hiding just below the
+     line. The box clips at its bottom edge, so the ears can duck out of sight. The rest of the life is in ears.ts. */
   .last {
     position: relative;
     white-space: nowrap;
@@ -164,65 +165,52 @@ import { places, apps, site } from "../content/facts";
   .bun {
     position: absolute;
     left: 100%;
-    bottom: 0.1em;
-    margin-left: 0.12em;
-    width: 0.56em;
+    bottom: 0.21em; /* the baseline, where the period sits */
+    margin-left: 0.11em;
+    width: 0.6em;
     color: var(--blue);
-  }
-  .bun::after {
-    content: "";
-    position: absolute;
-    left: 50%;
-    bottom: -0.03em;
-    width: 0.5em;
-    height: 0.07em;
-    border-radius: 50%;
-    background: rgb(18 24 51 / 0.14);
-    transform: translateX(-50%);
-    animation: bun-shadow 900ms var(--ease-out) 350ms both;
+    clip-path: inset(-100% -100% 0 -100%);
   }
   .bun :global(svg) {
     display: block;
     width: 100%;
     height: auto;
-    transform-origin: 50% 100%;
-    animation: bun-in 900ms var(--ease-out) 350ms both;
+    overflow: visible;
   }
-  h1:hover .bun :global(svg) {
-    animation: bun-hop 620ms var(--ease-out);
+  .bun :global(.ear) {
+    transform-box: view-box;
+    transform-origin: var(--pivot);
+    rotate: var(--lean, 0deg);
+    transition: rotate 500ms var(--ease-out);
+    animation: ear-up 760ms var(--ease-out) 450ms both;
   }
-  h1:hover .bun::after {
-    animation: bun-shadow-hop 620ms var(--ease-out);
+  /* The right ear sits higher in the logo; drop it to the same ground so both grow out of the line. */
+  .bun :global(.ear-r) {
+    translate: 0 14px;
+    rotate: calc(var(--lean, 0deg) * 1.4);
+    animation-name: ear-up-r;
+    animation-delay: 560ms;
+    animation-duration: 900ms;
   }
-  @keyframes bun-in {
-    0% { opacity: 0; transform: translate(-1.6em, 0) rotate(-14deg); }
-    18% { opacity: 1; }
-    45% { transform: translate(-0.7em, -0.75em) rotate(-4deg); }
-    70% { transform: translate(0, 0) scale(1.12, 0.84) rotate(0); }
-    84% { transform: translate(0, -0.08em) scale(0.96, 1.05); }
-    100% { opacity: 1; transform: none; }
-  }
-  @keyframes bun-shadow {
-    0%, 40% { opacity: 0; transform: translateX(-50%) scale(0.4); }
-    70% { opacity: 1; transform: translateX(-50%) scale(1.15); }
-    100% { opacity: 1; transform: translateX(-50%); }
-  }
-  @keyframes bun-hop {
-    0% { transform: none; }
-    20% { transform: scale(1.08, 0.88); }
-    50% { transform: translateY(-0.45em) scale(0.95, 1.06); }
-    80% { transform: scale(1.1, 0.86); }
+  @keyframes ear-up {
+    0% { transform: translateY(185px); }
+    55% { transform: translateY(-14px) scaleY(1.06); }
+    74% { transform: translateY(4px) scaleY(0.96); }
+    88% { transform: rotate(-3deg); }
     100% { transform: none; }
   }
-  @keyframes bun-shadow-hop {
-    50% { transform: translateX(-50%) scale(0.55); opacity: 0.5; }
+  @keyframes ear-up-r {
+    0% { transform: translateY(185px) rotate(-18deg); }
+    50% { transform: translateY(-10px) rotate(-6deg); }
+    68% { transform: rotate(16deg); }
+    84% { transform: rotate(-6deg); }
+    94% { transform: rotate(2deg); }
+    100% { transform: none; }
   }
   @media (prefers-reduced-motion: reduce) {
-    .bun :global(svg),
-    .bun::after,
-    h1:hover .bun :global(svg),
-    h1:hover .bun::after {
+    .bun :global(.ear) {
       animation: none;
+      transition: none;
     }
   }
   .pitch {
@@ -809,6 +797,9 @@ import { places, apps, site } from "../content/facts";
 
 <script>
   import { initHero } from "../scripts/hero";
+  import { initEars } from "../scripts/ears";
   const stage = document.querySelector<HTMLElement>("[data-stage]");
   if (stage) initHero(stage);
+  const ears = document.querySelector<HTMLElement>("[data-ears]");
+  if (ears) initEars(ears);
 </script>
