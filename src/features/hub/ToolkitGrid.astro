@@ -1,0 +1,634 @@
+---
+/**
+ * Hub: the Toolkit. Every tile is a small working version of the feature (scripts/tiles.ts): type into it.
+ * Snippets ADR-054, Clipboard History ADR-027, Emoji & Symbols ADR-051, Menu Commands ADR-050, Screenshots ADR-028,
+ * Quicklinks ADR-037, Scratch Notes ADR-059.
+ */
+import { toolkitTiles, snippetExamples, apps } from "../../content/facts";
+import { featureIcons } from "../../scripts/icons";
+const t = Object.fromEntries(toolkitTiles.map((x) => [x.id, x]));
+const shots = [
+  { name: "Screenshot 2026-10-08 at 4.12 PM", lines: ["Invoice #1042", "Northwind Ltd.", "Total due: $4,850.00", "Due November 1"] },
+  { name: "Screenshot 2026-10-09 at 10.03 AM", lines: ["Error: token expired", "at refresh (auth/refresh.ts:42)", "Request 7f3a"] },
+  { name: "Screenshot 2026-10-10 at 9.20 AM", lines: ["Flight TP 1347", "Lisbon to Porto", "Boarding 18:40, gate 14"] },
+];
+---
+<section class="tk" id="toolkit" aria-labelledby="tk-title" data-tk>
+  <div class="wrap">
+    <div class="head">
+      <p class="kicker">Toolkit</p>
+      <h2 id="tk-title">And the hundred small things.</h2>
+      <p class="lede">Everything you’d want from a launcher is built in. Each of these works: go ahead and type.</p>
+    </div>
+
+    <div class="tiles">
+      <!-- Snippets -->
+      <article class="tile" id="tile-snippets" aria-labelledby="tl-snippets">
+        <header><span class="ti" set:html={featureIcons.snippets} /><h3 id="tl-snippets">{t.snippets.title}</h3></header>
+        <p class="line">{t.snippets.line}</p>
+        <div class="try">
+          <label class="visually-hidden" for="sn-in">Type a snippet keyword</label>
+          <textarea id="sn-in" class="field area" rows="3" spellcheck="false" placeholder="Type ;date or ;shrug here…" data-sn></textarea>
+          <ul class="chips">
+            {snippetExamples.map((s) => <li><code>{s.keyword}</code>{s.name}</li>)}
+          </ul>
+          <p class="out" role="status" data-sn-out></p>
+        </div>
+      </article>
+
+      <!-- Clipboard -->
+      <article class="tile" id="tile-clipboard" aria-labelledby="tl-clipboard">
+        <header><span class="ti" set:html={featureIcons.clipboard} /><h3 id="tl-clipboard">{t.clipboard.title}</h3></header>
+        <p class="line">{t.clipboard.line}</p>
+        <div class="try">
+          <div class="copyables" role="group" aria-label="Copy something">
+            <button type="button" class="cp" data-copy="Pull request #482">Copy <b>Pull request #482</b></button>
+            <button type="button" class="cp" data-copy="analytics.internal/checkout">Copy <b>analytics.internal/checkout</b></button>
+            <button type="button" class="cp" data-copy="Ship it Thursday">Copy <b>Ship it Thursday</b></button>
+          </div>
+          <ol class="hist" aria-label="Clipboard history, newest first" data-hist><li class="empty">Copied things show up here.</li></ol>
+          <p class="out" role="status" data-cb-out></p>
+        </div>
+      </article>
+
+      <!-- Calculator -->
+      <article class="tile" id="tile-calculator" aria-labelledby="tl-calculator">
+        <header><span class="ti" set:html={featureIcons.calculator} /><h3 id="tl-calculator">{t.calculator.title}</h3></header>
+        <p class="line">{t.calculator.line}</p>
+        <div class="try">
+          <label class="visually-hidden" for="calc-in">Type a sum or a conversion</label>
+          <input id="calc-in" class="field" type="text" autocomplete="off" spellcheck="false" value="5 km in mi" data-calc />
+          <p class="calc-out" aria-live="polite"><span data-calc-out>3.1069 mi</span></p>
+          <p class="hint">Try <code>72 f in c</code>, <code>(1200 + 340) * 12</code> or <code>3 lb to kg</code>.</p>
+        </div>
+      </article>
+
+      <!-- Emoji -->
+      <article class="tile" id="tile-emoji" aria-labelledby="tl-emoji">
+        <header><span class="ti" set:html={featureIcons.emoji} /><h3 id="tl-emoji">{t.emoji.title}</h3></header>
+        <p class="line">{t.emoji.line}</p>
+        <div class="try">
+          <label class="visually-hidden" for="em-in">Search emoji and symbols</label>
+          <input id="em-in" class="field" type="text" autocomplete="off" spellcheck="false" placeholder="salute, ship, coffee…" data-em />
+          <p class="sub" data-em-section>Frequently Used</p>
+          <div class="emoji-grid" role="group" aria-label="Emoji" data-em-grid></div>
+          <p class="out" role="status" data-em-out></p>
+        </div>
+      </article>
+
+      <!-- Menu commands -->
+      <article class="tile" id="tile-menus" aria-labelledby="tl-menus">
+        <header><span class="ti" set:html={featureIcons.menus} /><h3 id="tl-menus">{t.menus.title}</h3></header>
+        <p class="line">{t.menus.line}</p>
+        <div class="try">
+          <p class="front"><img src={apps.safari.icon} alt="" width="18" height="18" />Safari is in front</p>
+          <label class="visually-hidden" for="mn-in">Search Safari’s menu commands</label>
+          <input id="mn-in" class="field" type="text" autocomplete="off" spellcheck="false" placeholder="hide sidebar, reopen tab…" data-mn />
+          <ul class="menu-list" data-mn-list></ul>
+          <p class="out" role="status" data-mn-out></p>
+        </div>
+      </article>
+
+      <!-- Screenshots -->
+      <article class="tile" id="tile-screenshots" aria-labelledby="tl-screenshots">
+        <header><span class="ti" set:html={featureIcons.screenshots} /><h3 id="tl-screenshots">{t.screenshots.title}</h3></header>
+        <p class="line">{t.screenshots.line}</p>
+        <div class="try">
+          <label class="visually-hidden" for="ss-in">Search the text in screenshots</label>
+          <input id="ss-in" class="field" type="text" autocomplete="off" spellcheck="false" placeholder="invoice, gate, token…" data-ss />
+          <ul class="shots" data-shots>
+            {shots.map((s) => (
+              <li class="shot">
+                <div class="shot-img">{s.lines.map((l) => <p>{l}</p>)}</div>
+                <span class="shot-name">{s.name}</span>
+              </li>
+            ))}
+          </ul>
+          <p class="out" role="status" data-ss-out></p>
+        </div>
+      </article>
+
+      <!-- Quicklinks -->
+      <article class="tile" id="tile-quicklinks" aria-labelledby="tl-quicklinks">
+        <header><span class="ti" set:html={featureIcons.quicklinks} /><h3 id="tl-quicklinks">{t.quicklinks.title}</h3></header>
+        <p class="line">{t.quicklinks.line}</p>
+        <div class="try">
+          <div class="ql">
+            <span class="ql-name"><img src={apps.safari.icon} alt="" width="18" height="18" />Search GitHub</span>
+            <label class="visually-hidden" for="ql-in">Query</label>
+            <input id="ql-in" class="field ql-arg" type="text" autocomplete="off" spellcheck="false" placeholder="Query" value="window layouts" data-ql />
+          </div>
+          <p class="tpl"><code>github.com/search?q=<b>{"{Query}"}</b></code></p>
+          <p class="ql-url" data-ql-out>github.com/search?q=window+layouts</p>
+          <p class="hint">Type into the blank. Return opens the link in your browser.</p>
+        </div>
+      </article>
+
+      <!-- Scratch notes -->
+      <article class="tile" id="tile-notes" aria-labelledby="tl-notes">
+        <header><span class="ti" set:html={featureIcons.notes} /><h3 id="tl-notes">{t.notes.title}</h3></header>
+        <p class="line">{t.notes.line}</p>
+        <div class="try">
+          <div class="note" data-note>
+            <h4>Launch day</h4>
+            <label class="task"><input type="checkbox" checked /> Pricing copy final</label>
+            <label class="task"><input type="checkbox" /> Send the September invoice</label>
+          </div>
+          <label class="visually-hidden" for="nt-in">Add a line to the note</label>
+          <input id="nt-in" class="field" type="text" autocomplete="off" spellcheck="false" placeholder="Add a line, then Return" data-nt />
+          <p class="hint">Start with <code># </code>, <code>- </code> or <code>[] </code> and the marks turn into a heading, a list or a checkbox.</p>
+        </div>
+      </article>
+    </div>
+  </div>
+</section>
+
+<style>
+  .tk {
+    padding-block: clamp(5rem, 4rem + 6vw, 9rem);
+    background: var(--white);
+    border-top: 1px solid var(--line);
+  }
+  .kicker {
+    font-size: var(--step--1);
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--blue);
+    margin-bottom: 1rem;
+  }
+  .head {
+    display: grid;
+    grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr);
+    gap: 1rem 4rem;
+    align-items: end;
+  }
+  .kicker {
+    grid-column: 1 / -1;
+  }
+  h2 {
+    max-width: 11ch;
+  }
+  .tiles {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 1rem;
+    margin-top: clamp(2.5rem, 2rem + 2vw, 4rem);
+  }
+  .tile {
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
+    padding: 1.25rem;
+    border-radius: 20px;
+    background: var(--paper);
+    border: 1px solid var(--line);
+    min-width: 0;
+    scroll-margin-top: 6rem;
+    transition: border-color 200ms ease;
+  }
+  .tile:focus-within {
+    border-color: var(--blue);
+  }
+  .tile header {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+  }
+  .ti {
+    display: grid;
+    place-items: center;
+    width: 2.1rem;
+    height: 2.1rem;
+    border-radius: 10px;
+    background: var(--blue);
+    color: var(--white);
+  }
+  .ti :global(.fi) {
+    width: 1.2rem;
+    height: 1.2rem;
+  }
+  h3 {
+    font-size: var(--step-0);
+    font-weight: 800;
+  }
+  .line {
+    color: var(--ink-2);
+    font-size: var(--step--1);
+    line-height: 1.45;
+  }
+  .try {
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
+    margin-top: 0.4rem;
+    flex: 1;
+  }
+  .field {
+    width: 100%;
+    min-height: 2.6rem;
+    padding: 0 0.8rem;
+    border-radius: 10px;
+    border: 1px solid var(--line);
+    background: var(--white);
+    font: 500 0.95rem var(--mac);
+    color: var(--ink);
+  }
+  .field:focus-visible {
+    outline: 2px solid var(--blue);
+    outline-offset: 1px;
+  }
+  .area {
+    padding: 0.6rem 0.8rem;
+    resize: none;
+    line-height: 1.45;
+  }
+  .chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.35rem;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    font-size: 0.78rem;
+    color: var(--ink-2);
+  }
+  .chips li {
+    display: inline-flex;
+    gap: 0.35rem;
+    align-items: center;
+    padding: 0.2rem 0.55rem 0.2rem 0.3rem;
+    border-radius: 999px;
+    background: var(--white);
+    border: 1px solid var(--line);
+  }
+  code {
+    font: 0.85em ui-monospace, "SF Mono", Menlo, monospace;
+    padding: 0.05rem 0.3rem;
+    border-radius: 5px;
+    background: var(--blue-soft);
+    color: var(--blue-deep);
+  }
+  .out {
+    min-height: 1.4em;
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: var(--blue-deep);
+  }
+  .hint {
+    font-size: 0.78rem;
+    color: var(--ink-2);
+    line-height: 1.6;
+  }
+  .sub {
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: var(--ink-2);
+  }
+
+  /* Clipboard */
+  .copyables {
+    display: grid;
+    gap: 0.35rem;
+  }
+  .cp {
+    display: block;
+    width: 100%;
+    padding: 0.45rem 0.7rem;
+    border: 1px dashed #b9bfd8;
+    border-radius: 8px;
+    background: transparent;
+    text-align: left;
+    font-size: 0.8rem;
+    color: var(--ink-2);
+    cursor: pointer;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .cp b {
+    color: var(--ink);
+  }
+  .cp:hover {
+    border-color: var(--blue);
+  }
+  .hist {
+    margin: 0;
+    padding: 0.35rem;
+    list-style: none;
+    border-radius: 10px;
+    background: rgb(30 31 38 / 0.95);
+    color: #f2f2f5;
+    font: 0.8rem var(--mac);
+    min-height: 6.5rem;
+  }
+  .hist :global(li.empty) {
+    padding: 0.5rem;
+    color: rgb(235 235 245 / 0.6);
+  }
+  .hist :global(button) {
+    display: flex;
+    justify-content: space-between;
+    gap: 0.5rem;
+    width: 100%;
+    padding: 0.4rem 0.5rem;
+    border: 0;
+    border-radius: 6px;
+    background: transparent;
+    color: inherit;
+    font: inherit;
+    text-align: left;
+    cursor: pointer;
+  }
+  .hist :global(button span) {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .hist :global(button small) {
+    color: rgb(235 235 245 / 0.55);
+    flex: none;
+  }
+  .hist :global(li:first-child button),
+  .hist :global(button:hover) {
+    background: rgb(255 255 255 / 0.11);
+  }
+  .hist :global(li.fresh) {
+    animation: fresh 380ms var(--ease-hop);
+  }
+  @keyframes fresh {
+    from { opacity: 0; transform: translateY(-8px); }
+  }
+
+  /* Calculator */
+  .calc-out {
+    font-family: var(--display);
+    font-weight: 800;
+    font-stretch: 80%;
+    font-size: clamp(1.75rem, 1.2rem + 1.4vw, 2.4rem);
+    line-height: 1.05;
+    color: var(--blue);
+    word-break: break-word;
+    min-height: 2.6rem;
+  }
+  .calc-out .muted {
+    color: var(--ink-2);
+    font-weight: 600;
+    font-size: 0.5em;
+    font-stretch: 100%;
+    font-family: var(--text);
+  }
+
+  /* Emoji */
+  .emoji-grid {
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    gap: 0.25rem;
+    min-height: 5.25rem;
+    align-content: start;
+  }
+  .emoji-grid :global(button) {
+    aspect-ratio: 1;
+    border: 0;
+    border-radius: 8px;
+    background: var(--white);
+    font-size: 1.35rem;
+    line-height: 1;
+    cursor: pointer;
+    transition: transform 200ms var(--ease-hop);
+  }
+  .emoji-grid :global(button:hover) {
+    transform: scale(1.15);
+  }
+  .emoji-grid :global(.none) {
+    grid-column: 1 / -1;
+    font-size: 0.8rem;
+    color: var(--ink-2);
+  }
+
+  /* Menus */
+  .front {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    font-size: 0.78rem;
+    font-weight: 600;
+    color: var(--ink-2);
+  }
+  .front img {
+    width: 18px;
+    height: 18px;
+  }
+  .menu-list {
+    margin: 0;
+    padding: 0.3rem;
+    list-style: none;
+    border-radius: 10px;
+    background: rgb(30 31 38 / 0.95);
+    min-height: 7.4rem;
+  }
+  .menu-list :global(button) {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    width: 100%;
+    padding: 0.4rem 0.5rem;
+    border: 0;
+    border-radius: 6px;
+    background: transparent;
+    color: #f2f2f5;
+    font: 0.78rem var(--mac);
+    text-align: left;
+    cursor: pointer;
+  }
+  .menu-list :global(li:first-child button),
+  .menu-list :global(button:hover) {
+    background: rgb(255 255 255 / 0.11);
+  }
+  .menu-list :global(.path) {
+    color: rgb(235 235 245 / 0.72);
+    white-space: nowrap;
+  }
+  .menu-list :global(.kb) {
+    margin-left: auto;
+    color: rgb(235 235 245 / 0.7);
+    white-space: nowrap;
+  }
+  .menu-list :global(.none) {
+    padding: 0.5rem;
+    font: 0.78rem var(--mac);
+    color: rgb(235 235 245 / 0.6);
+  }
+
+  /* Screenshots */
+  .shots {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 0.4rem;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+  .shot {
+    display: grid;
+    gap: 0.25rem;
+    transition: opacity 200ms ease, transform 300ms var(--ease-hop);
+  }
+  .shot-img {
+    aspect-ratio: 4 / 3;
+    padding: 0.4rem;
+    border-radius: 6px;
+    background: var(--white);
+    border: 1px solid var(--line);
+    font: 0.5rem/1.35 var(--mac);
+    color: #3a3d55;
+    overflow: hidden;
+  }
+  .shot-img :global(p:first-child) {
+    font-weight: 700;
+  }
+  .shot-img :global(mark) {
+    background: var(--sun);
+    color: var(--ink);
+    border-radius: 2px;
+  }
+  .shot-name {
+    font-size: 0.6rem;
+    color: var(--ink-2);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .shots.filtering .shot {
+    opacity: 0.25;
+  }
+  .shots.filtering .shot.hit {
+    opacity: 1;
+    transform: translateY(-3px);
+  }
+  .shots.filtering .shot.hit .shot-img {
+    border-color: var(--blue);
+    box-shadow: 0 0 0 2px var(--blue-soft);
+  }
+
+  /* Quicklinks */
+  .ql {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.4rem 0.4rem 0.4rem 0.7rem;
+    border-radius: 12px;
+    background: rgb(30 31 38 / 0.95);
+    color: #fff;
+  }
+  .ql-name {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    font: 600 0.8rem var(--mac);
+    white-space: nowrap;
+  }
+  .ql-name img {
+    width: 18px;
+    height: 18px;
+  }
+  .ql-arg {
+    flex: 1;
+    min-width: 0;
+    min-height: 2.1rem;
+    background: rgb(255 255 255 / 0.1);
+    border-color: transparent;
+    color: #fff;
+    font-size: 0.85rem;
+  }
+  .ql-arg::placeholder {
+    color: rgb(235 235 245 / 0.5);
+  }
+  .tpl {
+    font-size: 0.78rem;
+  }
+  .tpl b {
+    color: var(--blue);
+  }
+  .ql-url {
+    padding: 0.55rem 0.7rem;
+    border-radius: 8px;
+    background: var(--white);
+    border: 1px solid var(--line);
+    font: 0.8rem ui-monospace, "SF Mono", Menlo, monospace;
+    color: var(--blue-deep);
+    word-break: break-all;
+  }
+  .ql-url.flash {
+    animation: flash 600ms ease;
+  }
+  @keyframes flash {
+    30% { background: #fff4cc; }
+  }
+
+  /* Notes */
+  .note {
+    display: grid;
+    gap: 0.3rem;
+    align-content: start;
+    padding: 0.75rem 0.9rem;
+    border-radius: 12px;
+    background: #fff8d6;
+    box-shadow: 0 10px 24px -14px rgb(90 70 0 / 0.5);
+    transform: rotate(-0.6deg);
+    font: 0.85rem/1.45 var(--mac);
+    color: #3b3200;
+    min-height: 7rem;
+    max-height: 12rem;
+    overflow-y: auto;
+  }
+  .note :global(h4) {
+    margin: 0 0 0.15rem;
+    font-size: 1.1rem;
+  }
+  .note :global(.task) {
+    display: flex;
+    gap: 0.4rem;
+    align-items: center;
+  }
+  .note :global(.task input) {
+    margin: 0;
+    accent-color: #8a6a00;
+  }
+  .note :global(.task:has(input:checked)) {
+    text-decoration: line-through;
+    color: #6e6234;
+  }
+  .note :global(ul) {
+    margin: 0;
+    padding-left: 1.1rem;
+  }
+  .note :global(p) {
+    margin: 0;
+  }
+  .note :global(.fresh) {
+    animation: fresh 380ms var(--ease-hop);
+  }
+
+  @media (max-width: 75rem) {
+    .tiles {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+  @media (max-width: 56rem) {
+    .head {
+      grid-template-columns: 1fr;
+    }
+  }
+  @media (max-width: 36rem) {
+    .tiles {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>
+
+<script>
+  import { initTiles } from "../../scripts/tiles";
+  const root = document.querySelector<HTMLElement>("[data-tk]");
+  if (root) initTiles(root);
+</script>

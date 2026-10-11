@@ -1,0 +1,597 @@
+---
+/**
+ * Hub: Back & Now Playing. Now Playing (ADR-036) jumps to whatever is making sound, and to the last thing that played
+ * after it stops (tagged Paused); with several playing you pick. Toggle (ADR-023) flips between your last two places
+ * on a double tap of ⌘.
+ */
+import { apps, site, toggleGesture } from "../../content/facts";
+---
+<section class="pb" id="back" aria-labelledby="pb-title" data-pb>
+  <div class="wrap">
+    <div class="head">
+      <p class="kicker">Back, Toggle & Now Playing</p>
+      <h2 id="pb-title">Get back to where you were. Or to that sound.</h2>
+      <p class="lede">Back and Forward work across all your apps. A double tap flips between your last two places. Now Playing finds whatever’s making sound, even in your fortieth tab.</p>
+    </div>
+
+    <div class="cards">
+      <!-- Now Playing -->
+      <article class="card np" aria-labelledby="np-title">
+        <header class="card-h">
+          <h3 id="np-title">Now Playing</h3>
+          <p>Play something, go somewhere else, then jump back to it.</p>
+        </header>
+
+        <div class="np-scene" aria-hidden="true">
+          <div class="np-screen" data-np-screen data-front="notion">
+            <div class="np-view v-notion"><img src={apps.notion.icon} alt="" width="28" height="28" /><b>Q4 Launch Plan</b><span>Notion</span></div>
+            <div class="np-view v-chrome">
+              <div class="tabstrip">
+                {["Checkout funnel, Q4", "Pricing experiments", "Pull request #482", "Design review recording", "Flights to Lisbon", "Q3 retro notes"].map((t, i) => (
+                  <span class:list={["t", { snd: i === 3 }]} data-tab={i}>{t}{i === 3 && <i class="spk" data-spk></i>}</span>
+                ))}
+              </div>
+              <div class="video"><span class="play-ico"></span><span class="bar"><i data-np-progress></i></span></div>
+            </div>
+            <div class="np-view v-music">
+              <img src={apps.music.icon} alt="" width="56" height="56" />
+              <span><b>Deep Focus</b><small>Playlist · Music</small></span>
+              <span class="eq" data-eq><i></i><i></i><i></i><i></i></span>
+            </div>
+          </div>
+          <ul class="np-pick" data-np-pick hidden>
+            <li data-pick="chrome"><img src={apps.chrome.icon} alt="" width="18" height="18" />Design review recording<span>Tab</span></li>
+            <li data-pick="music"><img src={apps.music.icon} alt="" width="18" height="18" />Deep Focus<span>Playlist</span></li>
+          </ul>
+        </div>
+
+        <div class="np-controls">
+          <button type="button" class="src" data-src="chrome" aria-pressed="true"><img src={apps.chrome.icon} alt="" width="18" height="18" /><span>Recording</span><span class="state" data-state>Playing</span></button>
+          <button type="button" class="src" data-src="music" aria-pressed="false"><img src={apps.music.icon} alt="" width="18" height="18" /><span>Deep Focus</span><span class="state" data-state>Paused</span></button>
+          <button type="button" class="go" data-np-go>Now Playing</button>
+          <button type="button" class="away" data-np-away>Go somewhere else</button>
+        </div>
+        <p class="np-say" data-np-say role="status">You’re in Notion. The recording is playing in a Chrome tab.</p>
+      </article>
+
+      <!-- Toggle -->
+      <article class="card tg" aria-labelledby="tg-title">
+        <header class="card-h">
+          <h3 id="tg-title">Toggle</h3>
+          <p>Double-tap ⌘ to flip between your last two places.</p>
+        </header>
+        <div class="tg-scene" aria-hidden="true">
+          <div class="tg-place" data-tg="0"><img src={apps.notion.icon} alt="" width="40" height="40" /><b>Q4 Launch Plan</b><small>Notion page</small></div>
+          <svg class="tg-arc" viewBox="0 0 200 60" preserveAspectRatio="none"><path d="M20,52 Q100,-10 180,52" pathLength="1" /></svg>
+          <div class="tg-place" data-tg="1"><img src={apps.claude.icon} alt="" width="40" height="40" /><b>Fix auth token refresh</b><small>Claude Code session</small></div>
+        </div>
+        <button type="button" class="tg-btn" data-tg-btn>
+          <span class="keys" aria-hidden="true">{[...toggleGesture].map((k) => <span class="key">{k}</span>)}</span>
+          <span>Toggle</span>
+        </button>
+        <p class="tg-hint">Or tap <span class="key">⌘</span> twice on your keyboard. Back and Forward are <span class="keys"><span class="key">{site.back.join("")}</span></span> and <span class="keys"><span class="key">{site.forward.join("")}</span></span>.</p>
+        <p class="visually-hidden" aria-live="polite" data-tg-live></p>
+      </article>
+    </div>
+  </div>
+</section>
+
+<style>
+  .pb {
+    padding-block: clamp(5rem, 4rem + 6vw, 9rem);
+  }
+  .kicker {
+    font-size: var(--step--1);
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--blue);
+    margin-bottom: 1rem;
+  }
+  .head {
+    display: grid;
+    grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr);
+    gap: 1rem 4rem;
+    align-items: end;
+  }
+  .kicker {
+    grid-column: 1 / -1;
+  }
+  h2 {
+    max-width: 14ch;
+  }
+  .cards {
+    display: grid;
+    grid-template-columns: minmax(0, 1.35fr) minmax(0, 1fr);
+    gap: 1.25rem;
+    margin-top: clamp(2.5rem, 2rem + 2vw, 4rem);
+  }
+  .card {
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+    padding: clamp(1.25rem, 2vw, 1.75rem);
+    border-radius: 22px;
+    background: var(--white);
+    border: 1px solid var(--line);
+  }
+  .card-h h3 {
+    font-family: var(--display);
+    font-stretch: 85%;
+    font-weight: 800;
+    font-size: var(--step-2);
+    line-height: 1;
+  }
+  .card-h p {
+    margin-top: 0.4rem;
+    color: var(--ink-2);
+  }
+
+  /* Now Playing */
+  .np-scene {
+    position: relative;
+  }
+  .np-screen {
+    position: relative;
+    aspect-ratio: 16 / 8;
+    border-radius: 14px;
+    overflow: hidden;
+    background: var(--blue);
+    font-family: var(--mac);
+    font-size: clamp(0.65rem, 1.1vw, 0.85rem);
+  }
+  .np-view {
+    position: absolute;
+    inset: 8%;
+    border-radius: 10px;
+    background: #fff;
+    color: #1d1d1f;
+    box-shadow: 0 20px 40px -18px rgb(6 10 60 / 0.6);
+    opacity: 0;
+    transform: translateY(14px) scale(0.96);
+    transition: opacity 250ms ease, transform 480ms var(--ease-hop);
+  }
+  .np-screen[data-front="notion"] .v-notion,
+  .np-screen[data-front="chrome"] .v-chrome,
+  .np-screen[data-front="music"] .v-music {
+    opacity: 1;
+    transform: none;
+    z-index: 1;
+  }
+  .v-notion {
+    display: grid;
+    place-content: center;
+    justify-items: center;
+    gap: 0.3rem;
+  }
+  .v-notion img {
+    width: 2rem;
+    height: 2rem;
+  }
+  .v-notion b {
+    font-size: 1.4em;
+  }
+  .v-notion span {
+    color: #5f5f66;
+  }
+  .v-chrome {
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+  }
+  .tabstrip {
+    display: flex;
+    gap: 2px;
+    padding: 0.45em 0.45em 0;
+    background: #dfe3eb;
+    overflow: hidden;
+  }
+  .t {
+    flex: 1 1 0;
+    min-width: 0;
+    display: flex;
+    align-items: center;
+    gap: 0.3em;
+    padding: 0.45em 0.6em;
+    border-radius: 0.5em 0.5em 0 0;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    color: #4b5160;
+    font-size: 0.85em;
+  }
+  .t.on {
+    background: #fff;
+    color: #1d1d1f;
+    flex-basis: 30%;
+  }
+  .spk {
+    flex: none;
+    width: 0.9em;
+    height: 0.9em;
+    background: currentColor;
+    clip-path: polygon(0 35%, 30% 35%, 60% 5%, 60% 95%, 30% 65%, 0 65%);
+    opacity: 0;
+  }
+  .playing-chrome .spk {
+    opacity: 1;
+    color: var(--blue);
+    animation: spk 900ms ease-in-out infinite;
+  }
+  @keyframes spk {
+    50% { transform: scale(1.25); }
+  }
+  .video {
+    flex: 1;
+    margin: 0.8em;
+    border-radius: 0.6em;
+    background: #111427;
+    display: grid;
+    place-items: center;
+    position: relative;
+  }
+  .play-ico {
+    width: 2.6em;
+    height: 2.6em;
+    border-radius: 50%;
+    background: rgb(255 255 255 / 0.2);
+  }
+  .bar {
+    position: absolute;
+    left: 1em;
+    right: 1em;
+    bottom: 1em;
+    height: 0.3em;
+    border-radius: 1em;
+    background: rgb(255 255 255 / 0.2);
+    overflow: hidden;
+  }
+  .bar i {
+    display: block;
+    height: 100%;
+    width: 38%;
+    background: var(--sun);
+    transition: width 1s linear;
+  }
+  .v-music {
+    display: flex;
+    align-items: center;
+    gap: 1em;
+    padding: 0 2em;
+    background: linear-gradient(135deg, #fff, #fde9ee);
+  }
+  .v-music img {
+    width: 3.5em;
+    height: 3.5em;
+  }
+  .v-music span:not(.eq) {
+    display: grid;
+  }
+  .v-music b {
+    font-size: 1.3em;
+  }
+  .v-music small {
+    color: #5f5f66;
+  }
+  .eq {
+    margin-left: auto;
+    display: flex;
+    gap: 0.25em;
+    align-items: end;
+    height: 2em;
+  }
+  .eq i {
+    width: 0.4em;
+    height: 20%;
+    border-radius: 0.2em;
+    background: #fa2d48;
+  }
+  .playing-music .eq i {
+    animation: eq 800ms ease-in-out infinite alternate;
+  }
+  .eq i:nth-child(2) { animation-delay: -200ms !important; }
+  .eq i:nth-child(3) { animation-delay: -450ms !important; }
+  .eq i:nth-child(4) { animation-delay: -650ms !important; }
+  @keyframes eq {
+    to { height: 100%; }
+  }
+  .np-pick {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    z-index: 3;
+    width: min(85%, 22rem);
+    margin: 0;
+    padding: 0.4rem;
+    list-style: none;
+    transform: translate(-50%, -50%);
+    border-radius: 12px;
+    background: rgb(30 31 38 / 0.96);
+    color: #f2f2f5;
+    font-family: var(--mac);
+    font-size: 0.85rem;
+    box-shadow: 0 20px 50px -10px rgb(6 8 30 / 0.6);
+    animation: pick 300ms var(--ease-hop);
+  }
+  @keyframes pick {
+    from { opacity: 0; transform: translate(-50%, -44%) scale(0.95); }
+  }
+  .np-pick li {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem 0.6rem;
+    border-radius: 8px;
+  }
+  .np-pick li:first-child {
+    background: rgb(255 255 255 / 0.11);
+  }
+  .np-pick span {
+    margin-left: auto;
+    color: rgb(235 235 245 / 0.6);
+  }
+  .np-controls {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+  .src,
+  .away {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45rem;
+    min-height: 2.6rem;
+    padding: 0 0.85rem 0 0.6rem;
+    border-radius: 12px;
+    border: 1px solid var(--line);
+    background: var(--paper);
+    font-weight: 600;
+    font-size: var(--step--1);
+    cursor: pointer;
+  }
+  .away {
+    padding: 0 0.9rem;
+  }
+  .src:hover,
+  .away:hover {
+    border-color: var(--blue);
+  }
+  .src .state {
+    padding: 0.1rem 0.45rem;
+    border-radius: 6px;
+    background: var(--line);
+    font-size: 0.75rem;
+  }
+  .src[aria-pressed="true"] .state {
+    background: var(--sun);
+  }
+  .go {
+    min-height: 2.6rem;
+    padding: 0 1.1rem;
+    border-radius: 12px;
+    border: 0;
+    background: var(--ink);
+    color: var(--white);
+    font-weight: 700;
+    font-size: var(--step--1);
+    cursor: pointer;
+  }
+  .go:hover {
+    background: var(--blue);
+  }
+  .np-say {
+    font-size: var(--step--1);
+    color: var(--ink-2);
+    min-height: 3em;
+  }
+
+  /* Toggle */
+  .tg-scene {
+    position: relative;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+    padding-top: 2.5rem;
+  }
+  .tg-place {
+    display: grid;
+    justify-items: center;
+    text-align: center;
+    gap: 0.35rem;
+    padding: 1.1rem 0.75rem;
+    border-radius: 16px;
+    background: var(--paper);
+    border: 1px solid var(--line);
+    color: var(--ink-2);
+    transition: transform 420ms var(--ease-hop), border-color 250ms ease, background 250ms ease;
+  }
+  .tg-place img {
+    width: 2.5rem;
+    height: 2.5rem;
+    opacity: 0.55;
+    transition: opacity 250ms ease;
+  }
+  .tg-place.here img {
+    opacity: 1;
+  }
+  .tg-place b {
+    line-height: 1.2;
+    font-size: var(--step--1);
+  }
+  .tg-place small {
+    color: var(--ink-2);
+    font-size: 0.78rem;
+  }
+  .tg-place.here {
+    color: var(--ink);
+    background: var(--white);
+    border-color: var(--blue);
+    transform: translateY(-6px);
+    box-shadow: 0 0 0 3px var(--blue-soft);
+  }
+  .tg-arc {
+    position: absolute;
+    left: 15%;
+    right: 15%;
+    top: 0.25rem;
+    width: 70%;
+    height: 2.75rem;
+    overflow: visible;
+  }
+  .tg-arc path {
+    fill: none;
+    stroke: var(--blue);
+    stroke-width: 2;
+    stroke-dasharray: 1;
+    stroke-dashoffset: 1;
+  }
+  .tg-arc.draw path {
+    animation: draw 520ms var(--ease-out) forwards;
+  }
+  @keyframes draw {
+    to { stroke-dashoffset: 0; }
+  }
+  .tg-btn {
+    align-self: flex-start;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.5rem 1rem 0.5rem 0.5rem;
+    border: 1px solid var(--line);
+    border-radius: 14px;
+    background: var(--paper);
+    font-weight: 700;
+    cursor: pointer;
+  }
+  .tg-btn:hover {
+    border-color: var(--blue);
+  }
+  .tg-hint {
+    font-size: var(--step--1);
+    color: var(--ink-2);
+    line-height: 2;
+  }
+  .tg-hint .key {
+    font-size: 0.8rem;
+  }
+
+  @media (max-width: 60rem) {
+    .head,
+    .cards {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>
+
+<script>
+  import { press } from "../../scripts/launcher";
+
+  const root = document.querySelector<HTMLElement>("[data-pb]");
+  if (root) {
+    /* Now Playing */
+    type Src = "chrome" | "music";
+    const screen = root.querySelector<HTMLElement>("[data-np-screen]")!;
+    const say = root.querySelector<HTMLElement>("[data-np-say]")!;
+    const pick = root.querySelector<HTMLElement>("[data-np-pick]")!;
+    const srcBtns = [...root.querySelectorAll<HTMLButtonElement>("[data-src]")];
+    const tabs = [...root.querySelectorAll<HTMLElement>("[data-tab]")];
+    const progress = root.querySelector<HTMLElement>("[data-np-progress]")!;
+    const playing = new Set<Src>(["chrome"]);
+    let last: Src = "chrome";
+    let pct = 38;
+    const names: Record<Src, string> = { chrome: "the recording in its Chrome tab", music: "Deep Focus in Music" };
+
+    const sync = () => {
+      srcBtns.forEach((b) => {
+        const on = playing.has(b.dataset.src as Src);
+        b.setAttribute("aria-pressed", String(on));
+        b.querySelector("[data-state]")!.textContent = on ? "Playing" : "Paused";
+      });
+      root.classList.toggle("playing-chrome", playing.has("chrome"));
+      root.classList.toggle("playing-music", playing.has("music"));
+    };
+    const show = (front: "notion" | Src) => {
+      screen.dataset.front = front;
+      tabs.forEach((t) => t.classList.toggle("on", front === "chrome" ? t.dataset.tab === "3" : t.dataset.tab === "0"));
+    };
+    const jump = (to: Src, paused: boolean) => {
+      pick.hidden = true;
+      show(to);
+      say.textContent = paused ? `Nothing’s playing, so it took you to the last thing that was: ${names[to]} (Paused).` : `Jumped to ${names[to]}, out of everything you have open.`;
+    };
+
+    srcBtns.forEach((b) =>
+      b.addEventListener("click", () => {
+        const s = b.dataset.src as Src;
+        if (playing.has(s)) playing.delete(s);
+        else {
+          playing.add(s);
+          last = s;
+        }
+        sync();
+        say.textContent = playing.size === 0 ? "Everything’s paused. Now Playing still goes back to the last thing that played." : playing.size === 2 ? "Two things are playing. Now Playing will ask which." : `${playing.has("chrome") ? "The recording" : "Deep Focus"} is playing.`;
+      }),
+    );
+    root.querySelector("[data-np-away]")!.addEventListener("click", () => {
+      pick.hidden = true;
+      show("notion");
+      say.textContent = "You’re back in Notion.";
+    });
+    root.querySelector<HTMLButtonElement>("[data-np-go]")!.addEventListener("click", (e) => {
+      press(e.currentTarget as HTMLElement);
+      if (playing.size === 2) {
+        pick.hidden = false;
+        say.textContent = "Two things are making sound, so you pick: the recording or Deep Focus.";
+        return;
+      }
+      if (playing.size === 1) jump([...playing][0], false);
+      else jump(last, true);
+    });
+    pick.addEventListener("click", (e) => {
+      const li = (e.target as Element).closest<HTMLElement>("[data-pick]");
+      if (li) jump(li.dataset.pick as Src, false);
+    });
+    setInterval(() => {
+      if (!playing.has("chrome")) return;
+      pct = pct >= 96 ? 6 : pct + 1.5;
+      progress.style.width = `${pct}%`;
+    }, 1000);
+    sync();
+
+    /* Toggle */
+    const places = [...root.querySelectorAll<HTMLElement>("[data-tg]")];
+    const arc = root.querySelector<SVGSVGElement>(".tg-arc")!;
+    const tgBtn = root.querySelector<HTMLButtonElement>("[data-tg-btn]")!;
+    const tgLive = root.querySelector<HTMLElement>("[data-tg-live]")!;
+    let at = 0;
+    const toggle = () => {
+      at = 1 - at;
+      places.forEach((p, i) => p.classList.toggle("here", i === at));
+      arc.classList.remove("draw");
+      void arc.getBoundingClientRect();
+      arc.style.transform = at === 1 ? "" : "scaleX(-1)";
+      arc.classList.add("draw");
+      tgBtn.querySelectorAll(".key").forEach((k, i) => setTimeout(() => press(k, 110), i * 140));
+      tgLive.textContent = `Toggled to ${places[at].querySelector("b")!.textContent}.`;
+    };
+    places[0].classList.add("here");
+    tgBtn.addEventListener("click", toggle);
+
+    // A real double tap of ⌘ (two quick presses with nothing between) while the card is on screen.
+    let onScreen = false;
+    let lastTap = 0;
+    new IntersectionObserver(([e]) => (onScreen = e.isIntersecting), { threshold: 0.4 }).observe(root.querySelector(".tg")!);
+    document.addEventListener("keydown", (e) => {
+      if (e.key !== "Meta") {
+        lastTap = 0;
+        return;
+      }
+      if (!onScreen || e.repeat) return;
+      const now = performance.now();
+      if (now - lastTap < 350) {
+        lastTap = 0;
+        toggle();
+      } else lastTap = now;
+    });
+  }
+</script>

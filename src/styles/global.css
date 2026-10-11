@@ -1,0 +1,351 @@
+/* Hopper — global tokens and base styles. Moment-specific styles live in each moment's component. */
+
+@font-face {
+  font-family: "Archivo";
+  src: url("/fonts/archivo.woff2") format("woff2");
+  font-weight: 100 900;
+  font-stretch: 62% 125%;
+  font-display: swap;
+}
+
+/* Metric-matched fallback so the swap doesn't shift the layout. */
+@font-face {
+  font-family: "Archivo Fallback";
+  src: local("Arial");
+  size-adjust: 104%;
+  ascent-override: 88%;
+  descent-override: 21%;
+  line-gap-override: 0%;
+}
+
+:root {
+  /* Palette */
+  --paper: #f6f7fb;
+  --white: #ffffff;
+  --ink: #121833;
+  --ink-2: #474e6e;
+  --line: #d9ddea;
+  --blue: #2b3bf5;
+  --blue-deep: #1b26b5;
+  --blue-soft: #e6e8ff;
+  --sun: #ffc93c;
+  --night: #0f1433;
+  --night-2: #1b2150;
+
+  /* Type */
+  --display: "Archivo", "Archivo Fallback", system-ui, sans-serif;
+  --text: "Archivo", "Archivo Fallback", system-ui, sans-serif;
+  --mac: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Helvetica Neue", "Segoe UI", Roboto, sans-serif;
+
+  --step--1: 0.875rem;
+  --step-0: 1.0625rem;
+  --step-1: 1.25rem;
+  --step-2: clamp(1.5rem, 1.2rem + 1.2vw, 2rem);
+  --step-3: clamp(2.25rem, 1.4rem + 3.6vw, 4.25rem);
+  --step-4: clamp(3.25rem, 1.8rem + 6vw, 7.25rem);
+
+  --gutter: clamp(1rem, 0.4rem + 2.6vw, 2.5rem);
+  --max: 82rem;
+
+  --ease-hop: cubic-bezier(0.22, 1.2, 0.36, 1);
+  --ease-out: cubic-bezier(0.2, 0.8, 0.2, 1);
+
+  color-scheme: light;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+  scroll-padding-top: 5rem;
+}
+
+body {
+  margin: 0;
+  background: var(--paper);
+  color: var(--ink);
+  font-family: var(--text);
+  font-size: var(--step-0);
+  line-height: 1.55;
+  font-variation-settings: normal;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+  overflow-x: clip;
+}
+
+img,
+svg {
+  display: block;
+  max-width: 100%;
+}
+
+[hidden] {
+  display: none !important;
+}
+
+h1,
+h2,
+h3,
+p {
+  margin: 0;
+}
+
+h1,
+h2 {
+  font-family: var(--display);
+  font-stretch: 78%;
+  font-weight: 800;
+  letter-spacing: -0.025em;
+  line-height: 0.94;
+  text-wrap: balance;
+}
+
+h1 {
+  font-size: var(--step-4);
+}
+
+h2 {
+  font-size: var(--step-3);
+  line-height: 0.98;
+}
+
+p {
+  text-wrap: pretty;
+}
+
+a {
+  color: inherit;
+  text-underline-offset: 0.18em;
+  text-decoration-thickness: 1px;
+}
+
+button {
+  font: inherit;
+  color: inherit;
+}
+
+:focus-visible {
+  outline: 3px solid var(--blue);
+  outline-offset: 3px;
+  border-radius: 6px;
+}
+
+.on-dark :focus-visible,
+.on-blue :focus-visible {
+  outline-color: var(--sun);
+}
+
+.wrap {
+  width: min(100% - 2 * var(--gutter), var(--max));
+  margin-inline: auto;
+}
+
+.lede {
+  font-size: var(--step-1);
+  line-height: 1.45;
+  color: var(--ink-2);
+  max-width: 34ch;
+}
+
+.visually-hidden {
+  position: absolute !important;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+/* Keycaps: the recurring physical object. */
+.key {
+  display: inline-grid;
+  place-items: center;
+  min-width: 2.2em;
+  height: 2.2em;
+  padding: 0 0.55em;
+  border-radius: 0.5em;
+  font-family: var(--mac);
+  font-size: 0.95em;
+  font-weight: 500;
+  line-height: 1;
+  color: var(--ink);
+  background: linear-gradient(#fff, #f1f2f7);
+  border: 1px solid #c9cde0;
+  box-shadow: 0 2px 0 #c2c7dc, 0 3px 6px rgb(18 24 51 / 0.12);
+  transform: translateY(0);
+  transition: transform 90ms ease, box-shadow 90ms ease;
+  white-space: nowrap;
+}
+
+.key.is-down,
+button:active > .key,
+button.key:active {
+  transform: translateY(2px);
+  box-shadow: 0 0 0 #c2c7dc, 0 1px 2px rgb(18 24 51 / 0.12);
+}
+
+.keys {
+  display: inline-flex;
+  gap: 0.35em;
+  align-items: center;
+}
+
+/* Line icons (scripts/icons.ts). */
+.fi {
+  width: 1.25em;
+  height: 1.25em;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.8;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  flex: none;
+}
+
+/* The in-page hop: a section reached from the features launcher or a chip lands with a little bounce. */
+[tabindex="-1"]:focus {
+  outline: none;
+}
+.hop-land :is(h2, h3):first-of-type {
+  animation: hop-land 620ms var(--ease-hop);
+}
+/* The thing a #link landed on (scripts/anchors.ts). */
+.anchor-flash {
+  animation: anchor-flash 1.8s ease;
+}
+@keyframes anchor-flash {
+  0%,
+  100% {
+    box-shadow: 0 0 0 0 rgb(255 201 60 / 0);
+  }
+  15%,
+  60% {
+    box-shadow: 0 0 0 4px var(--sun), 0 0 0 9px rgb(255 201 60 / 0.25);
+  }
+}
+.hop-land.tile {
+  animation: hop-ring 1.4s ease;
+}
+@keyframes hop-land {
+  0% {
+    transform: translateY(-22px);
+    opacity: 0.4;
+  }
+  60% {
+    transform: translateY(3px);
+    opacity: 1;
+  }
+}
+@keyframes hop-ring {
+  0%,
+  100% {
+    box-shadow: 0 0 0 0 rgb(43 59 245 / 0);
+  }
+  20% {
+    box-shadow: 0 0 0 6px rgb(43 59 245 / 0.25);
+  }
+}
+
+/* The page hop: same-site navigations are cross-document view transitions. The page leaves one way and the next one
+   arrives on a small arc from the other side; going back (history, or up a level) mirrors it. The header stays put.
+   Elements named alike on both pages (stage-<feature>, title-<feature>) morph from one into the other. Direction: /hop.js. */
+@view-transition {
+  navigation: auto;
+}
+::view-transition-old(root) {
+  animation: hop-out 260ms cubic-bezier(0.4, 0, 1, 1) both;
+}
+::view-transition-new(root) {
+  animation: hop-in 560ms both;
+}
+html:active-view-transition-type(back)::view-transition-old(root) {
+  animation-name: hop-out-back;
+}
+html:active-view-transition-type(back)::view-transition-new(root) {
+  animation-name: hop-in-back;
+}
+@keyframes hop-out {
+  to {
+    opacity: 0;
+    transform: translateX(-5%) scale(0.98);
+  }
+}
+@keyframes hop-out-back {
+  to {
+    opacity: 0;
+    transform: translateX(5%) scale(0.98);
+  }
+}
+@keyframes hop-in {
+  0% {
+    opacity: 0;
+    transform: translate(7%, 16px) scale(0.98);
+    animation-timing-function: cubic-bezier(0.2, 0.7, 0.4, 1);
+  }
+  55% {
+    opacity: 1;
+    transform: translate(0.6%, -14px) scale(1);
+    animation-timing-function: cubic-bezier(0.4, 0, 0.5, 1.6);
+  }
+  100% {
+    transform: none;
+  }
+}
+@keyframes hop-in-back {
+  0% {
+    opacity: 0;
+    transform: translate(-7%, 16px) scale(0.98);
+    animation-timing-function: cubic-bezier(0.2, 0.7, 0.4, 1);
+  }
+  55% {
+    opacity: 1;
+    transform: translate(-0.6%, -14px) scale(1);
+    animation-timing-function: cubic-bezier(0.4, 0, 0.5, 1.6);
+  }
+  100% {
+    transform: none;
+  }
+}
+::view-transition-group(stage-windows),
+::view-transition-group(title-windows),
+::view-transition-group(stage-search),
+::view-transition-group(title-search) {
+  animation-duration: 600ms;
+  animation-timing-function: cubic-bezier(0.3, 1.15, 0.4, 1);
+}
+/* The morphing stage rises on its way, like a hop. */
+::view-transition-image-pair(stage-windows),
+::view-transition-image-pair(stage-search) {
+  animation: hop-arc 600ms ease-in-out;
+}
+@keyframes hop-arc {
+  50% {
+    transform: translateY(-28px);
+  }
+}
+::view-transition-group(site-header) {
+  animation: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  ::view-transition-group(*),
+  ::view-transition-image-pair(*),
+  ::view-transition-old(*),
+  ::view-transition-new(*) {
+    animation: none !important;
+  }
+  *,
+  *::before,
+  *::after {
+    animation-duration: 1ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 1ms !important;
+    scroll-behavior: auto !important;
+  }
+}

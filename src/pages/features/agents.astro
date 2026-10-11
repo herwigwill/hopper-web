@@ -1,0 +1,21 @@
+---
+import Base from "../../layouts/Base.astro";
+import AgentsHero from "../../features/agents/AgentsHero.astro";
+import NextAgent from "../../features/agents/NextAgent.astro";
+import WorksWith from "../../features/agents/WorksWith.astro";
+import PastSessions from "../../features/agents/PastSessions.astro";
+import MoreFeatures from "../../features/MoreFeatures.astro";
+import Join from "../../moments/Join.astro";
+---
+<Base
+  title="Agents · Hopper"
+  description="Claude Code, Codex and Cursor in one list, sorted by who needs you. Next Agent jumps to whoever’s waited longest, and past sessions are a search away."
+  path="/features/agents"
+>
+  <AgentsHero />
+  <NextAgent />
+  <WorksWith />
+  <PastSessions />
+  <MoreFeatures current="agents" />
+  <Join />
+</Base>

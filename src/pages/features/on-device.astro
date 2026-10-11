@@ -1,0 +1,19 @@
+---
+/** On-Device Only (ADR-004, 006, 027, 028; the one network use is ADR-032's Online Lookups, said plainly). */
+import Base from "../../layouts/Base.astro";
+import NotePage from "../../components/NotePage.astro";
+import MoreFeatures from "../../features/MoreFeatures.astro";
+
+const points = [
+  { id: "index", title: "Search runs on your Mac", text: "Everything Hopper finds is read, stored and searched on this Mac. There’s no cloud copy of your tabs, docs or chats." },
+  { id: "screenshots", title: "Screenshot text, read locally", text: "Hopper recognizes the words in your screenshots with on-device text recognition, so you can search for them." },
+  { id: "agents", title: "Agents, without hooks", text: "Hopper reads each agent’s own files. Nothing gets installed into Claude Code, Codex or Cursor." },
+  { id: "clipboard", title: "Copied links stay put", text: "Clipboard History lives in Hopper’s database on your Mac, and never opens the links you copy." },
+  { id: "private", title: "Private stays private", text: 'Incognito and private windows are never read. <a href="/features/privacy-controls">See every privacy control</a>.' },
+  { id: "online-lookups", title: "The one exception", text: "For Hulu and Netflix links, Hopper fetches the public page, signed out and without cookies, to name the episode. Turn it off in Settings ▸ Privacy ▸ Online Lookups." },
+];
+---
+<Base title="On-Device Only · Hopper" description="Hopper reads, stores and searches everything on your Mac. Screenshot text is recognized on-device and agents are read without hooks." path="/features/on-device">
+  <NotePage crumb="On-Device Only" title="It all stays on your&nbsp;Mac." lede="Hopper does its work where your work already is. Here’s exactly what that means." points={points} />
+  <MoreFeatures current="on-device" />
+</Base>

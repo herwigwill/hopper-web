@@ -1,0 +1,187 @@
+---
+/**
+ * The features hub's opening: a Hopper launcher that searches the features themselves. Return hops to a feature's
+ * section, or to its own page (with the page-to-page hop). The page is navigated the way Hopper navigates a Mac.
+ */
+import "../../styles/launcher.css";
+import { pillars, toolkitTiles } from "../../content/facts";
+import { featureIcons } from "../../scripts/icons";
+
+const items = [
+  ...pillars.map((p) => ({ id: p.id, title: p.name, sub: p.line, href: "href" in p ? p.href : `#${p.id}`, page: "href" in p })),
+  ...toolkitTiles.map((t) => ({ id: t.id, title: t.title, sub: t.line, href: `#tile-${t.id}`, page: false })),
+];
+---
+<section class="hh" aria-labelledby="hh-title" data-hh>
+  <div class="wrap grid">
+    <div class="copy">
+      <p class="kicker">Features</p>
+      <h1 id="hh-title">Everything Hopper does.</h1>
+      <p class="lede">One shortcut for the places you’ve been, the agents you’re running, the windows on your screen and the small things you do a hundred times a day.</p>
+      <nav class="chips" aria-label="Features on this page">
+        {pillars.map((p) => (
+          <a href={"href" in p ? p.href : `#${p.id}`} class:list={{ page: "href" in p }} data-hop-link>
+            <span set:html={featureIcons[p.id]} />{p.name}
+          </a>
+        ))}
+      </nav>
+    </div>
+
+    <div class="lx-box">
+      <div class="lx hh-lx" id="hh-lx" data-launcher data-items={JSON.stringify(items)}>
+        <div class="lx-head">
+          <div class="lx-field">
+            <label class="visually-hidden" for="hh-q">Search Hopper’s features</label>
+            <input
+              class="lx-input"
+              id="hh-q"
+              type="text"
+              autocomplete="off"
+              spellcheck="false"
+              role="combobox"
+              aria-controls="hh-list"
+              aria-expanded="true"
+              aria-autocomplete="list"
+              aria-activedescendant={`hh-${items[0].id}`}
+            />
+            <span class="lx-text" data-text></span><span class="lx-caret" aria-hidden="true"></span><span class="lx-placeholder" data-placeholder>Search features…</span>
+          </div>
+          <div class="lx-tabs" aria-hidden="true"><span class="lx-tab" aria-current="true">Features</span></div>
+        </div>
+        <div class="lx-rule"></div>
+        <p class="lx-section" data-section>All Features</p>
+        <ul class="lx-list" id="hh-list" role="listbox" aria-label="Features" data-list>
+          {items.map((it, i) => (
+            <li class="lx-row" role="option" id={`hh-${it.id}`} data-id={it.id} aria-selected={i === 0 ? "true" : "false"}>
+              <span class="lx-ico" set:html={featureIcons[it.id]} />
+              <span class="lx-title">{it.title}</span>
+              <span class="lx-sub">{it.sub}</span>
+              <span class="lx-acc"><span>{it.page ? "Page" : "Section"}</span></span>
+            </li>
+          ))}
+        </ul>
+        <div class="lx-rule"></div>
+        <div class="lx-foot" aria-hidden="true">
+          <span>Hopper</span>
+          <span class="lx-primary" data-primary>Go to Section</span><span class="lx-kbd" data-enter>↵</span>
+        </div>
+      </div>
+      <p class="try">Try it: type <b>emoji</b> or <b>windows</b> and press Return.</p>
+    </div>
+  </div>
+</section>
+
+<style>
+  .hh {
+    padding-block: clamp(2rem, 1.5rem + 3vw, 4.5rem) clamp(3rem, 2rem + 4vw, 6rem);
+  }
+  .grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    gap: 2.5rem clamp(2rem, 5vw, 5rem);
+    align-items: center;
+  }
+  .kicker {
+    font-size: var(--step--1);
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--blue);
+    margin-bottom: 1rem;
+  }
+  h1 {
+    max-width: 8ch;
+  }
+  .lede {
+    margin-top: 1.5rem;
+  }
+  .chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-top: 2rem;
+  }
+  .chips a {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45rem;
+    min-height: 2.5rem;
+    padding: 0 1rem 0 0.75rem;
+    border-radius: 999px;
+    border: 1px solid var(--line);
+    background: var(--white);
+    font-weight: 600;
+    font-size: var(--step--1);
+    text-decoration: none;
+    transition: border-color 150ms ease, transform 250ms var(--ease-hop);
+  }
+  .chips a:hover {
+    border-color: var(--blue);
+    transform: translateY(-2px);
+  }
+  .chips a.page::after {
+    content: "→";
+    color: var(--blue);
+  }
+  .chips :global(.fi) {
+    width: 1.1rem;
+    height: 1.1rem;
+    color: var(--blue);
+  }
+
+  .lx-box {
+    container-type: inline-size;
+    min-width: 0;
+  }
+  .hh-lx {
+    --lx-size: clamp(11px, calc(100cqw / 44), 13.5px);
+    width: 100%;
+  }
+  .hh-lx .lx-list {
+    height: 25em;
+    overflow-y: auto;
+    scrollbar-width: none;
+  }
+  .hh-lx .lx-list::-webkit-scrollbar {
+    display: none;
+  }
+  .hh-lx :global(.lx-row) {
+    cursor: pointer;
+  }
+  .hh-lx :global(.lx-ico) {
+    display: grid;
+    place-items: center;
+    width: 1.9em;
+    height: 1.9em;
+    border-radius: 0.5em;
+    background: rgb(108 134 255 / 0.18);
+    color: #b9c4ff;
+    flex: none;
+  }
+  .hh-lx :global(.lx-ico .fi) {
+    width: 1.2em;
+    height: 1.2em;
+  }
+  .try {
+    margin-top: 0.9rem;
+    font-size: var(--step--1);
+    color: var(--ink-2);
+  }
+  @media (max-width: 56rem) {
+    .grid {
+      grid-template-columns: 1fr;
+    }
+    .hh-lx :global(.lx-sub) {
+      display: none;
+    }
+    .hh-lx .lx-list {
+      height: 19em;
+    }
+  }
+</style>
+
+<script>
+  import { initHubLauncher } from "../../scripts/hub";
+  const root = document.querySelector<HTMLElement>("[data-hh]");
+  if (root) initHubLauncher(root);
+</script>

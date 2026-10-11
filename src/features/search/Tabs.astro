@@ -1,0 +1,322 @@
+---
+/**
+ * Filter tabs (ADR-046) and the app in front: Search, the app in front, and Agents over one search text; ⇥ moves
+ * between them. The app tab lists that app's own things and its menu commands (ADR-050).
+ */
+import "../../styles/launcher.css";
+import { apps } from "../../content/facts";
+const fronts = ["chrome", "slack", "notion"] as const;
+---
+<section class="st" id="filter-tabs" aria-labelledby="st-title" data-st>
+  <div class="wrap grid">
+    <div class="copy">
+      <h2 id="st-title">Narrow it down with one key.</h2>
+      <p class="lede">Press <span class="key">⇥</span> to move between Search, the app you’re in and your agents. The text you typed stays put.</p>
+      <div id="app-in-front" class="front">
+        <p class="front-l" id="st-front-l">The app you’re in</p>
+        <div class="seg" role="radiogroup" aria-labelledby="st-front-l" data-fronts>
+          {fronts.map((a, i) => (
+            <button type="button" role="radio" aria-checked={i === 0 ? "true" : "false"} tabindex={i === 0 ? 0 : -1} data-front={a}>
+              <img src={apps[a].icon} alt="" width="18" height="18" />{apps[a].short}
+            </button>
+          ))}
+        </div>
+        <p class="front-d">Its tab shows only its tabs, pages or channels, plus its own menu commands.</p>
+      </div>
+    </div>
+
+    <div class="lx-box">
+      <div class="lx st-lx" id="st-lx">
+        <div class="lx-head">
+          <div class="lx-field">
+            <label class="visually-hidden" for="st-q">Search, then press Tab to change filter</label>
+            <input class="lx-input" id="st-q" type="text" autocomplete="off" spellcheck="false" role="combobox" aria-controls="st-list" aria-expanded="true" aria-autocomplete="list" aria-describedby="st-hint" />
+            <span class="lx-text" data-text></span><span class="lx-caret" aria-hidden="true"></span><span class="lx-placeholder" data-placeholder>Search anything…</span>
+          </div>
+          <div class="lx-tabs st-tabs" role="tablist" aria-label="Filter">
+            <button type="button" class="lx-tab" role="tab" aria-selected="true" data-tab="search">Search</button>
+            <button type="button" class="lx-tab" role="tab" aria-selected="false" data-tab="app"><img src={apps.chrome.icon} alt="" width="16" height="16" data-tab-icon /><span data-tab-name>Chrome</span></button>
+            <button type="button" class="lx-tab" role="tab" aria-selected="false" data-tab="agents">Agents</button>
+          </div>
+        </div>
+        <div class="lx-rule"></div>
+        <ul class="lx-list" id="st-list" role="listbox" aria-label="Results" data-list></ul>
+        <div class="lx-rule"></div>
+        <div class="lx-foot" aria-hidden="true">
+          <span>Hopper</span>
+          <span class="lx-primary">Open</span><span class="lx-kbd" data-enter>↵</span>
+          <span class="lx-sep"></span>
+          <span>Filter</span><span class="lx-kbd" data-tabkey>⇥</span>
+        </div>
+      </div>
+      <p class="hint" id="st-hint">Type, then press Tab to switch filters. Tab past Agents moves on.</p>
+    </div>
+  </div>
+  <p class="visually-hidden" aria-live="polite" data-st-live></p>
+</section>
+
+<style>
+  .st {
+    padding-block: clamp(5rem, 4rem + 6vw, 9rem);
+    background: var(--white);
+    border-block: 1px solid var(--line);
+  }
+  .grid {
+    display: grid;
+    grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.2fr);
+    gap: 3rem clamp(2rem, 5vw, 5rem);
+    align-items: center;
+  }
+  h2 {
+    max-width: 10ch;
+  }
+  .lede {
+    margin-top: 1.5rem;
+  }
+  .lede .key {
+    font-size: 0.85rem;
+  }
+  .front {
+    margin-top: 2.25rem;
+    scroll-margin-top: 6rem;
+  }
+  .front-l {
+    font-weight: 700;
+    font-size: var(--step--1);
+    margin-bottom: 0.6rem;
+  }
+  .front-d {
+    margin-top: 0.75rem;
+    font-size: var(--step--1);
+    color: var(--ink-2);
+    max-width: 34ch;
+  }
+  .seg {
+    display: inline-flex;
+    flex-wrap: wrap;
+    gap: 0.3rem;
+    padding: 0.3rem;
+    border-radius: 14px;
+    background: var(--paper);
+    border: 1px solid var(--line);
+  }
+  .seg button {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    min-height: 2.25rem;
+    padding: 0 0.8rem;
+    border: 0;
+    border-radius: 10px;
+    background: transparent;
+    font-size: var(--step--1);
+    font-weight: 600;
+    cursor: pointer;
+  }
+  .seg button img {
+    width: 18px;
+    height: 18px;
+  }
+  .seg button[aria-checked="true"] {
+    background: var(--ink);
+    color: var(--white);
+  }
+
+  .lx-box {
+    container-type: inline-size;
+    min-width: 0;
+  }
+  .st-lx {
+    --lx-size: clamp(10px, calc(100cqw / 58.5), 13.5px);
+    width: 100%;
+  }
+  .st-lx .lx-list {
+    height: 25em;
+    overflow-y: auto;
+    scrollbar-width: none;
+  }
+  .st-lx .lx-field {
+    overflow: hidden;
+  }
+  .st-tabs .lx-tab {
+    border: 0;
+    background: transparent;
+    font: inherit;
+    font-size: 0.92em;
+    cursor: pointer;
+  }
+  .st-tabs .lx-tab[aria-selected="true"] {
+    background: rgb(255 255 255 / 0.12);
+    color: #fff;
+    font-weight: 500;
+  }
+  .st-tabs .lx-tab:focus-visible {
+    outline: 2px solid var(--sun);
+    outline-offset: 1px;
+  }
+  .st-lx :global(.lx-row) {
+    cursor: pointer;
+  }
+  .st-lx :global(.menu-ico) {
+    display: grid;
+    place-items: center;
+    width: 1.7em;
+    height: 1.7em;
+    flex: none;
+    border-radius: 0.4em;
+    background: rgb(255 255 255 / 0.1);
+    font-size: 0.85em;
+  }
+  .hint {
+    margin-top: 0.9rem;
+    font-size: var(--step--1);
+    color: var(--ink-2);
+  }
+  @media (max-width: 56rem) {
+    .grid {
+      grid-template-columns: 1fr;
+    }
+    .st-lx {
+      --lx-size: 12px;
+    }
+    .st-lx :global(.lx-sub) {
+      display: none;
+    }
+    .st-lx .lx-field {
+      font-size: 1.3em;
+    }
+  }
+</style>
+
+<script>
+  import { apps, places, agents, appTabs, type Place } from "../../content/facts";
+  import { search, rowHTML, press, escape } from "../../scripts/launcher";
+  import { check, radioKeys } from "../../scripts/controls";
+
+  type Front = keyof typeof appTabs;
+  type Tab = "search" | "app" | "agents";
+  type Row = { kind: "place"; p: Place } | { kind: "menu"; title: string; path: string; keys: string };
+
+  const root = document.querySelector<HTMLElement>("[data-st]");
+  if (root) {
+    const lx = root.querySelector<HTMLElement>("#st-lx")!;
+    const input = lx.querySelector<HTMLInputElement>(".lx-input")!;
+    const text = lx.querySelector<HTMLElement>("[data-text]")!;
+    const placeholder = lx.querySelector<HTMLElement>("[data-placeholder]")!;
+    const list = lx.querySelector<HTMLElement>("[data-list]")!;
+    const tabs = [...lx.querySelectorAll<HTMLButtonElement>("[data-tab]")];
+    const tabIcon = lx.querySelector<HTMLImageElement>("[data-tab-icon]")!;
+    const tabName = lx.querySelector<HTMLElement>("[data-tab-name]")!;
+    const enterKey = lx.querySelector<HTMLElement>("[data-enter]")!;
+    const tabKey = lx.querySelector<HTMLElement>("[data-tabkey]")!;
+    const fronts = [...root.querySelectorAll<HTMLButtonElement>("[data-front]")];
+    const live = root.querySelector<HTMLElement>("[data-st-live]")!;
+    let tab: Tab = "search";
+    let front: Front = "chrome";
+    let rows: Row[] = [];
+    let selected = 0;
+
+    const words = (s: string) => s.toLowerCase().split(/[^a-z0-9#]+/).filter(Boolean);
+    const menuMatch = (title: string, q: string) => {
+      const t = words(q);
+      return !t.length || t.every((x) => words(title).some((w) => w.startsWith(x)));
+    };
+
+    const render = () => {
+      const q = input.value;
+      text.textContent = q;
+      placeholder.hidden = q.length > 0;
+      let html = "";
+      if (tab === "search") {
+        rows = search(places, q).slice(0, 8).map((p) => ({ kind: "place", p }));
+        html = section(q ? "Results" : "Recent") + rows.map((r, i) => rowOf(r, i)).join("");
+      } else if (tab === "agents") {
+        rows = search(agents, q).map((p) => ({ kind: "place", p }));
+        html = section("Agents") + rows.map((r, i) => rowOf(r, i)).join("");
+      } else {
+        const own: Row[] = search(appTabs[front].places, q).map((p) => ({ kind: "place", p }));
+        const menus: Row[] = appTabs[front].menus.filter(([t]) => menuMatch(t, q)).map(([title, path, keys]) => ({ kind: "menu", title, path, keys }));
+        rows = [...own, ...menus];
+        html =
+          (own.length ? section(apps[front].short) + own.map((r, i) => rowOf(r, i)).join("") : "") +
+          (menus.length ? section("Menu Commands") + menus.map((r, i) => rowOf(r, own.length + i)).join("") : "");
+      }
+      selected = 0;
+      list.innerHTML = rows.length ? html : `<li class="lx-empty" role="presentation">Nothing here for that. Press Tab to look in another filter.</li>`;
+      sync();
+    };
+    const section = (t: string) => `<li class="lx-section" role="presentation">${escape(t)}</li>`;
+    const rowOf = (r: Row, i: number) =>
+      r.kind === "place"
+        ? rowHTML(r.p, i === 0, "st")
+        : `<li class="lx-row" role="option" id="st-m-${i}" data-i="${i}" aria-selected="${i === 0}">
+            <span class="menu-ico" aria-hidden="true">⌘</span>
+            <span class="lx-title">${escape(r.title)}</span>
+            <span class="lx-sub">${escape(r.path)}</span>
+            <span class="lx-acc"><span>${escape(r.keys)}</span></span>
+          </li>`;
+    const rowEls = () => [...list.querySelectorAll<HTMLElement>(".lx-row")];
+    const sync = () => {
+      const els = rowEls();
+      els.forEach((r, i) => r.setAttribute("aria-selected", String(i === selected)));
+      if (els[selected]) input.setAttribute("aria-activedescendant", els[selected].id);
+      else input.removeAttribute("aria-activedescendant");
+    };
+    const setTab = (t: Tab, say = true) => {
+      tab = t;
+      tabs.forEach((b) => b.setAttribute("aria-selected", String(b.dataset.tab === t)));
+      render();
+      if (say) live.textContent = `${t === "app" ? apps[front].short : t === "agents" ? "Agents" : "Search"} filter, ${rows.length} result${rows.length === 1 ? "" : "s"}.`;
+    };
+    const setFront = (f: Front) => {
+      front = f;
+      check(fronts, (b) => b.dataset.front === f);
+      tabIcon.src = apps[f].icon;
+      tabName.textContent = apps[f].short;
+      setTab("app");
+    };
+    const open = () => {
+      const r = rows[selected];
+      if (!r) return;
+      press(enterKey);
+      live.textContent = r.kind === "place" ? `Opened ${r.p.title} in ${apps[r.p.app].name}.` : `Chose ${r.path} ▸ ${r.title} in ${apps[front].name}.`;
+    };
+
+    const order: Tab[] = ["search", "app", "agents"];
+    input.addEventListener("input", render);
+    input.addEventListener("keydown", (e) => {
+      if (e.key === "Tab") {
+        // ⇥ / ⇧⇥ move between filters; past the last (or first) one, focus moves on as usual.
+        const i = order.indexOf(tab) + (e.shiftKey ? -1 : 1);
+        if (i < 0 || i >= order.length) return;
+        e.preventDefault();
+        press(tabKey);
+        setTab(order[i]);
+      } else if (e.key === "ArrowDown" || e.key === "ArrowUp") {
+        e.preventDefault();
+        if (!rows.length) return;
+        selected = (selected + (e.key === "ArrowDown" ? 1 : -1) + rows.length) % rows.length;
+        sync();
+      } else if (e.key === "Enter") {
+        e.preventDefault();
+        open();
+      } else if (e.key === "Escape") {
+        input.value = "";
+        render();
+      }
+    });
+    tabs.forEach((b) => b.addEventListener("click", () => setTab(b.dataset.tab as Tab)));
+    list.addEventListener("pointerdown", (e) => {
+      const row = (e.target as Element).closest<HTMLElement>(".lx-row");
+      if (!row) return;
+      e.preventDefault();
+      input.focus({ preventScroll: true });
+      selected = rowEls().indexOf(row);
+      sync();
+      open();
+    });
+    fronts.forEach((b) => b.addEventListener("click", () => setFront(b.dataset.front as Front)));
+    root.querySelector<HTMLElement>("[data-fronts]")!.addEventListener("keydown", (e) => radioKeys(e, fronts));
+    render();
+  }
+</script>

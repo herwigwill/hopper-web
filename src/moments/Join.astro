@@ -1,0 +1,53 @@
+---
+import WaitlistForm from "../components/WaitlistForm.astro";
+import { site } from "../content/facts";
+---
+<section class="join on-blue" id="join" aria-labelledby="join-title">
+  <div class="wrap grid">
+    <div>
+      <h2 id="join-title">Be the first to try Hopper.</h2>
+      <p class="sub">Hopper is in private testing now. Join the waitlist and we’ll send you a build when it’s ready.</p>
+    </div>
+    <div class="form">
+      <p class="press" aria-hidden="true"><span class="keys"><span class="key">{site.shortcut[0]}</span><span class="key">{site.shortcut[1]}</span></span></p>
+      <WaitlistForm id="join-join" tone="blue" />
+    </div>
+  </div>
+</section>
+
+<style>
+  .join {
+    background: var(--blue);
+    color: var(--white);
+    padding-block: clamp(5rem, 4rem + 6vw, 9rem);
+    margin-bottom: 0;
+  }
+  .grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    gap: 2.5rem clamp(2rem, 6vw, 6rem);
+    align-items: end;
+  }
+  h2 {
+    font-size: var(--step-4);
+    max-width: 9ch;
+  }
+  .sub {
+    margin-top: 1.5rem;
+    max-width: 34ch;
+    font-size: var(--step-1);
+    line-height: 1.45;
+    color: rgb(255 255 255 / 0.86);
+  }
+  .press {
+    margin-bottom: 1.25rem;
+  }
+  .press .key {
+    font-size: 1.1rem;
+  }
+  @media (max-width: 56rem) {
+    .grid {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

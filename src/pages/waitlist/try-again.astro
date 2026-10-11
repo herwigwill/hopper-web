@@ -1,0 +1,15 @@
+---
+import Base from "../../layouts/Base.astro";
+---
+<Base title="Try again · Hopper" path="/waitlist/try-again" noindex>
+  <section class="wrap msg">
+    <h1>That didn’t go through.</h1>
+    <p>Check that your email address looks like name@example.com and try again. If it keeps happening, wait a few minutes: sign-ups may be paused for a moment.</p>
+    <a href="/#join">Back to the waitlist</a>
+  </section>
+</Base>
+<style>
+  .msg { padding-block: 6rem 8rem; display: grid; gap: 1.25rem; justify-items: start; }
+  h1 { font-size: var(--step-3); }
+  p { font-size: var(--step-1); color: var(--ink-2); max-width: 44ch; }
+</style>

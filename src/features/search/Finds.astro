@@ -1,0 +1,380 @@
+---
+/** Files & folders (Spotlight, per query) and Settings search (ADR-049): two more things one search box finds. */
+import "../../styles/launcher.css";
+import { settingsPages } from "../../content/facts";
+---
+<section class="sf" aria-labelledby="sf-title" data-sf>
+  <div class="wrap">
+    <h2 id="sf-title">Files and settings, from the same box.</h2>
+
+    <div class="cards">
+      <article class="card" id="files" aria-labelledby="sf-files">
+        <h3 id="sf-files">Files and folders</h3>
+        <p class="line">Documents, folders and downloads come up next to everything else, found the way Spotlight finds them.</p>
+        <div class="lx mini">
+          <div class="lx-head">
+            <div class="lx-field">
+              <label class="visually-hidden" for="sf-fq">Search files</label>
+              <input class="lx-input" id="sf-fq" type="text" value="invoice" autocomplete="off" spellcheck="false" data-fq />
+              <span class="lx-text" data-ftext>invoice</span><span class="lx-caret" aria-hidden="true"></span>
+            </div>
+          </div>
+          <div class="lx-rule"></div>
+          <ul class="lx-list" aria-label="Files" data-flist></ul>
+        </div>
+      </article>
+
+      <article class="card" id="settings-search" aria-labelledby="sf-settings">
+        <h3 id="sf-settings">Every setting, by name</h3>
+        <p class="line">Search finds any setting on any page. Pick one and Settings opens right on it.</p>
+        <div class="settings" data-settings>
+          <aside>
+            <label class="visually-hidden" for="sf-sq">Search settings</label>
+            <input id="sf-sq" type="search" placeholder="Search settings" value="gap" autocomplete="off" data-sq />
+            <ul data-pages>
+              {settingsPages.map((p, i) => <li><button type="button" data-page={p.page} aria-current={i === 2 ? "page" : undefined}>{p.page}</button></li>)}
+            </ul>
+          </aside>
+          <div class="pane">
+            <ul class="hits" aria-label="Matching settings" data-hits></ul>
+            <div class="page" data-page-view></div>
+          </div>
+        </div>
+        <p class="out" role="status" data-sf-out></p>
+      </article>
+    </div>
+  </div>
+</section>
+
+<style>
+  .sf {
+    padding-block: clamp(5rem, 4rem + 6vw, 9rem);
+  }
+  h2 {
+    max-width: 14ch;
+  }
+  .cards {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 1.25rem;
+    margin-top: clamp(2.5rem, 2rem + 2vw, 4rem);
+  }
+  .card {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    padding: clamp(1.25rem, 2vw, 1.75rem);
+    border-radius: 22px;
+    background: var(--white);
+    border: 1px solid var(--line);
+    scroll-margin-top: 6rem;
+    min-width: 0;
+  }
+  h3 {
+    font-family: var(--display);
+    font-stretch: 85%;
+    font-weight: 800;
+    font-size: var(--step-2);
+    line-height: 1;
+  }
+  .line {
+    color: var(--ink-2);
+    max-width: 46ch;
+  }
+  .mini {
+    --lx-size: 13px;
+    width: 100%;
+  }
+  .mini .lx-list {
+    height: 19em;
+  }
+  .mini :global(.lx-row.sel) {
+    background: rgb(255 255 255 / 0.11);
+  }
+  .mini :global(.f-ico) {
+    display: grid;
+    place-items: center;
+    width: 1.7em;
+    height: 1.7em;
+    flex: none;
+    color: #b9c4ff;
+  }
+  .mini :global(.f-ico svg) {
+    width: 100%;
+    height: 100%;
+  }
+
+  .settings {
+    display: grid;
+    grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.4fr);
+    min-height: 19rem;
+    border-radius: 12px;
+    overflow: hidden;
+    border: 1px solid var(--line);
+    font-family: var(--mac);
+    font-size: 0.85rem;
+  }
+  .settings aside {
+    padding: 0.75rem 0.5rem;
+    background: #f2f2f5;
+    border-right: 1px solid var(--line);
+  }
+  .settings input {
+    width: 100%;
+    min-height: 2rem;
+    padding: 0 0.6rem;
+    margin-bottom: 0.6rem;
+    border-radius: 7px;
+    border: 1px solid #d5d7e2;
+    background: #fff;
+    font: inherit;
+  }
+  .settings input:focus-visible {
+    outline: 2px solid var(--blue);
+    outline-offset: 1px;
+  }
+  .settings ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+  [data-pages] button {
+    display: block;
+    width: 100%;
+    padding: 0.35rem 0.6rem;
+    border: 0;
+    border-radius: 6px;
+    background: transparent;
+    font: inherit;
+    text-align: left;
+    color: #3a3d55;
+    cursor: pointer;
+  }
+  [data-pages] button[aria-current="page"] {
+    background: var(--blue);
+    color: #fff;
+  }
+  .pane {
+    padding: 0.75rem;
+    min-width: 0;
+  }
+  .hits :global(button) {
+    display: flex;
+    justify-content: space-between;
+    gap: 0.5rem;
+    width: 100%;
+    padding: 0.45rem 0.6rem;
+    border: 0;
+    border-radius: 6px;
+    background: transparent;
+    font: inherit;
+    text-align: left;
+    cursor: pointer;
+  }
+  .hits :global(button:hover),
+  .hits :global(li:first-child button) {
+    background: var(--blue-soft);
+  }
+  .hits :global(small) {
+    color: var(--ink-2);
+    white-space: nowrap;
+  }
+  .hits :global(.none) {
+    padding: 0.45rem 0.6rem;
+    color: var(--ink-2);
+  }
+  .page :global(h4) {
+    margin: 0.25rem 0 0.6rem;
+    font-size: 1rem;
+  }
+  .page :global(p) {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 0.75rem;
+    min-height: 2.6rem;
+    padding: 0.4rem 0.6rem;
+    border-bottom: 1px solid #ececf2;
+    border-radius: 6px;
+  }
+  .page :global(.nm) {
+    min-width: 0;
+  }
+  /* Controls, drawn like macOS's: a switch, a pop-up button, a push button. */
+  .page :global(.tg) {
+    position: relative;
+    flex: none;
+    width: 2.1rem;
+    height: 1.25rem;
+    padding: 0;
+    border: 0;
+    border-radius: 1rem;
+    background: #d5d7e2;
+    cursor: pointer;
+    transition: background 180ms ease;
+  }
+  .page :global(.tg::after) {
+    content: "";
+    position: absolute;
+    top: 0.125rem;
+    left: 0.125rem;
+    width: 1rem;
+    height: 1rem;
+    border-radius: 50%;
+    background: #fff;
+    box-shadow: 0 1px 2px rgb(0 0 0 / 0.25);
+    transition: transform 220ms var(--ease-hop);
+  }
+  .page :global(.tg[aria-checked="true"]) {
+    background: var(--blue);
+  }
+  .page :global(.tg[aria-checked="true"]::after) {
+    transform: translateX(0.85rem);
+  }
+  .page :global(.pop),
+  .page :global(.act) {
+    flex: none;
+    max-width: 55%;
+    padding: 0.15rem 0.55rem;
+    border-radius: 6px;
+    background: #fff;
+    box-shadow: 0 0 0 0.5px rgb(0 0 0 / 0.18), 0 1px 1.5px rgb(0 0 0 / 0.1);
+    font-size: 0.8rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .page :global(.pop::after) {
+    content: "⌄";
+    margin-left: 0.4rem;
+    color: var(--ink-2);
+  }
+  .page :global(p.lit) {
+    background: #fff4cc;
+    animation: lit 1.4s ease;
+  }
+  @keyframes lit {
+    0% { background: var(--sun); }
+  }
+  .out {
+    min-height: 1.5em;
+    font-size: var(--step--1);
+    font-weight: 600;
+    color: var(--blue-deep);
+  }
+  @media (max-width: 60rem) {
+    .cards {
+      grid-template-columns: 1fr;
+    }
+  }
+  @media (max-width: 30rem) {
+    .mini :global(.lx-sub) {
+      display: none;
+    }
+    .settings {
+      grid-template-columns: 1fr;
+    }
+    .settings aside {
+      border-right: 0;
+      border-bottom: 1px solid var(--line);
+    }
+    [data-pages] {
+      display: none;
+    }
+  }
+</style>
+
+<script>
+  import { demoFiles, settingControls, settingsPages } from "../../content/facts";
+  import { escape } from "../../scripts/launcher";
+
+  const root = document.querySelector<HTMLElement>("[data-sf]");
+  if (root) {
+    const words = (s: string) => s.toLowerCase().split(/[^a-z0-9]+/).filter(Boolean);
+    const matches = (title: string, q: string) => words(q).every((t) => words(title).some((w) => w.startsWith(t)));
+
+    /* Files */
+    const fq = root.querySelector<HTMLInputElement>("[data-fq]")!;
+    const ftext = root.querySelector<HTMLElement>("[data-ftext]")!;
+    const flist = root.querySelector<HTMLElement>("[data-flist]")!;
+    const doc = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"><path d="M6 3h8l4 4v14H6z"/><path d="M14 3v4h4"/></svg>`;
+    const folder = `<svg viewBox="0 0 24 24" fill="currentColor" opacity=".9"><path d="M3 6.5A1.5 1.5 0 0 1 4.5 5H9l2 2h8.5A1.5 1.5 0 0 1 21 8.5v9a1.5 1.5 0 0 1-1.5 1.5h-15A1.5 1.5 0 0 1 3 17.5z"/></svg>`;
+    const renderFiles = () => {
+      const q = fq.value;
+      ftext.textContent = q;
+      const hits = q.trim() ? demoFiles.filter((f) => matches(f.name, q)) : demoFiles.slice(0, 6);
+      flist.innerHTML =
+        `<li class="lx-section">${q.trim() ? "Files" : "Recent Files"}</li>` +
+        (hits.length
+          ? hits
+              .map(
+                (f, i) => `<li class="lx-row${i === 0 ? " sel" : ""}"><span class="f-ico">${f.kind === "Folder" ? folder : doc}</span>
+                  <span class="lx-title">${escape(f.name)}</span><span class="lx-sub">${escape(f.where)}</span><span class="lx-acc"><span>${f.kind}</span></span></li>`,
+              )
+              .join("")
+          : `<li class="lx-empty">No file by that name. Try “launch” or “pdf”.</li>`);
+    };
+    fq.addEventListener("input", renderFiles);
+    renderFiles();
+
+    /* Settings search */
+    const sq = root.querySelector<HTMLInputElement>("[data-sq]")!;
+    const hits = root.querySelector<HTMLElement>("[data-hits]")!;
+    const view = root.querySelector<HTMLElement>("[data-page-view]")!;
+    const out = root.querySelector<HTMLElement>("[data-sf-out]")!;
+    const pageBtns = [...root.querySelectorAll<HTMLButtonElement>("[data-page]")];
+    const all = settingsPages.flatMap((p) => p.rows.map((row) => ({ page: p.page, row })));
+    let found: typeof all = [];
+
+    // Switches keep what you set as you move between pages.
+    const on = new Map(Object.entries(settingControls).flatMap(([k, c]) => ("toggle" in c ? [[k, c.toggle] as const] : [])));
+    const control = (r: string) => {
+      const c = settingControls[r];
+      if (!c) return "";
+      if ("toggle" in c) return `<button type="button" class="tg" role="switch" aria-checked="${on.get(r)}" aria-label="${escape(r)}" data-tg="${escape(r)}"></button>`;
+      if ("choice" in c) return `<span class="pop">${escape(c.choice)}</span>`;
+      return `<span class="act">${escape(c.action)}</span>`;
+    };
+    const showPage = (page: string, lit?: string) => {
+      const p = settingsPages.find((x) => x.page === page)!;
+      pageBtns.forEach((b) => (b.dataset.page === page ? b.setAttribute("aria-current", "page") : b.removeAttribute("aria-current")));
+      view.innerHTML = `<h4>${escape(page)}</h4>` + p.rows.map((r) => `<p class="${r === lit ? "lit" : ""}"><span class="nm">${escape(r)}</span>${control(r)}</p>`).join("");
+    };
+    view.addEventListener("click", (e) => {
+      const b = (e.target as Element).closest<HTMLButtonElement>("[data-tg]");
+      if (!b) return;
+      const v = !on.get(b.dataset.tg!);
+      on.set(b.dataset.tg!, v);
+      b.setAttribute("aria-checked", String(v));
+    });
+    const renderHits = () => {
+      const q = sq.value.trim();
+      found = q ? all.filter((s) => matches(`${s.row} ${s.page}`, q)) : [];
+      hits.innerHTML = q
+        ? found.length
+          ? found.slice(0, 4).map((s, i) => `<li><button type="button" data-hit="${i}"><span>${escape(s.row)}</span><small>${escape(s.page)}</small></button></li>`).join("")
+          : `<li class="none">No setting called that.</li>`
+        : "";
+    };
+    const go = (i: number) => {
+      const s = found[i];
+      if (!s) return;
+      showPage(s.page, s.row);
+      out.textContent = `Opened ${s.page} and highlighted ${s.row}.`;
+    };
+    sq.addEventListener("input", renderHits);
+    sq.addEventListener("keydown", (e) => {
+      if (e.key === "Enter") {
+        e.preventDefault();
+        go(0);
+      }
+    });
+    hits.addEventListener("click", (e) => {
+      const b = (e.target as Element).closest<HTMLButtonElement>("[data-hit]");
+      if (b) go(Number(b.dataset.hit));
+    });
+    pageBtns.forEach((b) => b.addEventListener("click", () => showPage(b.dataset.page!)));
+    renderHits();
+    showPage("Window Management");
+  }
+</script>

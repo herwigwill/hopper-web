@@ -1,0 +1,78 @@
+---
+/** The blog: newest post big, the rest in a grid. Posts live in src/content/blog. */
+import Base from "../../layouts/Base.astro";
+import PostCard from "../../components/blog/PostCard.astro";
+import Join from "../../moments/Join.astro";
+import { getPosts, blogJsonLd, ldJson } from "../../lib/blog";
+
+const posts = await getPosts();
+const [latest, ...rest] = posts;
+---
+<Base title="Blog · Hopper" description="How to get around your Mac faster: guides to search, navigation, coding agents and window management, from the team building Hopper." path="/blog">
+  <script slot="head" type="application/ld+json" is:inline set:html={ldJson(blogJsonLd(posts))} />
+
+  <section class="bl">
+    <div class="wrap">
+      <div class="intro">
+        <h1>Notes on never losing your&nbsp;place.</h1>
+        <p class="lede">Guides and ideas for getting around your Mac faster, from the team building Hopper. <a href="/rss.xml">RSS</a></p>
+      </div>
+
+      {latest && <div class="lead"><PostCard post={latest} big headingLevel={2} /></div>}
+
+      {rest.length > 0 && (
+        <ul class="grid" aria-label="More posts">
+          {rest.map((p) => <li><PostCard post={p} headingLevel={2} /></li>)}
+        </ul>
+      )}
+    </div>
+  </section>
+
+  <Join />
+</Base>
+
+<style>
+  .bl {
+    padding-block: clamp(1.5rem, 1rem + 2.5vw, 3.5rem) clamp(4rem, 3rem + 5vw, 8rem);
+  }
+  .intro {
+    display: grid;
+    grid-template-columns: minmax(0, 1.3fr) minmax(0, 1fr);
+    gap: 1.5rem clamp(2rem, 5vw, 5rem);
+    align-items: end;
+  }
+  h1 {
+    max-width: 12ch;
+    font-size: clamp(2.75rem, 1.6rem + 4.4vw, 5.5rem);
+  }
+  .lede {
+    padding-bottom: 0.5rem;
+  }
+  .lede a {
+    color: var(--blue);
+    font-weight: 600;
+  }
+  .lead {
+    margin-top: clamp(2.5rem, 2rem + 3vw, 4.5rem);
+    padding-bottom: clamp(2.5rem, 2rem + 3vw, 4.5rem);
+    border-bottom: 1px solid var(--line);
+  }
+  .grid {
+    list-style: none;
+    margin: clamp(2.5rem, 2rem + 3vw, 4.5rem) 0 0;
+    padding: 0;
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: clamp(2.5rem, 4vw, 4rem) clamp(1.5rem, 3vw, 2.5rem);
+  }
+  @media (max-width: 56rem) {
+    .intro {
+      grid-template-columns: 1fr;
+    }
+  }
+  @media (max-width: 40rem) {
+    .grid {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

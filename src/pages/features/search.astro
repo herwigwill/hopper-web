@@ -1,0 +1,21 @@
+---
+import Base from "../../layouts/Base.astro";
+import SearchHero from "../../features/search/SearchHero.astro";
+import Tabs from "../../features/search/Tabs.astro";
+import Finds from "../../features/search/Finds.astro";
+import Sources from "../../features/search/Sources.astro";
+import MoreFeatures from "../../features/MoreFeatures.astro";
+import Join from "../../moments/Join.astro";
+---
+<Base
+  title="Search · Hopper"
+  description="Hopper finds the tab, doc, chat or coding session you had open, from 28 places on your Mac. Filter by the app you’re in, find files and settings, and keep personal sources off until you want them."
+  path="/features/search"
+>
+  <SearchHero />
+  <Tabs />
+  <Finds />
+  <Sources />
+  <MoreFeatures current="search" />
+  <Join />
+</Base>

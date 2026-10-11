@@ -1,0 +1,99 @@
+---
+/** A plain feature page: breadcrumb, headline, one line, then a list of points. For features that need no demo. */
+interface Props {
+  crumb: string;
+  title: string;
+  lede: string;
+  points: { id?: string; title: string; text: string }[];
+}
+const { crumb, title, lede, points } = Astro.props;
+---
+<section class="np">
+  <div class="wrap">
+    <nav class="crumbs" aria-label="Breadcrumb">
+      <a href="/features">Features</a><span aria-hidden="true">/</span><span aria-current="page">{crumb}</span>
+    </nav>
+    <div class="intro">
+      <h1 set:html={title} />
+      <p class="lede">{lede}</p>
+    </div>
+    <ul class="points">
+      {points.map((p) => (
+        <li id={p.id}>
+          <h2>{p.title}</h2>
+          <p set:html={p.text} />
+        </li>
+      ))}
+    </ul>
+    <slot />
+  </div>
+</section>
+
+<style>
+  .np {
+    padding-block: clamp(1.5rem, 1rem + 2.5vw, 3.5rem) clamp(4rem, 3rem + 5vw, 7rem);
+  }
+  .crumbs {
+    display: flex;
+    gap: 0.6rem;
+    font-size: var(--step--1);
+    font-weight: 600;
+    color: var(--ink-2);
+  }
+  .crumbs a {
+    color: var(--blue);
+    text-decoration: none;
+  }
+  .intro {
+    display: grid;
+    grid-template-columns: minmax(0, 1.3fr) minmax(0, 1fr);
+    gap: 1.5rem clamp(2rem, 5vw, 5rem);
+    align-items: end;
+    margin-top: 1.5rem;
+  }
+  h1 {
+    max-width: 11ch;
+    font-size: clamp(2.75rem, 1.6rem + 4.4vw, 5.5rem);
+  }
+  .points {
+    list-style: none;
+    margin: clamp(2.5rem, 2rem + 2vw, 4rem) 0 0;
+    padding: 0;
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 1.25rem;
+  }
+  .points li {
+    padding: clamp(1.25rem, 2vw, 1.6rem);
+    border-radius: 22px;
+    background: var(--white);
+    border: 1px solid var(--line);
+    scroll-margin-top: 6rem;
+  }
+  h2 {
+    font-size: var(--step-1);
+    line-height: 1.15;
+  }
+  .points p {
+    margin-top: 0.6rem;
+    color: var(--ink-2);
+    font-size: var(--step--1);
+  }
+  .points :global(a) {
+    color: var(--blue);
+    font-weight: 600;
+  }
+  @media (max-width: 60rem) {
+    .intro {
+      grid-template-columns: 1fr;
+    }
+    .points {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+  @media (max-width: 36rem) {
+    .points {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

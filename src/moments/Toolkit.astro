@@ -1,0 +1,403 @@
+---
+/**
+ * The rest of the launcher as one run of type, each feature followed by a tiny live illustration of it working.
+ * Every feature here is built in Hopper today (STATUS.md). The illustrations are pure CSS and pause off-screen.
+ */
+---
+<section class="toolkit" aria-labelledby="toolkit-title" data-toolkit>
+  <div class="wrap grid">
+    <div class="head">
+      <h2 id="toolkit-title">And everything you’d want from <span class="hl">spotlight search</span>.</h2>
+      <p class="aside">Coming from Rectangle, Magnet or Spectacle? Hopper can import your window shortcuts.</p>
+    </div>
+    <ul class="run">
+      <li>
+        <span class="label">Snap windows</span>
+        <span class="w w-snap" aria-hidden="true"><i></i></span>
+      </li>
+      <li>
+        <span class="label">clipboard history</span>
+        <span class="w w-clip" aria-hidden="true"><i></i><i></i><i></i></span>
+      </li>
+      <li>
+        <span class="label">snippets that type themselves</span>
+        <span class="w w-swap w-snip" aria-hidden="true"><b>;thx</b><b>Thanks!</b></span>
+      </li>
+      <li>
+        <span class="label">quicklinks</span>
+        <span class="w w-swap w-link" aria-hidden="true"><b>gh</b><b>github.com</b></span>
+      </li>
+      <li>
+        <span class="label">scratch notes</span>
+        <span class="w w-note" aria-hidden="true"><i></i><i></i><i></i></span>
+      </li>
+      <li>
+        <span class="label">emoji</span>
+        <span class="w w-emoji" aria-hidden="true"><span><b>🫡</b><b>🖖</b><b>❤️</b><b>✨</b><b>🫡</b></span></span>
+      </li>
+      <li>
+        <span class="label">text inside your screenshots</span>
+        <span class="w w-shot" aria-hidden="true"><i></i><i></i><i></i></span>
+      </li>
+      <li>
+        <span class="label">your apps’ own menus</span>
+        <span class="w w-menu" aria-hidden="true"><i></i><i></i><i></i><i></i></span>
+      </li>
+      <li>
+        <span class="label">and a calculator that knows units</span>
+        <span class="w w-swap w-calc" aria-hidden="true"><b>5 km</b><b>3.11 mi</b></span>
+      </li>
+    </ul>
+  </div>
+</section>
+
+<style>
+  .toolkit {
+    padding-block: clamp(5rem, 4rem + 6vw, 9rem);
+  }
+  .grid {
+    display: grid;
+    grid-template-columns: minmax(0, 0.75fr) minmax(0, 1.5fr);
+    gap: 2.5rem clamp(2rem, 5vw, 5rem);
+    align-items: start;
+  }
+  h2 {
+    max-width: 10ch;
+  }
+  /* The highlighter: a sun-yellow stroke swipes in behind the words the first time the section comes into view. */
+  .hl {
+    padding: 0 0.08em;
+    margin: 0 -0.08em;
+    background: linear-gradient(var(--sun), var(--sun)) no-repeat 0 82% / 0% 0.5em;
+    box-decoration-break: clone;
+    -webkit-box-decoration-break: clone;
+    transition: background-size 900ms var(--ease-out) 150ms;
+  }
+  .toolkit.seen .hl {
+    background-size: 100% 0.5em;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .hl {
+      background-size: 100% 0.5em;
+    }
+  }
+  .run {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.4em 0.5em;
+    font-family: var(--display);
+    font-size: clamp(1.5rem, 1rem + 1.9vw, 2.75rem);
+    font-weight: 400;
+    font-stretch: 72%;
+    line-height: 1.2;
+    letter-spacing: -0.01em;
+    color: var(--ink-2);
+  }
+  .run li {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.28em;
+    white-space: nowrap;
+    transition: color 300ms ease;
+  }
+  .run li:not(:last-child)::after {
+    content: ",";
+    margin-left: -0.2em;
+  }
+  /* The feature in the spotlight: full ink, with a highlighter stroke behind it. */
+  .label {
+    background: linear-gradient(var(--sun), var(--sun)) no-repeat 0 88% / 0% 0.42em;
+    transition: background-size 500ms var(--ease-out);
+  }
+  .run li.on {
+    color: var(--ink);
+  }
+  .run li.on .label {
+    background-size: 100% 0.42em;
+  }
+  .run li.on .w {
+    transform: scale(1.12) rotate(-2deg);
+  }
+  .w {
+    transition: transform 400ms var(--ease-hop);
+  }
+  .aside {
+    margin-top: 1.5rem;
+    max-width: 30ch;
+    color: var(--ink-2);
+  }
+  @media (max-width: 56rem) {
+    .grid {
+      grid-template-columns: 1fr;
+    }
+    h2 {
+      max-width: 14ch;
+    }
+  }
+
+  /* Shared: a small live tile, sized in em of the line so it scales with the type. */
+  .w {
+    position: relative;
+    display: inline-block;
+    flex: none;
+    height: 0.95em;
+    border-radius: 0.2em;
+    vertical-align: middle;
+    font-family: var(--mac);
+    font-stretch: 100%;
+    overflow: hidden;
+  }
+  .w i,
+  .w b {
+    position: absolute;
+    display: block;
+  }
+  .paused .w,
+  .paused .w * {
+    animation-play-state: paused !important;
+  }
+
+  /* Snap windows: a window snaps left, right, then fills the screen. */
+  .w-snap {
+    width: 1.55em;
+    background: var(--blue-soft);
+    box-shadow: inset 0 0 0 0.05em #b9bff5;
+  }
+  .w-snap i {
+    top: 0.1em;
+    bottom: 0.1em;
+    left: 0.1em;
+    width: calc(50% - 0.13em);
+    border-radius: 0.1em;
+    background: var(--blue);
+    animation: snap 4.8s var(--ease-hop) infinite;
+  }
+  @keyframes snap {
+    0%, 22% { left: 0.1em; width: calc(50% - 0.13em); }
+    33%, 55% { left: calc(50% + 0.03em); width: calc(50% - 0.13em); }
+    66%, 88% { left: 0.1em; width: calc(100% - 0.2em); }
+    100% { left: 0.1em; width: calc(50% - 0.13em); }
+  }
+
+  /* Clipboard history: copies stack up, newest on top. */
+  .w-clip {
+    width: 1.2em;
+  }
+  .w-clip i {
+    left: 0.05em;
+    right: 0.05em;
+    height: 0.26em;
+    border-radius: 0.07em;
+    background: var(--ink);
+    animation: clip 3.6s ease-in-out infinite;
+  }
+  .w-clip i:nth-child(1) { top: 0.04em; background: var(--blue); }
+  .w-clip i:nth-child(2) { top: 0.35em; background: #8a91c7; animation-delay: -1.2s; }
+  .w-clip i:nth-child(3) { top: 0.66em; background: #c8cce6; animation-delay: -2.4s; }
+  @keyframes clip {
+    0%, 80%, 100% { transform: none; }
+    88% { transform: translateX(0.12em); }
+  }
+
+  /* Swaps: what you type, then what it becomes. */
+  .w-swap {
+    height: 1.05em;
+    padding: 0 0.3em;
+    background: var(--night);
+    color: var(--white);
+    font-size: 0.5em;
+    line-height: 1.05em;
+    height: 1.9em;
+    line-height: 1.9em;
+    border-radius: 0.4em;
+  }
+  .w-swap {
+    display: inline-grid;
+  }
+  .w-swap b {
+    grid-area: 1 / 1;
+    position: relative;
+    display: block;
+    font-weight: 500;
+    font-family: ui-monospace, "SF Mono", Menlo, monospace;
+    letter-spacing: 0;
+    padding: 0 0.15em;
+    animation: swap-a 4s steps(1) infinite;
+  }
+  .w-swap b + b {
+    color: var(--sun);
+    animation-name: swap-b;
+  }
+  @keyframes swap-a {
+    0% { opacity: 1; }
+    50% { opacity: 0; }
+  }
+  @keyframes swap-b {
+    0% { opacity: 0; }
+    50% { opacity: 1; }
+  }
+  .w-link {
+    background: var(--blue);
+  }
+  .w-link b + b {
+    color: var(--white);
+  }
+  .w-calc {
+    background: var(--ink);
+  }
+
+  /* Scratch notes: a note fills in, line by line. */
+  .w-note {
+    width: 0.95em;
+    background: #ffe27a;
+    border-radius: 0.12em;
+    box-shadow: 0 0.06em 0.12em rgb(18 24 51 / 0.2);
+    transform: rotate(-4deg);
+  }
+  .w-note i {
+    left: 0.14em;
+    height: 0.07em;
+    border-radius: 0.04em;
+    background: #8a6a00;
+    transform-origin: left;
+    animation: write 3.6s ease-out infinite;
+  }
+  .w-note i:nth-child(1) { top: 0.22em; width: 0.6em; }
+  .w-note i:nth-child(2) { top: 0.42em; width: 0.5em; animation-delay: 0.4s; }
+  .w-note i:nth-child(3) { top: 0.62em; width: 0.35em; animation-delay: 0.8s; }
+  @keyframes write {
+    0% { transform: scaleX(0); }
+    25%, 85% { transform: scaleX(1); }
+    100% { transform: scaleX(1); opacity: 1; }
+  }
+
+  /* Emoji: a picker flicks through to the one you meant. */
+  .w-emoji {
+    width: 1em;
+    height: 1em;
+    font-size: 0.95em;
+  }
+  .w-emoji > span {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    animation: flick 6s var(--ease-hop) infinite;
+  }
+  .w-emoji b {
+    position: static;
+    height: 1em;
+    line-height: 1em;
+    text-align: center;
+    font-weight: 400;
+  }
+  @keyframes flick {
+    0%, 20% { transform: translateY(0); }
+    25%, 45% { transform: translateY(-1em); }
+    50%, 70% { transform: translateY(-2em); }
+    75%, 95% { transform: translateY(-3em); }
+    100% { transform: translateY(-4em); }
+  }
+
+  /* Screenshots: a highlight sweeps across the line of text it found. */
+  .w-shot {
+    width: 1.5em;
+    background: var(--white);
+    box-shadow: inset 0 0 0 0.05em var(--line);
+  }
+  .w-shot i {
+    left: 0.15em;
+    height: 0.1em;
+    border-radius: 0.05em;
+    background: #c8cce6;
+  }
+  .w-shot i:nth-child(1) { top: 0.2em; width: 1.1em; }
+  .w-shot i:nth-child(2) { top: 0.42em; width: 0.8em; }
+  .w-shot i:nth-child(3) {
+    top: 0.62em;
+    width: 1em;
+    background: var(--sun);
+    transform-origin: left;
+    animation: sweep 3.2s ease-in-out infinite;
+  }
+  @keyframes sweep {
+    0% { transform: scaleX(0); }
+    40%, 90% { transform: scaleX(1); }
+    100% { transform: scaleX(1); }
+  }
+
+  /* Menus: the highlight steps down to the command. */
+  .w-menu {
+    width: 1.2em;
+    background: var(--white);
+    box-shadow: inset 0 0 0 0.05em var(--line), 0 0.05em 0.15em rgb(18 24 51 / 0.12);
+  }
+  .w-menu i {
+    left: 0.12em;
+    right: 0.12em;
+    height: 0.08em;
+    border-radius: 0.04em;
+    background: #c8cce6;
+  }
+  .w-menu i:nth-child(1) { top: 0.18em; }
+  .w-menu i:nth-child(2) { top: 0.38em; }
+  .w-menu i:nth-child(3) { top: 0.58em; }
+  .w-menu i:nth-child(4) {
+    top: 0.1em;
+    left: 0.06em;
+    right: 0.06em;
+    height: 0.22em;
+    border-radius: 0.06em;
+    background: rgb(43 59 245 / 0.85);
+    mix-blend-mode: multiply;
+    animation: step 3.6s steps(1) infinite;
+  }
+  @keyframes step {
+    0% { transform: translateY(0); }
+    33% { transform: translateY(0.2em); }
+    66% { transform: translateY(0.4em); }
+  }
+
+  @media (max-width: 40rem) {
+    .run li {
+      white-space: normal;
+    }
+  }
+</style>
+
+<script>
+  // Stop the little animations while they're off-screen, and walk a highlighter through the features.
+  const root = document.querySelector<HTMLElement>("[data-toolkit]");
+  if (root) {
+    const items = [...root.querySelectorAll<HTMLElement>(".run li")];
+    const still = matchMedia("(prefers-reduced-motion: reduce)").matches;
+    let i = 0;
+    let timer = 0;
+    let hovering = false;
+    const show = (n: number) => items.forEach((li, k) => li.classList.toggle("on", k === n));
+    const tick = () => {
+      if (!hovering) show((i = (i + 1) % items.length));
+    };
+    root.classList.add("paused");
+    new IntersectionObserver(([e]) => {
+      root.classList.toggle("paused", !e.isIntersecting);
+      if (e.isIntersecting) root.classList.add("seen");
+      clearInterval(timer);
+      if (e.isIntersecting && !still) {
+        show(i);
+        timer = window.setInterval(tick, 2200);
+      }
+    }).observe(root);
+    items.forEach((li, k) => {
+      li.addEventListener("pointerenter", () => {
+        hovering = true;
+        show((i = k));
+      });
+      li.addEventListener("pointerleave", () => (hovering = false));
+    });
+  }
+</script>

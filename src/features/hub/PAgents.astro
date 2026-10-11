@@ -1,0 +1,284 @@
+---
+/**
+ * Hub: Agents. The Agents tab lists Claude Code, Cursor and Codex sessions as they work; Next Agent (⌥⌘], ADR-020/023)
+ * steps through them and shows where each one runs. Only Claude Code reports Needs You (ADR-006).
+ */
+import Launcher from "../../components/Launcher.astro";
+import { agents, apps } from "../../content/facts";
+---
+<section class="pa on-dark" id="agents" aria-labelledby="pa-title" data-pa>
+  <div class="wrap grid">
+    <div class="copy">
+      <p class="kicker">Agents</p>
+      <h2 id="pa-title">All your agents in one list.</h2>
+      <p class="lede">Claude Code, Cursor and Codex sessions show up as they work, wherever they’re running. When Claude Code stops to ask you something, it rises to the top.</p>
+      <button type="button" class="next" data-next>
+        <span class="keys" aria-hidden="true"><span class="key">⌥</span><span class="key">⌘</span><span class="key">]</span></span>
+        <span>Next Agent</span>
+      </button>
+      <a class="cta" href="/features/agents">Explore agents<span aria-hidden="true">→</span></a>
+      <p class="visually-hidden" aria-live="polite" data-pa-live></p>
+    </div>
+
+    <div class="scene" aria-hidden="true">
+      <div class="lx-box">
+        <Launcher id="pa-lx" places={agents} tab="agents" frontApp="terminal" section="Agents" primary="Go to Session" />
+      </div>
+      <div class="where" data-where>
+        <header><img data-where-icon src={apps.claude.icon} alt="" width="20" height="20" /><span data-where-title>api — claude</span></header>
+        <div class="where-body" data-where-body></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .pa {
+    background: var(--night);
+    color: #eef0ff;
+    padding-block: clamp(5rem, 4rem + 6vw, 9rem);
+  }
+  .grid {
+    display: grid;
+    grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.2fr);
+    gap: 3rem clamp(2rem, 5vw, 5rem);
+    align-items: center;
+  }
+  .kicker {
+    font-size: var(--step--1);
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--sun);
+    margin-bottom: 1rem;
+  }
+  h2 {
+    max-width: 10ch;
+    view-transition-name: title-agents;
+  }
+  .cta {
+    display: flex;
+    width: fit-content;
+    align-items: center;
+    gap: 0.6rem;
+    margin-top: 1.25rem;
+    font-weight: 700;
+    color: #fff;
+    text-decoration: none;
+  }
+  .cta span {
+    transition: transform 300ms var(--ease-hop);
+  }
+  .cta:hover {
+    text-decoration: underline;
+    text-underline-offset: 0.3em;
+  }
+  .cta:hover span {
+    transform: translateX(4px);
+  }
+  .lede {
+    margin-top: 1.5rem;
+    color: #b9bfe6;
+  }
+  .next {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin-top: 2rem;
+    padding: 0.5rem 1.1rem 0.5rem 0.5rem;
+    border: 1px solid #3b437a;
+    border-radius: 14px;
+    background: var(--night-2);
+    color: #eef0ff;
+    font-weight: 700;
+    cursor: pointer;
+  }
+  .next:hover {
+    border-color: var(--sun);
+  }
+  .next .key {
+    font-size: 0.85rem;
+  }
+  .scene {
+    position: relative;
+    display: grid;
+    gap: 1rem;
+  }
+  .lx-box {
+    container-type: inline-size;
+    view-transition-name: stage-agents;
+  }
+  .lx-box :global(.lx) {
+    --lx-size: calc(100cqw / 58.5);
+    width: 100%;
+  }
+  .lx-box :global(.lx-list) {
+    height: auto;
+  }
+  .lx-box :global(.lx-row) {
+    cursor: pointer;
+    transition: background 200ms ease;
+  }
+  .where {
+    border-radius: 12px;
+    overflow: hidden;
+    background: #16161a;
+    box-shadow: 0 0 0 0.5px rgb(255 255 255 / 0.12), 0 30px 60px -30px rgb(0 0 0 / 0.8);
+    animation: where-in 380ms var(--ease-hop);
+  }
+  .where.again {
+    animation: where-in-2 380ms var(--ease-hop);
+  }
+  @keyframes where-in {
+    from { opacity: 0.3; transform: translateY(10px) scale(0.98); }
+  }
+  @keyframes where-in-2 {
+    from { opacity: 0.3; transform: translateY(10px) scale(0.98); }
+  }
+  .where header {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 0.4rem;
+    height: 2rem;
+    background: #26262b;
+    font: 0.75rem var(--mac);
+    color: #b8b8c0;
+  }
+  .where header img {
+    width: 16px;
+    height: 16px;
+  }
+  .where-body {
+    padding: 0.9rem 1rem 1.1rem;
+    font: clamp(0.68rem, 1vw, 0.8rem) / 1.6 ui-monospace, "SF Mono", Menlo, monospace;
+    color: #e6e6ea;
+    min-height: 8.5rem;
+  }
+  .where-body :global(p) {
+    margin: 0;
+    white-space: pre-wrap;
+  }
+  .where-body :global(.dim) {
+    color: #9a9aa5;
+  }
+  .where-body :global(.ask) {
+    margin-top: 0.4rem;
+    padding: 0.5rem 0.75rem;
+    border: 1px solid #b08cf0;
+    border-radius: 6px;
+  }
+  .where-body :global(.y) {
+    color: var(--sun);
+    font-weight: 700;
+  }
+  .where-body :global(.g) {
+    color: #8fe3a5;
+  }
+  @media (max-width: 56rem) {
+    .grid {
+      grid-template-columns: 1fr;
+    }
+    .lx-box :global(.lx) {
+      --lx-size: 12px;
+    }
+    .lx-box :global(.lx-sub),
+    .lx-box :global(.lx-tabs) {
+      display: none;
+    }
+  }
+</style>
+
+<script>
+  import { apps } from "../../content/facts";
+  import { press, reducedMotion } from "../../scripts/launcher";
+
+  const root = document.querySelector<HTMLElement>("[data-pa]");
+  if (root) {
+    const list = root.querySelector<HTMLElement>("[data-list]")!;
+    const where = root.querySelector<HTMLElement>("[data-where]")!;
+    const wTitle = root.querySelector<HTMLElement>("[data-where-title]")!;
+    const wIcon = root.querySelector<HTMLImageElement>("[data-where-icon]")!;
+    const wBody = root.querySelector<HTMLElement>("[data-where-body]")!;
+    const live = root.querySelector<HTMLElement>("[data-pa-live]")!;
+    const next = root.querySelector<HTMLButtonElement>("[data-next]")!;
+    const rows = () => [...list.querySelectorAll<HTMLElement>(".lx-row")];
+    let needsYou = false;
+
+    const views: Record<string, () => { app: keyof typeof apps; title: string; body: string; say: string }> = {
+      "a-claude": () => ({
+        app: "terminal",
+        title: "api — claude",
+        body: needsYou
+          ? `<p class="dim">● Update(src/auth/refresh.ts)</p><div class="ask"><p>Do you want to make this edit?</p><p class="y">❯ 1. Yes</p><p>  2. No, and tell Claude what to do instead</p></div>`
+          : `<p class="dim">● Reading src/auth/refresh.ts</p><p>Tokens are checked after the request starts.</p><p class="dim">● Update(src/auth/refresh.ts)…</p>`,
+        say: needsYou ? "Claude Code in Terminal, api: waiting for you to approve an edit." : "Claude Code in Terminal, api: working.",
+      }),
+      "a-cursor": () => ({
+        app: "cursor",
+        title: "webhooks.ts — web",
+        body: `<p class="dim">Agent · Refactor billing webhooks</p><p>Splitting onEvent into one handler per event type.</p><p class="g">Edited billing/webhooks.ts  +42 −18</p>`,
+        say: "Cursor, web: working on billing webhooks.",
+      }),
+      "a-codex": () => ({
+        app: "codex",
+        title: "Codex — api",
+        body: `<p class="dim">Task · Add rate limiting to signup</p><p>Adding a per-IP limit to POST /signup.</p><p class="dim">Running tests…</p>`,
+        say: "Codex, api: working on rate limiting.",
+      }),
+      "a-claude-2": () => ({
+        app: "terminal",
+        title: "api — claude",
+        body: `<p class="dim">● Write(migrations/0042_teams.sql)</p><p class="g">✓ Migration written and tested.</p><p class="dim">Done.</p>`,
+        say: "Claude Code in Terminal, api: done.",
+      }),
+    };
+
+    let sel = 0;
+    const select = (i: number, announce = true) => {
+      const rs = rows();
+      sel = (i + rs.length) % rs.length;
+      rs.forEach((r, k) => r.setAttribute("aria-selected", String(k === sel)));
+      const v = views[rs[sel].dataset.id!]();
+      wTitle.textContent = v.title;
+      wIcon.src = apps[v.app].icon;
+      wBody.innerHTML = v.body;
+      where.classList.toggle("again");
+      if (announce) live.textContent = v.say;
+    };
+
+    const flip = () => {
+      if (needsYou) return;
+      needsYou = true;
+      const row = list.querySelector<HTMLElement>('[data-id="a-claude"]')!;
+      const status = row.querySelector<HTMLElement>(".lx-status")!;
+      status.dataset.s = "Needs You";
+      status.textContent = "Needs You";
+      const before = row.getBoundingClientRect().top;
+      list.prepend(row);
+      const after = row.getBoundingClientRect().top;
+      if (!reducedMotion()) row.animate([{ transform: `translateY(${before - after}px)` }, { transform: "none" }], { duration: 420, easing: "cubic-bezier(.22,1.2,.36,1)" });
+      select(0, false);
+      live.textContent = "Claude Code needs you: it's asking to approve an edit.";
+    };
+
+    next.addEventListener("click", () => {
+      next.querySelectorAll(".key").forEach((k) => press(k));
+      select(sel + 1);
+    });
+    list.addEventListener("click", (e) => {
+      const row = (e.target as Element).closest<HTMLElement>(".lx-row");
+      if (row) select(rows().indexOf(row));
+    });
+
+    select(0, false);
+    if (reducedMotion()) flip();
+    else
+      new IntersectionObserver(([e], obs) => {
+        if (e.isIntersecting) {
+          obs.disconnect();
+          setTimeout(flip, 2200);
+        }
+      }, { threshold: 0.5 }).observe(root.querySelector(".scene")!);
+  }
+</script>

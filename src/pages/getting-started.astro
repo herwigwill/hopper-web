@@ -1,0 +1,488 @@
+---
+/**
+ * Getting started: the companion to Hopper's first-run setup (HopperSettings/Onboarding/OnboardingView.swift:
+ * Permissions, Personal sources, Your shortcut), then five things to try and three fixes. Drawn with the site's own
+ * launcher recreation (launcher.css), keycaps and app icons. Copy follows the onboarding's own wording; defaults from
+ * ADR-007, ADR-018, ADR-044, ADR-045, ADR-062.
+ */
+import "../styles/launcher.css";
+import Base from "../layouts/Base.astro";
+import MoreFeatures from "../features/MoreFeatures.astro";
+import { apps, site } from "../content/facts";
+
+const steps = [
+  { id: "permissions", title: "Let Hopper look around." },
+  { id: "sources", title: "Choose what it searches." },
+  { id: "shortcut", title: "Pick your shortcut." },
+  { id: "try", title: "Try these five." },
+];
+const personal = [
+  { icon: apps.messages.icon, name: "Messages" },
+  { icon: apps.notes.icon, name: "Apple Notes" },
+  { icon: apps.slack.icon, name: "Slack" },
+];
+const tries = [
+  { id: "search", keys: ["⌘", "Space"], what: "Type two letters, press ↵", sub: "You land in the exact tab, doc or chat." },
+  { id: "back", keys: ["⌃", "⌥", "←"], what: "Go Back", sub: "To the place you were just in, in any app." },
+  { id: "toggle", keys: ["⌘", "⌘"], what: "Double-tap ⌘", sub: "Flip between your two latest apps." },
+  { id: "agents", keys: ["⌥", "Space"], what: "Open Agents", sub: "Every coding agent, sorted by who needs you." },
+  { id: "actions", keys: ["⌘", "K"], what: "On any result", sub: "Everything you can do with it." },
+];
+const fixes = [
+  { q: "My browser tabs don’t show up.", a: "Open System Settings ▸ Privacy & Security ▸ Automation and allow Hopper for Chrome or Safari. Check that Accessibility is on for Hopper too." },
+  { q: "⌘Space still opens Spotlight.", a: "Turn off Spotlight’s shortcut in System Settings ▸ Keyboard ▸ Keyboard Shortcuts ▸ Spotlight, or record a different key for Hopper in its Settings." },
+  { q: "An agent isn’t in the list.", a: "Hopper lists Claude Code, Claude, Codex and Cursor, plus agents in herdr. To search old sessions too, switch on Past agent sessions in Settings." },
+];
+---
+<Base title="Getting Started · Hopper" description="Set up Hopper in about two minutes: turn on Accessibility, choose what it searches, pick your shortcut, then try five keys." path="/getting-started">
+  <section class="gs-hero">
+    <div class="wrap intro">
+      <div>
+        <h1>Set up in two&nbsp;minutes.</h1>
+        <p class="lede">Hopper walks you through it the first time you open it. Here’s the same thing, so you know what’s coming.</p>
+      </div>
+      <ol class="rail" aria-label="Steps">
+        {steps.map((s, i) => <li><a href={`#${s.id}`}><span class="n">{i + 1}</span>{s.title}</a></li>)}
+      </ol>
+    </div>
+  </section>
+
+  <section class="step" id="permissions" aria-labelledby="t-permissions">
+    <div class="wrap row">
+      <div class="copy">
+        <span class="n big" aria-hidden="true">1</span>
+        <h2 id="t-permissions">Let Hopper look around.</h2>
+        <p>Turn on <b>Accessibility</b> so Hopper can see your windows and tabs. Full Disk Access is optional. When macOS asks if Hopper can read Chrome or Safari, click OK.</p>
+      </div>
+      <div class="stage on-blue" aria-hidden="true">
+        <div class="lx-box"><div class="lx">
+          <ul class="lx-list">
+            <li class="lx-section">Permissions</li>
+            <li class="lx-row on"><span class="gl"><svg viewBox="0 0 24 24"><rect x="3.5" y="5" width="17" height="14" rx="2.5"/><path d="M3.5 9h17"/></svg></span><span class="lx-title">Accessibility</span><span class="lx-sub">Windows, tabs and switching</span><span class="lx-acc"><span class="pill">Recommended</span></span></li>
+            <li class="lx-row"><span class="gl"><svg viewBox="0 0 24 24"><path d="M3.5 7.5a2 2 0 0 1 2-2h4l2 2h7a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2h-13a2 2 0 0 1-2-2z"/></svg></span><span class="lx-title">Full Disk Access</span><span class="lx-sub">History, bookmarks, Notes</span><span class="lx-acc">Optional</span></li>
+            <li class="lx-section">macOS asks once per app</li>
+            <li class="lx-row"><img src={apps.chrome.icon} alt="" width="22" height="22" /><span class="lx-title">Chrome</span><span class="lx-sub">Read its tabs</span><span class="lx-acc"><span class="ok">OK</span></span></li>
+            <li class="lx-row"><img src={apps.safari.icon} alt="" width="22" height="22" /><span class="lx-title">Safari</span><span class="lx-sub">Read its tabs</span><span class="lx-acc"><span class="ok">OK</span></span></li>
+          </ul>
+        </div></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="step" id="sources" aria-labelledby="t-sources">
+    <div class="wrap row">
+      <div class="copy">
+        <span class="n big" aria-hidden="true">2</span>
+        <h2 id="t-sources">Choose what it searches.</h2>
+        <p>Apps, windows, tabs and agents are already on. Personal apps stay off until you switch them on, and everything stays on your Mac.</p>
+      </div>
+      <div class="stage on-blue">
+        <div class="lx-box"><div class="lx">
+          <ul class="lx-list">
+            <li class="lx-section" aria-hidden="true">Already on</li>
+            <li class="lx-row" aria-hidden="true"><img src={apps.chrome.icon} alt="" width="22" height="22" /><span class="lx-title">Tabs and windows</span><span class="lx-acc"><span class="sw" data-on></span></span></li>
+            <li class="lx-row" aria-hidden="true"><img src={apps.claude.icon} alt="" width="22" height="22" /><span class="lx-title">Coding agents</span><span class="lx-acc"><span class="sw" data-on></span></span></li>
+            <li class="lx-section" aria-hidden="true">Off until you choose</li>
+            {personal.map((p) => (
+              <li class="lx-row">
+                <img src={p.icon} alt="" width="22" height="22" />
+                <span class="lx-title">{p.name}</span>
+                <span class="lx-acc"><button type="button" class="sw" role="switch" aria-checked="false" aria-label={p.name}></button></span>
+              </li>
+            ))}
+          </ul>
+        </div></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="step" id="shortcut" aria-labelledby="t-shortcut">
+    <div class="wrap row">
+      <div class="copy">
+        <span class="n big" aria-hidden="true">3</span>
+        <h2 id="t-shortcut">Pick your shortcut.</h2>
+        <p>Hopper opens with <span class="keys"><span class="key">⌘</span><span class="key">Space</span></span>. If Spotlight still has it, turn Spotlight’s off in System Settings ▸ Keyboard ▸ Keyboard Shortcuts, or record another key for Hopper.</p>
+        <p class="aside">Using Raycast too? Switch Hotkeys hands the keys to Raycast and back.</p>
+      </div>
+      <div class="stage on-blue" aria-hidden="true">
+        <div class="lx-box"><div class="lx">
+          <ul class="lx-list">
+            <li class="lx-section">Your shortcut</li>
+            <li class="lx-row on"><span class="lx-title">Open Hopper</span><span class="lx-acc"><span class="rec">⌘ Space</span></span></li>
+            <li class="lx-section">Also built in</li>
+            <li class="lx-row"><span class="lx-title">Agents</span><span class="lx-acc mono">⌥Space</span></li>
+            <li class="lx-row"><span class="lx-title">Back</span><span class="lx-acc mono">⌃⌥←</span></li>
+            <li class="lx-row"><span class="lx-title">Toggle</span><span class="lx-acc mono">⌘⌘</span></li>
+          </ul>
+          <div class="lx-foot"><span>Hopper</span><span class="lx-primary">Start Using Hopper</span><span class="lx-kbd">↵</span></div>
+        </div></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="step try" id="try" aria-labelledby="t-try" data-try>
+    <div class="wrap">
+      <div class="copy">
+        <span class="n big" aria-hidden="true">4</span>
+        <h2 id="t-try">Try these five.</h2>
+        <p>Tick them off as you go. <span class="count" role="status" data-count>0 of 5 done.</span></p>
+      </div>
+      <ul class="checks">
+        {tries.map((t) => (
+          <li>
+            <label>
+              <input type="checkbox" data-check={t.id} />
+              <span class="keys" aria-hidden="true">{t.keys.map((k) => <span class="key">{k}</span>)}</span>
+              <span class="txt"><b>{t.what}</b><small>{t.sub}</small></span>
+            </label>
+          </li>
+        ))}
+      </ul>
+      <p class="done" data-done hidden>You’re set. The <a href="/features/hotkeys">cheat sheet</a> has every other key.</p>
+    </div>
+  </section>
+
+  <section class="fixes" id="help" aria-labelledby="t-help">
+    <div class="wrap">
+      <h2 id="t-help">Something not right?</h2>
+      <div class="qs">
+        {fixes.map((f) => (
+          <details>
+            <summary>{f.q}</summary>
+            <p>{f.a}</p>
+          </details>
+        ))}
+      </div>
+      <p class="mail">Still stuck? Email <a href={`mailto:${site.contact}`}>{site.contact}</a>.</p>
+    </div>
+  </section>
+
+  <MoreFeatures current="" />
+</Base>
+
+<style>
+  .gs-hero {
+    padding-block: clamp(1.5rem, 1rem + 2.5vw, 3.5rem) clamp(2rem, 1.5rem + 2vw, 3rem);
+  }
+  .intro {
+    display: grid;
+    grid-template-columns: minmax(0, 1.3fr) minmax(0, 1fr);
+    gap: 2rem clamp(2rem, 5vw, 5rem);
+    align-items: end;
+  }
+  h1 {
+    max-width: 10ch;
+    font-size: clamp(3rem, 1.6rem + 5.2vw, 6rem);
+  }
+  .lede {
+    margin-top: 1.5rem;
+    max-width: 34ch;
+  }
+  .rail {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: 0.25rem;
+  }
+  .rail a {
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
+    padding: 0.6rem 0.75rem;
+    border-radius: 0.8rem;
+    color: var(--ink);
+    font-weight: 600;
+    text-decoration: none;
+  }
+  .rail a:hover {
+    background: var(--blue-soft);
+  }
+  .n {
+    display: inline-grid;
+    place-items: center;
+    width: 1.8rem;
+    height: 1.8rem;
+    flex: none;
+    border-radius: 50%;
+    background: var(--blue);
+    color: #fff;
+    font-size: 0.85rem;
+    font-weight: 700;
+  }
+  .n.big {
+    width: 2.6rem;
+    height: 2.6rem;
+    font-size: 1.1rem;
+  }
+
+  .step {
+    padding-block: clamp(2.5rem, 2rem + 3vw, 5rem);
+    border-top: 1px solid var(--line);
+    scroll-margin-top: 4rem;
+  }
+  .row {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1.15fr);
+    gap: 2rem clamp(2rem, 5vw, 5rem);
+    align-items: center;
+  }
+  .copy h2 {
+    margin-top: 1.25rem;
+    max-width: 14ch;
+  }
+  .copy p {
+    margin-top: 1rem;
+    max-width: 36ch;
+    color: var(--ink-2);
+    font-size: var(--step-1);
+    line-height: 1.45;
+  }
+  .copy b {
+    color: var(--ink);
+  }
+  .copy .key {
+    font-size: 0.75em;
+  }
+  .copy .aside {
+    font-size: var(--step-0);
+  }
+
+  .stage {
+    padding: clamp(1rem, 3.5vw, 2.5rem);
+    border-radius: clamp(18px, 2vw, 28px);
+    background:
+      radial-gradient(120% 90% at 85% 0%, #4a58ff 0%, transparent 55%),
+      var(--blue);
+  }
+  .lx-box {
+    container-type: inline-size;
+  }
+  .lx {
+    --lx-size: clamp(11px, calc(100cqw / 40), 14px);
+    width: 100%;
+  }
+  .lx-list {
+    height: auto;
+    padding-block: 0.5em;
+  }
+  .lx-list li {
+    list-style: none;
+  }
+  .lx-row.on {
+    background: rgb(255 255 255 / 0.11);
+  }
+  .gl {
+    display: grid;
+    place-items: center;
+    width: 1.7em;
+    height: 1.7em;
+    flex: none;
+    border-radius: 0.45em;
+    background: #2f3878;
+  }
+  .gl svg {
+    width: 1.1em;
+    height: 1.1em;
+    fill: none;
+    stroke: #fff;
+    stroke-width: 1.8;
+    stroke-linejoin: round;
+    stroke-linecap: round;
+  }
+  .pill {
+    padding: 0.15em 0.55em;
+    border-radius: 0.4em;
+    background: var(--sun);
+    color: var(--night);
+    font-weight: 600;
+  }
+  .ok,
+  .rec {
+    padding: 0.2em 0.8em;
+    border-radius: 0.45em;
+    background: rgb(255 255 255 / 0.14);
+    color: #fff;
+    font-weight: 600;
+  }
+  .rec {
+    box-shadow: 0 0 0 0.15em var(--sun);
+  }
+  .mono {
+    font-variant-numeric: tabular-nums;
+    letter-spacing: 0.08em;
+  }
+  /* The onboarding's switches. Personal ones are real buttons; flipping them shows they start off. */
+  .sw {
+    position: relative;
+    display: inline-block;
+    width: 2.6em;
+    height: 1.5em;
+    padding: 0;
+    border: 0;
+    border-radius: 1em;
+    background: rgb(255 255 255 / 0.22);
+    vertical-align: middle;
+    transition: background 180ms ease;
+  }
+  button.sw {
+    cursor: pointer;
+  }
+  .sw::after {
+    content: "";
+    position: absolute;
+    top: 0.15em;
+    left: 0.15em;
+    width: 1.2em;
+    height: 1.2em;
+    border-radius: 50%;
+    background: #fff;
+    transition: transform 220ms var(--ease-hop);
+  }
+  .sw[data-on],
+  .sw[aria-checked="true"] {
+    background: #34c759;
+  }
+  .sw[data-on]::after,
+  .sw[aria-checked="true"]::after {
+    transform: translateX(1.1em);
+  }
+
+  .checks {
+    list-style: none;
+    margin: 2rem 0 0;
+    padding: 0;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(min(100%, 17rem), 1fr));
+    gap: 0.75rem;
+  }
+  .checks label {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    grid-template-areas: "box keys" "box txt";
+    gap: 0.7rem 0.9rem;
+    height: 100%;
+    padding: 1.1rem 1.2rem;
+    border-radius: 1rem;
+    background: var(--white);
+    box-shadow: 0 0 0 1px var(--line);
+    cursor: pointer;
+    transition: box-shadow 180ms ease, background 180ms ease;
+  }
+  .checks label:hover {
+    box-shadow: 0 0 0 2px var(--blue);
+  }
+  .checks label:has(input:checked) {
+    background: var(--blue-soft);
+    box-shadow: 0 0 0 2px var(--blue);
+  }
+  .checks input {
+    grid-area: box;
+    width: 1.25rem;
+    height: 1.25rem;
+    margin: 0.3rem 0 0;
+    accent-color: var(--blue);
+  }
+  .checks .keys {
+    grid-area: keys;
+  }
+  .checks .txt {
+    grid-area: txt;
+    display: grid;
+    gap: 0.2rem;
+  }
+  .checks small {
+    color: var(--ink-2);
+    font-size: var(--step--1);
+  }
+  .count {
+    font-weight: 600;
+    color: var(--ink);
+  }
+  .done {
+    margin-top: 1.5rem;
+    font-weight: 600;
+  }
+  .done a,
+  .mail a {
+    color: var(--blue);
+  }
+
+  .fixes {
+    padding-block: clamp(3rem, 2rem + 4vw, 6rem);
+    background: var(--white);
+    border-top: 1px solid var(--line);
+  }
+  .qs {
+    margin-top: 1.5rem;
+    max-width: 44rem;
+    border-top: 1px solid var(--line);
+  }
+  details {
+    border-bottom: 1px solid var(--line);
+  }
+  summary {
+    padding: 1.1rem 0;
+    font-weight: 700;
+    cursor: pointer;
+  }
+  details p {
+    padding-bottom: 1.1rem;
+    max-width: 40rem;
+    color: var(--ink-2);
+  }
+  .mail {
+    margin-top: 1.5rem;
+    color: var(--ink-2);
+  }
+
+  @media (max-width: 56rem) {
+    .intro,
+    .row {
+      grid-template-columns: 1fr;
+    }
+  }
+  @media (max-width: 30rem) {
+    .lx-sub {
+      display: none;
+    }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .sw,
+    .sw::after {
+      transition: none;
+    }
+  }
+</style>
+
+<script>
+  /* The personal switches flip; the checklist remembers what you ticked, in this browser only. */
+  document.querySelectorAll<HTMLButtonElement>("#sources button.sw").forEach((b) =>
+    b.addEventListener("click", () => b.setAttribute("aria-checked", String(b.getAttribute("aria-checked") !== "true"))),
+  );
+
+  const root = document.querySelector<HTMLElement>("[data-try]");
+  if (root) {
+    const KEY = "hopper:getting-started";
+    const boxes = [...root.querySelectorAll<HTMLInputElement>("[data-check]")];
+    const count = root.querySelector<HTMLElement>("[data-count]")!;
+    const done = root.querySelector<HTMLElement>("[data-done]")!;
+    let saved: string[] = [];
+    try {
+      saved = JSON.parse(localStorage.getItem(KEY) ?? "[]");
+    } catch {}
+    const update = () => {
+      const on = boxes.filter((b) => b.checked);
+      count.textContent = `${on.length} of ${boxes.length} done.`;
+      done.hidden = on.length < boxes.length;
+      try {
+        localStorage.setItem(KEY, JSON.stringify(on.map((b) => b.dataset.check)));
+      } catch {}
+    };
+    boxes.forEach((b) => {
+      b.checked = saved.includes(b.dataset.check!);
+      b.addEventListener("change", update);
+    });
+    update();
+  }
+</script>

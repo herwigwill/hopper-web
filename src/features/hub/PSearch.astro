@@ -1,0 +1,178 @@
+---
+/** Hub: Search. A working launcher over the demo Mac; the apps behind each result light up as you type. */
+import Launcher from "../../components/Launcher.astro";
+import { apps, places, sourceCount, type AppId } from "../../content/facts";
+const wall = Object.keys(apps) as AppId[];
+---
+<section class="ps" id="search" aria-labelledby="ps-title" data-ps>
+  <div class="wrap grid">
+    <div class="copy">
+      <p class="kicker">Search</p>
+      <h2 id="ps-title">Find anything you had open.</h2>
+      <p class="lede">Tabs, docs, chats, notes, coding sessions. Hopper reads {sourceCount} sources on your Mac and puts the one you mean first.</p>
+      <ul class="wall" aria-label="Some of the apps Hopper reads">
+        {wall.map((a) => (
+          <li data-app={a}><img src={apps[a].icon} alt="" width="44" height="44" loading="lazy" /><span>{apps[a].short}</span></li>
+        ))}
+      </ul>
+      <p class="fine">Personal apps like Messages, Notes and Slack stay off until you turn them on, and nothing ever leaves your Mac.</p>
+      <a class="cta" href="/features/search">Explore search<span aria-hidden="true">→</span></a>
+    </div>
+    <div class="lx-box">
+      <Launcher id="ps-lx" places={places} interactive />
+      <p class="try" data-ps-status>Type “launch”, “maya” or “api”.</p>
+    </div>
+  </div>
+  <p class="visually-hidden" aria-live="polite" data-ps-live></p>
+</section>
+
+<style>
+  .ps {
+    padding-block: clamp(5rem, 4rem + 6vw, 9rem);
+    background: var(--white);
+    border-block: 1px solid var(--line);
+  }
+  .grid {
+    display: grid;
+    grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr);
+    gap: 3rem clamp(2rem, 5vw, 5rem);
+    align-items: center;
+  }
+  .kicker {
+    font-size: var(--step--1);
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--blue);
+    margin-bottom: 1rem;
+  }
+  h2 {
+    max-width: 10ch;
+    view-transition-name: title-search;
+  }
+  .cta {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.6rem;
+    margin-top: 1.75rem;
+    min-height: 3rem;
+    padding: 0 1.4rem;
+    border-radius: 999px;
+    background: var(--ink);
+    color: var(--white);
+    font-weight: 700;
+    text-decoration: none;
+    transition: background 150ms ease;
+  }
+  .cta span {
+    transition: transform 300ms var(--ease-hop);
+  }
+  .cta:hover {
+    background: var(--blue);
+  }
+  .cta:hover span {
+    transform: translateX(4px);
+  }
+  .lede {
+    margin-top: 1.5rem;
+  }
+  .wall {
+    list-style: none;
+    margin: 2rem 0 0;
+    padding: 0;
+    display: grid;
+    grid-template-columns: repeat(7, minmax(0, 1fr));
+    gap: 0.9rem 0.5rem;
+    max-width: 30rem;
+  }
+  .wall li {
+    display: grid;
+    justify-items: center;
+    gap: 0.3rem;
+    font-size: 0.7rem;
+    font-weight: 600;
+    color: var(--ink-2);
+    transition: opacity 250ms ease, transform 350ms var(--ease-hop), filter 250ms ease;
+  }
+  .wall img {
+    width: clamp(2rem, 3.4vw, 2.75rem);
+    height: auto;
+  }
+  .wall span {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 100%;
+  }
+  .wall.filtering li {
+    opacity: 0.25;
+    filter: grayscale(1);
+  }
+  .wall.filtering li.hit {
+    opacity: 1;
+    filter: none;
+    transform: translateY(-4px) scale(1.08);
+    color: var(--ink);
+  }
+  .fine {
+    margin-top: 1.75rem;
+    max-width: 38ch;
+    font-size: var(--step--1);
+    color: var(--ink-2);
+  }
+  .lx-box {
+    container-type: inline-size;
+    min-width: 0;
+    view-transition-name: stage-search;
+  }
+  .lx-box :global(.lx) {
+    --lx-size: clamp(10px, calc(100cqw / 58.5), 13.5px);
+    width: 100%;
+  }
+  .lx-box :global(.lx-list) {
+    height: 25.2em;
+  }
+  .try {
+    margin-top: 0.9rem;
+    font-size: var(--step--1);
+    color: var(--ink-2);
+    min-height: 1.5em;
+  }
+  @media (max-width: 56rem) {
+    .grid {
+      grid-template-columns: 1fr;
+    }
+    .lx-box :global(.lx) {
+      --lx-size: 12px;
+    }
+    .lx-box :global(.lx-sub),
+    .lx-box :global(.lx-tabs) {
+      display: none;
+    }
+  }
+  @media (max-width: 30rem) {
+    .wall {
+      grid-template-columns: repeat(5, minmax(0, 1fr));
+    }
+  }
+</style>
+
+<script>
+  import { apps } from "../../content/facts";
+  import { initSearchDemo } from "../../scripts/searchdemo";
+
+  const root = document.querySelector<HTMLElement>("[data-ps]");
+  if (root) {
+    const wall = root.querySelector<HTMLElement>(".wall")!;
+    initSearchDemo(root.querySelector<HTMLElement>("[data-launcher]")!, {
+      prefix: "ps-lx",
+      status: root.querySelector<HTMLElement>("[data-ps-status]")!,
+      live: root.querySelector<HTMLElement>("[data-ps-live]")!,
+      onResults: (results, q) => {
+        const hit = new Set(results.map((p) => p.app));
+        wall.classList.toggle("filtering", q.trim().length > 0);
+        wall.querySelectorAll<HTMLElement>("li").forEach((li) => li.classList.toggle("hit", hit.has(li.dataset.app as keyof typeof apps)));
+      },
+    });
+  }
+</script>

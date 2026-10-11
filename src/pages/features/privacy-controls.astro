@@ -1,0 +1,21 @@
+---
+/** Privacy Controls (ADR-018, 019, 022, 027, 032, 007; Reset Ranking from STATUS.md). */
+import Base from "../../layouts/Base.astro";
+import NotePage from "../../components/NotePage.astro";
+import MoreFeatures from "../../features/MoreFeatures.astro";
+
+const points = [
+  { id: "personal-sources", title: "Personal apps start off", text: 'Messages, Apple Notes, Slack, Calendar, browser history and past agent sessions stay out of search until you switch them on. <a href="/features/search#sources">See every source</a>.' },
+  { id: "excluded-apps", title: "Exclude any app", text: "An excluded app is never indexed or recorded. It won’t show up in search, Back or Clipboard History, and snippets never expand in it." },
+  { id: "private-windows", title: "Private windows stay private", text: "Incognito and private browser windows never reach Hopper at all." },
+  { id: "history", title: "You decide how long history lasts", text: "Hopper remembers where you’ve been for 30 days. Make it 7 or 90, or clear it whenever you like." },
+  { id: "clipboard", title: "Clipboard History is opt-in", text: "It’s off until you turn it on. It skips anything your password manager marks as secret, and you choose how long entries are kept." },
+  { id: "online-lookups", title: "Online lookups can go", text: "For a few streaming sites, Hopper looks up the episode name so you can search for it. Turn that off and the saved names are deleted." },
+  { id: "full-disk-access", title: "Full Disk Access is optional", text: "It lets Hopper search more apps. Without it, Hopper works with what it can already see." },
+  { id: "reset-ranking", title: "Forget a pick", text: "Hopper learns which result you pick for what you type. Reset Ranking, from ⌘K on that result, forgets it." },
+];
+---
+<Base title="Privacy Controls · Hopper" description="Personal apps start off, excluded apps are never recorded, private windows never reach Hopper, and you decide how long history lasts." path="/features/privacy-controls">
+  <NotePage crumb="Privacy Controls" title="Your Mac, your&nbsp;rules." lede="Every privacy choice is a switch in Settings ▸ Privacy, and the careful option is the default." points={points} />
+  <MoreFeatures current="privacy-controls" />
+</Base>

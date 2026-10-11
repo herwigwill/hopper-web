@@ -1,0 +1,272 @@
+---
+import Launcher from "../components/Launcher.astro";
+import { agents, apps } from "../content/facts";
+---
+<section class="agents on-dark" aria-labelledby="agents-title" data-agents>
+  <div class="wrap grid">
+    <div class="copy">
+      <h2 id="agents-title">Running a few agents? Go straight to the one that needs you.</h2>
+      <p class="lede">Claude Code, Cursor and Codex sessions show up as they work. When one stops to ask you something, it’s one keystroke away, in whichever window or terminal it’s running.</p>
+      <button type="button" class="replay" data-replay hidden>Play it again</button>
+    </div>
+    <div class="scene" aria-hidden="true">
+      <div class="lx-box">
+        <Launcher id="agents-lx" places={agents} tab="agents" frontApp="terminal" section="Agents" primary="Go to Session" />
+      </div>
+      <div class="term" data-term>
+        <header class="term-bar"><i></i><i></i><i></i><span><img src={apps.terminal.icon} alt="" width="16" height="16" />api — claude</span></header>
+        <div class="tui">
+          <p class="dim">● Update(src/auth/refresh.ts)</p>
+          <div class="box">
+            <p class="box-h">Edit file</p>
+            <p>src/auth/refresh.ts</p>
+            <p class="del">- if (isExpired(token)) {"{"}</p>
+            <p class="add">+ if (expiresWithin(token, 30_000)) {"{"}</p>
+            <p class="q">Do you want to make this edit?</p>
+            <p class="pick">❯ 1. Yes</p>
+            <p>&nbsp;&nbsp;2. Yes, and don’t ask again this session</p>
+            <p>&nbsp;&nbsp;3. No, and tell Claude what to do instead</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <p class="visually-hidden">In the demo, four agent sessions are listed. The Claude Code session fixing auth token refresh changes to Needs You, and choosing it opens the terminal where Claude is asking to approve an edit.</p>
+</section>
+
+<style>
+  .agents {
+    background: var(--night);
+    color: #eef0ff;
+    padding-block: clamp(5rem, 4rem + 6vw, 10rem);
+  }
+  .grid {
+    display: grid;
+    grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.2fr);
+    gap: 3rem clamp(2rem, 5vw, 5rem);
+    align-items: center;
+  }
+  h2 {
+    max-width: 13ch;
+  }
+  .lede {
+    margin-top: 1.5rem;
+    color: #b9bfe6;
+  }
+  .replay {
+    margin-top: 2rem;
+    min-height: 2.75rem;
+    padding: 0 1.1rem;
+    border-radius: 999px;
+    border: 1px solid #3b437a;
+    background: transparent;
+    color: #eef0ff;
+    font-weight: 600;
+    cursor: pointer;
+  }
+  .replay:hover {
+    border-color: var(--sun);
+  }
+  .scene {
+    position: relative;
+    min-height: 30rem;
+  }
+  .lx-box {
+    container-type: inline-size;
+    position: relative;
+    z-index: 1;
+    transition: transform 400ms var(--ease-out), opacity 400ms ease;
+  }
+  .lx-box :global(.lx) {
+    --lx-size: calc(100cqw / 58.5);
+    width: 100%;
+  }
+  .lx-box :global(.lx-list) {
+    height: auto;
+    min-height: 15em;
+  }
+  .lx-box :global(.lx-row) {
+    transition: transform 380ms var(--ease-hop), background 200ms ease;
+  }
+  .term {
+    position: absolute;
+    z-index: 2;
+    right: -0.5rem;
+    bottom: -1rem;
+    width: min(92%, 34rem);
+    border-radius: 12px;
+    overflow: hidden;
+    background: #16161a;
+    box-shadow: 0 0 0 0.5px rgb(255 255 255 / 0.12), 0 40px 80px -30px rgb(0 0 0 / 0.8);
+    opacity: 0;
+    transform: translateY(24px) scale(0.97);
+    pointer-events: none;
+    transition: opacity 300ms ease, transform 480ms var(--ease-hop);
+  }
+  .agents.is-landed .term {
+    opacity: 1;
+    transform: none;
+  }
+  .agents.is-landed .lx-box {
+    transform: translate(-3%, -4%) scale(0.96);
+    filter: brightness(0.9);
+  }
+  .term-bar {
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    height: 32px;
+    padding: 0 12px;
+    background: #26262b;
+    font-family: var(--mac);
+    font-size: 12px;
+    color: #b8b8c0;
+  }
+  .term-bar i {
+    width: 11px;
+    height: 11px;
+    border-radius: 50%;
+    background: #ff5f57;
+  }
+  .term-bar i:nth-child(2) {
+    background: #febc2e;
+  }
+  .term-bar i:nth-child(3) {
+    background: #28c840;
+  }
+  .term-bar span {
+    position: absolute;
+    left: 0;
+    right: 0;
+    display: flex;
+    justify-content: center;
+    gap: 6px;
+    align-items: center;
+  }
+  .term-bar img {
+    width: 16px;
+    height: 16px;
+  }
+  .tui {
+    padding: 14px 16px 18px;
+    font: clamp(10px, 1.05vw, 12.5px) / 1.55 ui-monospace, "SF Mono", Menlo, monospace;
+    color: #e6e6ea;
+  }
+  .tui p {
+    white-space: pre-wrap;
+  }
+  .dim {
+    color: #9a9aa5;
+    margin-bottom: 8px;
+  }
+  .box {
+    border: 1px solid #b08cf0;
+    border-radius: 6px;
+    padding: 10px 14px;
+  }
+  .box-h {
+    color: #c9a2ff;
+    font-weight: 700;
+  }
+  .del {
+    color: #ff8f8f;
+    margin-top: 8px;
+  }
+  .add {
+    color: #8fe3a5;
+    margin-bottom: 8px;
+  }
+  .q {
+    margin-bottom: 4px;
+  }
+  .pick {
+    color: var(--sun);
+    font-weight: 700;
+  }
+  @media (max-width: 56rem) {
+    .grid {
+      grid-template-columns: 1fr;
+    }
+    .scene {
+      min-height: 0;
+      padding-bottom: 8rem;
+    }
+    .lx-box :global(.lx-sub),
+    .lx-box :global(.lx-tabs) {
+      display: none;
+    }
+    .lx-box :global(.lx) {
+      --lx-size: 12px;
+    }
+    .term {
+      right: 0;
+      bottom: 0;
+      width: 100%;
+    }
+  }
+</style>
+
+<script>
+  import { press, wait, reducedMotion } from "../scripts/launcher";
+  const root = document.querySelector<HTMLElement>("[data-agents]");
+  if (root) {
+    const list = root.querySelector<HTMLElement>("[data-list]")!;
+    const enter = root.querySelector<HTMLElement>("[data-enter]");
+    const replay = root.querySelector<HTMLButtonElement>("[data-replay]")!;
+    const first = () => list.querySelector<HTMLElement>('[data-id="a-claude"]')!;
+    const status = () => first().querySelector<HTMLElement>(".lx-status")!;
+    const initial = [...list.children];
+
+    const reset = () => {
+      root.classList.remove("is-landed");
+      initial.forEach((el) => list.append(el));
+      status().dataset.s = "Working";
+      status().textContent = "Working";
+      list.querySelectorAll(".lx-row").forEach((r, i) => r.setAttribute("aria-selected", String(i === 0)));
+    };
+
+    const land = () => {
+      status().dataset.s = "Needs You";
+      status().textContent = "Needs You";
+      root.classList.add("is-landed");
+    };
+
+    const play = async () => {
+      replay.hidden = true;
+      reset();
+      await wait(900);
+      // The session stops to ask: its status flips and it rises to the top (Needs You ranks first).
+      status().dataset.s = "Needs You";
+      status().textContent = "Needs You";
+      const row = first();
+      const before = row.getBoundingClientRect().top;
+      list.prepend(row);
+      const after = row.getBoundingClientRect().top;
+      row.animate([{ transform: `translateY(${before - after}px)` }, { transform: "none" }], { duration: 420, easing: "cubic-bezier(.22,1.2,.36,1)" });
+      list.querySelectorAll(".lx-row").forEach((r) => r.setAttribute("aria-selected", String(r === row)));
+      await wait(1100);
+      press(enter);
+      await wait(180);
+      root.classList.add("is-landed");
+      await wait(600);
+      replay.hidden = false;
+    };
+
+    if (reducedMotion()) {
+      land();
+    } else {
+      let played = false;
+      new IntersectionObserver(
+        ([e]) => {
+          if (e.isIntersecting && !played) {
+            played = true;
+            play();
+          }
+        },
+        { threshold: 0.55 },
+      ).observe(root.querySelector(".scene")!);
+      replay.addEventListener("click", play);
+    }
+  }
+</script>

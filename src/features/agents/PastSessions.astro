@@ -1,0 +1,110 @@
+---
+/** Past sessions: Claude Code and Codex conversations are searchable like anything else (STATUS.md sources). */
+import "../../styles/launcher.css";
+import { apps, pastSessions } from "../../content/facts";
+---
+<section class="ps on-dark" id="past-sessions" aria-labelledby="ps-title" data-ps>
+  <div class="wrap grid">
+    <div class="copy">
+      <h2 id="ps-title">Find the session from last week.</h2>
+      <p class="lede">Past Claude Code and Codex sessions are in search too. Type what it was about and open it again.</p>
+    </div>
+    <div class="lx-box">
+      <div class="lx">
+        <div class="lx-head">
+          <div class="lx-field">
+            <label class="visually-hidden" for="ps-q">Search past sessions</label>
+            <input class="lx-input" id="ps-q" type="text" value="auth" autocomplete="off" spellcheck="false" data-ps-q />
+            <span class="lx-text" data-ps-text>auth</span><span class="lx-caret" aria-hidden="true"></span>
+          </div>
+        </div>
+        <div class="lx-rule"></div>
+        <ul class="lx-list" aria-label="Past sessions" data-ps-list></ul>
+      </div>
+      <p class="hint" data-ps-say role="status">Try “checkout”, “teams” or “pricing”.</p>
+    </div>
+  </div>
+</section>
+
+<style>
+  .ps {
+    background: var(--night);
+    color: #eef0ff;
+    padding-block: clamp(5rem, 4rem + 6vw, 9rem);
+    scroll-margin-top: 4rem;
+  }
+  .grid {
+    display: grid;
+    grid-template-columns: minmax(0, 0.85fr) minmax(0, 1.15fr);
+    gap: 3rem clamp(2rem, 5vw, 5rem);
+    align-items: center;
+  }
+  h2 {
+    max-width: 12ch;
+  }
+  .lede {
+    margin-top: 1.5rem;
+    color: #b9bfe6;
+  }
+  .lx-box {
+    container-type: inline-size;
+    min-width: 0;
+  }
+  .lx {
+    --lx-size: clamp(11px, calc(100cqw / 50), 13px);
+    width: 100%;
+  }
+  .lx-list {
+    height: 20em;
+  }
+  .lx-list :global(.lx-row.sel) {
+    background: rgb(255 255 255 / 0.11);
+  }
+  .hint {
+    margin-top: 1rem;
+    min-height: 1.5em;
+    color: #b9bfe6;
+    font-size: var(--step--1);
+  }
+  @media (max-width: 56rem) {
+    .grid {
+      grid-template-columns: 1fr;
+    }
+  }
+  @media (max-width: 30rem) {
+    .lx :global(.lx-sub) {
+      display: none;
+    }
+  }
+</style>
+
+<script>
+  import { apps, pastSessions } from "../../content/facts";
+  import { escape } from "../../scripts/launcher";
+
+  const root = document.querySelector<HTMLElement>("[data-ps]");
+  if (root) {
+    const q = root.querySelector<HTMLInputElement>("[data-ps-q]")!;
+    const text = root.querySelector<HTMLElement>("[data-ps-text]")!;
+    const list = root.querySelector<HTMLElement>("[data-ps-list]")!;
+    const words = (s: string) => s.toLowerCase().split(/[^a-z0-9]+/).filter(Boolean);
+    const render = () => {
+      text.textContent = q.value;
+      const t = words(q.value);
+      const hits = t.length ? pastSessions.filter((s) => t.every((w) => words(`${s.title} ${s.where}`).some((x) => x.startsWith(w)))) : pastSessions;
+      list.innerHTML =
+        `<li class="lx-section">${t.length ? "Past Sessions" : "Recent Sessions"}</li>` +
+        (hits.length
+          ? hits
+              .map(
+                (s, i) => `<li class="lx-row${i === 0 ? " sel" : ""}"><img src="${apps[s.app].icon}" alt="" width="22" height="22" />
+                  <span class="lx-title">${escape(s.title)}</span><span class="lx-sub">${escape(s.where)} · ${apps[s.app].short}</span>
+                  <span class="lx-acc">${escape(s.when)}</span></li>`,
+              )
+              .join("")
+          : `<li class="lx-empty">No session about that. Try “checkout”.</li>`);
+    };
+    q.addEventListener("input", render);
+    render();
+  }
+</script>

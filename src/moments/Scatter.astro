@@ -1,0 +1,254 @@
+---
+import { apps, type AppId } from "../content/facts";
+
+/** A workday's worth of open things. x/y are % offsets from centre, r is rotation, d is depth (size). */
+const bits: { app: AppId; t: string; x: number; y: number; r: number; d: number; dark?: boolean }[] = [
+  { app: "chrome", t: "Pricing experiments: results", x: -38, y: -30, r: -4, d: 1 },
+  { app: "slack", t: "#design", x: 30, y: -34, r: 3, d: 0.9 },
+  { app: "notion", t: "Meeting notes, Oct 8", x: -12, y: -38, r: 2, d: 0.8 },
+  { app: "claude", t: "Write migration for teams table", x: 12, y: -22, r: -2, d: 1.1, dark: true },
+  { app: "chrome", t: "Pull request #482", x: -40, y: 2, r: 3, d: 0.85 },
+  { app: "messages", t: "Maya Okafor", x: 40, y: -8, r: -3, d: 1 },
+  { app: "cursor", t: "billing/webhooks.ts", x: -24, y: 22, r: -2, d: 1.05, dark: true },
+  { app: "notes", t: "Interview questions, design lead", x: 28, y: 22, r: 2, d: 0.95 },
+  { app: "safari", t: "Flights to Lisbon", x: -4, y: 36, r: -3, d: 0.85 },
+  { app: "obsidian", t: "Onboarding research", x: 42, y: 36, r: 4, d: 0.8 },
+  { app: "codex", t: "Add rate limiting to signup", x: -42, y: 36, r: 2, d: 0.9, dark: true },
+  { app: "chrome", t: "Stripe docs: webhooks", x: 4, y: -42, r: -1, d: 0.75 },
+  { app: "slack", t: "#launch", x: -28, y: -16, r: 1, d: 0.9 },
+  { app: "reminders", t: "Send the September invoice", x: 20, y: 40, r: -2, d: 0.8 },
+  { app: "vscode", t: "marketing-site", x: 44, y: 10, r: 2, d: 0.75 },
+  { app: "notion", t: "Roadmap", x: -46, y: -14, r: -2, d: 0.75 },
+  { app: "music", t: "Deep Focus", x: 16, y: 6, r: 3, d: 0.7 },
+  { app: "terminal", t: "npm run dev", x: -16, y: 8, r: -3, d: 0.8, dark: true },
+  { app: "chrome", t: "Q3 board deck", x: 34, y: -20, r: -1, d: 0.85 },
+  { app: "claude", t: "Flaky signup test", x: -6, y: 22, r: 2, d: 0.9, dark: true },
+];
+---
+<section class="scatter" aria-labelledby="scatter-title" data-scatter>
+  <div class="sticky">
+    <div class="wrap copy">
+      <h2 id="scatter-title">Forty tabs. Six windows. Three agents.</h2>
+      <p class="then" data-then>Hopper goes straight to the one you need.</p>
+    </div>
+    <div class="field" aria-hidden="true">
+      {bits.map((b, i) => (
+        <div
+          class:list={["bit", { dark: b.dark }]}
+          style={`--x:${b.x};--y:${b.y};--r:${b.r}deg;--d:${b.d};--i:${i}`}
+        >
+          <img src={apps[b.app].icon} alt="" width="28" height="28" loading="lazy" />
+          <span>{b.t}</span>
+        </div>
+      ))}
+      <div class="found">
+        <div class="found-q"><span class="glass"></span>checkout</div>
+        <div class="found-row">
+          <img src={apps.chrome.icon} alt="" width="28" height="28" loading="lazy" />
+          <span class="found-t">Checkout funnel, Q4</span>
+          <span class="found-s">analytics.internal</span>
+          <span class="found-k">Tab</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .scatter {
+    --e: 1;
+    --g: 0;
+    --f: 1;
+    position: relative;
+    margin-top: clamp(4rem, 3rem + 6vw, 9rem);
+  }
+  .scatter.is-live {
+    height: 175vh;
+  }
+  .sticky {
+    position: relative;
+    display: grid;
+    grid-template-rows: auto 1fr;
+    min-height: 44rem;
+  }
+  .is-live .sticky {
+    position: sticky;
+    top: 0;
+    height: 100vh;
+    min-height: 36rem;
+    padding-top: 5rem;
+  }
+  .copy {
+    position: relative;
+    z-index: 2;
+    pointer-events: none;
+  }
+  h2 {
+    max-width: 12ch;
+  }
+  .then {
+    margin-top: 1rem;
+    font-size: var(--step-2);
+    font-weight: 600;
+    font-stretch: 85%;
+    letter-spacing: -0.01em;
+    color: var(--blue);
+    opacity: var(--g);
+    transform: translateY(calc((1 - var(--g)) * 12px));
+  }
+  .field {
+    position: relative;
+    min-height: 28rem;
+    overflow: hidden;
+  }
+  .is-live .field {
+    position: absolute;
+    inset: 0;
+    min-height: 0;
+  }
+  .bit {
+    --m: calc((1.7 - 0.7 * var(--e)) * (1 - var(--g)));
+    position: absolute;
+    left: 50%;
+    top: 64%;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.6em;
+    padding: 0.55em 0.9em 0.55em 0.6em;
+    border-radius: 0.8em;
+    background: var(--white);
+    box-shadow: 0 1px 0 rgb(18 24 51 / 0.04), 0 10px 26px -14px rgb(18 24 51 / 0.45);
+    font-family: var(--mac);
+    font-size: calc(15px * var(--d));
+    white-space: nowrap;
+    color: var(--ink);
+    opacity: calc(var(--e) * (1 - var(--g) * 1.6));
+    transform:
+      translate(-50%, -50%)
+      translate(calc(var(--x) * 0.88vw * var(--m)), calc(var(--y) * 0.72vh * var(--m)))
+      rotate(calc(var(--r) * (1 - var(--g))))
+      scale(calc(1 - var(--g) * 0.5));
+    will-change: transform, opacity;
+  }
+  .bit img {
+    width: 1.75em;
+    height: 1.75em;
+  }
+  .bit.dark {
+    background: var(--night);
+    color: #e9ebff;
+  }
+  .found {
+    position: absolute;
+    left: 50%;
+    top: 64%;
+    width: min(36rem, 92%);
+    transform: translate(-50%, -50%) scale(calc(0.92 + var(--f) * 0.08));
+    opacity: var(--f);
+    border-radius: 16px;
+    background: rgb(30 31 38);
+    color: #f2f2f5;
+    font-family: var(--mac);
+    box-shadow: 0 30px 70px -24px rgb(6 8 30 / 0.6);
+    padding: 0.5rem;
+  }
+  .found-q {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    padding: 0.75rem 0.8rem 0.9rem;
+    font-size: 1.25rem;
+    border-bottom: 1px solid rgb(255 255 255 / 0.08);
+    margin-bottom: 0.4rem;
+  }
+  .found-q::after {
+    content: "";
+    width: 2px;
+    height: 1.2em;
+    background: #6c86ff;
+  }
+  .glass {
+    display: none;
+  }
+  .found-row {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.7rem 0.75rem;
+    border-radius: 10px;
+    background: rgb(255 255 255 / 0.11);
+    box-shadow: 0 0 0 2px var(--sun);
+  }
+  .found-row img {
+    width: 1.6rem;
+    height: 1.6rem;
+  }
+  .found-s,
+  .found-k {
+    color: rgb(235 235 245 / 0.7);
+    font-size: 0.9rem;
+  }
+  .found-k {
+    margin-left: auto;
+  }
+
+  /* Without the scroll animation: the field and the result, both still and readable. */
+  .scatter:not(.is-live) .field {
+    min-height: 34rem;
+  }
+  .scatter:not(.is-live) .found {
+    top: auto;
+    bottom: 1rem;
+    opacity: 1;
+    transform: translate(-50%, 0);
+  }
+  .scatter:not(.is-live) .then {
+    opacity: 1;
+    transform: none;
+  }
+  .scatter:not(.is-live) .bit {
+    --m: 0.78;
+    transform: translate(-50%, -50%) translate(calc(var(--x) * 1vw * var(--m)), calc(var(--y) * 0.8rem * var(--m))) rotate(var(--r));
+  }
+
+  @media (max-width: 40rem) {
+    .bit:nth-child(3n) {
+      display: none;
+    }
+    .bit {
+      font-size: calc(12px * var(--d));
+    }
+    .found-s {
+      display: none;
+    }
+  }
+</style>
+
+<script>
+  const section = document.querySelector<HTMLElement>("[data-scatter]");
+  if (section && !matchMedia("(prefers-reduced-motion: reduce)").matches) {
+    section.classList.add("is-live");
+    let raf = 0;
+    const clamp = (v: number) => Math.min(1, Math.max(0, v));
+    const update = () => {
+      raf = 0;
+      const r = section.getBoundingClientRect();
+      const total = r.height - innerHeight;
+      const p = clamp(-r.top / total);
+      // Before the section pins, things drift in as it approaches.
+      const approach = clamp(1 - r.top / innerHeight);
+      const e = r.top > 0 ? approach * 0.9 : clamp(0.9 + (p / 0.1) * 0.1);
+      // Most of the pinned scroll is the collapse itself; it settles a little before the end so it never overshoots.
+      const g = clamp((p - 0.2) / 0.55);
+      section.style.setProperty("--e", e.toFixed(3));
+      section.style.setProperty("--g", g.toFixed(3));
+      section.style.setProperty("--f", clamp((g - 0.5) / 0.4).toFixed(3));
+    };
+    const onScroll = () => {
+      if (!raf) raf = requestAnimationFrame(update);
+    };
+    addEventListener("scroll", onScroll, { passive: true });
+    addEventListener("resize", onScroll);
+    update();
+  }
+</script>

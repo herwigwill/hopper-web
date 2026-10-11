@@ -1,0 +1,404 @@
+---
+/**
+ * Hotkeys & Gestures: a cheat sheet of Hopper's default keys. Global defaults from the command metadata
+ * (SearchCommand, AgentsCommands, NavigateCommand, TimelineListCommand; ADR-023…026, 045, 062); launcher keys from
+ * ADR-046 and STATUS.md; list actions from each command's Action shortcuts (Clipboard ADR-027, Emoji, Screenshots,
+ * Snippets). Window commands have no keys by default (ADR-057).
+ */
+import Base from "../../layouts/Base.astro";
+import MoreFeatures from "../../features/MoreFeatures.astro";
+
+type Row = { keys: string[][]; what: string; note?: string; tag?: string };
+type Group = { id: string; title: string; line: string; rows: Row[] };
+
+const groups: Group[] = [
+  {
+    id: "anywhere",
+    title: "Anywhere on your Mac",
+    line: "These work from any app, with Hopper closed.",
+    rows: [
+      { keys: [["⌘", "Space"]], what: "Search", note: "Everything you had open, from any app" },
+      { keys: [["⌥", "Space"]], what: "Agents", note: "Every agent, sorted by who needs you" },
+      { keys: [["⌥", "⌘", "]"]], what: "Next Agent", note: "The agent that’s waited longest; again for the next" },
+      { keys: [["⌃", "⌥", "←"]], what: "Back", note: "The place you were before" },
+      { keys: [["⌃", "⌥", "→"]], what: "Forward", note: "Undo a Back" },
+      { keys: [["⌘", "⌘"]], what: "Toggle", note: "Your two most recent apps", tag: "Double tap" },
+      { keys: [["⌥", "⌥"]], what: "Toggle Tab", note: "Your two most recent tabs, windows or sessions", tag: "Double tap" },
+      { keys: [["⌃", "⌘"]], what: "History", note: "Places you visited, newest first", tag: "Press and release" },
+    ],
+  },
+  {
+    id: "launcher",
+    title: "In Search",
+    line: "While Hopper is open.",
+    rows: [
+      { keys: [["↑"], ["↓"]], what: "Move through results" },
+      { keys: [["↵"]], what: "Open the selected result", note: "Exactly the tab, doc or session" },
+      { keys: [["⌘", "K"]], what: "Every action for the selected result" },
+      { keys: [["⇥"], ["⇧", "⇥"]], what: "Next or previous filter tab", note: "Also ⌘⌥→ and ⌘⌥←" },
+      { keys: [["⌘", "1"], ["⌘", "9"]], what: "Jump to a filter tab", note: "⌘1 through ⌘9" },
+      { keys: [["→"]], what: "Go into the selected row", note: "With the cursor at the end: an app’s own tab, a quicklink’s blanks" },
+      { keys: [["←"]], what: "Back out to where you were", note: "With the cursor at the start" },
+      { keys: [["esc"]], what: "Start fresh", note: "Otherwise Hopper keeps your search for next time" },
+    ],
+  },
+  {
+    id: "clipboard",
+    title: "Clipboard History",
+    line: "In the list of everything you copied.",
+    rows: [
+      { keys: [["↵"]], what: "Paste into the app you were in" },
+      { keys: [["⌘", "C"]], what: "Copy to the clipboard" },
+      { keys: [["⇧", "⌘", "V"]], what: "Paste as plain text" },
+      { keys: [["⇧", "⌘", "P"]], what: "Pin or unpin an entry" },
+      { keys: [["⌘", "O"]], what: "Open a copied link" },
+      { keys: [["⇧", "⌘", "F"]], what: "Show a copied file in Finder" },
+      { keys: [["⌃", "X"]], what: "Delete an entry" },
+      { keys: [["⌃", "⇧", "X"]], what: "Delete all entries", note: "Press twice to confirm; pinned ones stay" },
+    ],
+  },
+  {
+    id: "grids",
+    title: "Emoji, Snippets & Screenshots",
+    line: "Return pastes and ⌘Return copies. Swap them with Primary Action in Settings.",
+    rows: [
+      { keys: [["↵"]], what: "Paste into the app you were in" },
+      { keys: [["⌘", "↵"]], what: "Copy instead" },
+      { keys: [["⌥", "↵"]], what: "Paste and keep Hopper open", note: "Emoji" },
+      { keys: [["⇧", "⌘", "C"]], what: "Copy an emoji’s name", note: "Emoji" },
+      { keys: [["⌘", "Y"]], what: "Quick Look", note: "Screenshots" },
+      { keys: [["⇧", "⌘", "C"]], what: "Copy the text in a screenshot", note: "Screenshots" },
+      { keys: [["⌘", "A"]], what: "Select every screenshot", note: "Or ⇧-click and ⌘-click; actions run on all of them" },
+      { keys: [["⌃", "X"]], what: "Delete a snippet or trash a screenshot" },
+    ],
+  },
+  {
+    id: "typing",
+    title: "While you type",
+    line: "In any app.",
+    rows: [
+      { keys: [[";date"]], what: "A snippet’s keyword becomes its text", note: "Your own keywords; never in password managers or excluded apps" },
+      { keys: [["```"]], what: "Start a code block", note: "Scratch Notes" },
+      { keys: [["⌘", "B"]], what: "Bold", note: "Scratch Notes" },
+    ],
+  },
+];
+---
+<Base
+  title="Hotkeys & Gestures · Hopper"
+  description="Every Hopper shortcut on one page: Search on ⌘Space, Agents on ⌥Space, Back and Forward, the double-tap toggles, and the keys inside Search and each list."
+  path="/features/hotkeys"
+>
+  <section class="hk" data-hk>
+    <div class="wrap">
+      <nav class="crumbs" aria-label="Breadcrumb">
+        <a href="/features">Features</a><span aria-hidden="true">/</span><span aria-current="page">Hotkeys &amp; Gestures</span>
+      </nav>
+      <div class="intro">
+        <h1>Every shortcut, on one&nbsp;page.</h1>
+        <p class="lede">The keys Hopper starts with. Change any of them, or give any command its own, in Settings&nbsp;▸&nbsp;Shortcuts.</p>
+      </div>
+
+      <div class="tools">
+        <label class="visually-hidden" for="hk-q">Filter shortcuts</label>
+        <input id="hk-q" type="search" placeholder="Filter shortcuts, like “paste” or “agent”" autocomplete="off" data-hk-q />
+        <nav class="jump" aria-label="Sections">
+          {groups.map((g) => <a href={`#${g.id}`}>{g.title}</a>)}
+          <a href="#gestures">Gestures</a>
+          <a href="#windows">Windows</a>
+        </nav>
+      </div>
+
+      <div class="groups">
+        {groups.map((g) => (
+          <section class="group" id={g.id} aria-labelledby={`hk-${g.id}`} data-group>
+            <h2 id={`hk-${g.id}`}>{g.title}</h2>
+            <p class="gline">{g.line}</p>
+            <table>
+              <caption class="visually-hidden">{g.title} shortcuts</caption>
+              <tbody>
+                {g.rows.map((r) => (
+                  <tr data-row>
+                    <th scope="row">
+                      <span class="combo">
+                        {r.keys.map((combo, i) => (
+                          <>
+                            {i > 0 && <span class="or">{g.id === "launcher" && r.what.startsWith("Jump") ? "–" : "/"}</span>}
+                            <span class="keys">{combo.map((k) => <kbd class="key">{k}</kbd>)}</span>
+                          </>
+                        ))}
+                      </span>
+                    </th>
+                    <td>
+                      <b>{r.what}</b>
+                      {r.tag && <span class="tag">{r.tag}</span>}
+                      {r.note && <small>{r.note}</small>}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </section>
+        ))}
+
+        <section class="group note" id="gestures" aria-labelledby="hk-gestures" data-group>
+          <h2 id="hk-gestures">How gestures work</h2>
+          <dl>
+            <dt>Double tap</dt>
+            <dd>Tap the key twice, quickly, on its own. <kbd class="key">⌘</kbd><kbd class="key">⌘</kbd> is Toggle; <kbd class="key">⌥</kbd><kbd class="key">⌥</kbd> is Toggle Tab.</dd>
+            <dt>Press and release</dt>
+            <dd>Hold the keys together and let go without pressing anything else. <kbd class="key">⌃</kbd><kbd class="key">⌘</kbd> opens History.</dd>
+            <dt>Good to know</dt>
+            <dd>Gestures need Accessibility permission. Any command can take a gesture or a regular hotkey instead.</dd>
+          </dl>
+        </section>
+
+        <section class="group note" id="windows" aria-labelledby="hk-windows" data-group>
+          <h2 id="hk-windows">Window commands</h2>
+          <p>None of the 42 window commands has a key until you give it one, so Hopper never takes keys you already use. Coming from Rectangle, Magnet or Spectacle? Import their keys in one go.</p>
+          <a class="more" href="/features/windows#presets">See hotkey presets<span aria-hidden="true">→</span></a>
+        </section>
+      </div>
+      <p class="empty" data-hk-empty hidden>No shortcut matches that. Try “copy”, “tab” or “window”.</p>
+    </div>
+  </section>
+  <MoreFeatures current="hotkeys" />
+</Base>
+
+<style>
+  .hk {
+    padding-block: clamp(1.5rem, 1rem + 2.5vw, 3.5rem) clamp(4rem, 3rem + 5vw, 7rem);
+  }
+  .crumbs {
+    display: flex;
+    gap: 0.6rem;
+    font-size: var(--step--1);
+    font-weight: 600;
+    color: var(--ink-2);
+  }
+  .crumbs a {
+    color: var(--blue);
+    text-decoration: none;
+  }
+  .intro {
+    display: grid;
+    grid-template-columns: minmax(0, 1.3fr) minmax(0, 1fr);
+    gap: 1.5rem clamp(2rem, 5vw, 5rem);
+    align-items: end;
+    margin-top: 1.5rem;
+  }
+  h1 {
+    max-width: 11ch;
+    font-size: clamp(2.75rem, 1.6rem + 4.4vw, 5.5rem);
+  }
+  .tools {
+    position: sticky;
+    top: 4rem;
+    z-index: 5;
+    display: grid;
+    gap: 0.75rem;
+    margin-top: clamp(2rem, 1.5rem + 2vw, 3rem);
+    padding: 0.75rem 0;
+    background: var(--paper);
+  }
+  .tools input {
+    width: 100%;
+    max-width: 32rem;
+    min-height: 3rem;
+    padding: 0 1rem;
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    background: var(--white);
+    font: inherit;
+  }
+  .tools input:focus-visible {
+    outline: 2px solid var(--blue);
+    outline-offset: 1px;
+  }
+  .jump {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+  }
+  .jump a {
+    padding: 0.35rem 0.75rem;
+    border-radius: 999px;
+    background: var(--white);
+    border: 1px solid var(--line);
+    font-size: var(--step--1);
+    font-weight: 600;
+    text-decoration: none;
+  }
+  .jump a:hover {
+    border-color: var(--blue);
+    color: var(--blue);
+  }
+  .groups {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 1.25rem;
+    margin-top: 1rem;
+    align-items: start;
+  }
+  .group {
+    padding: clamp(1.25rem, 2vw, 1.75rem);
+    border-radius: 22px;
+    background: var(--white);
+    border: 1px solid var(--line);
+    scroll-margin-top: 12rem;
+    min-width: 0;
+  }
+  h2 {
+    font-size: var(--step-2);
+    line-height: 1.05;
+  }
+  .gline {
+    margin-top: 0.4rem;
+    color: var(--ink-2);
+    font-size: var(--step--1);
+  }
+  table {
+    width: 100%;
+    margin-top: 1rem;
+    border-collapse: collapse;
+  }
+  tr + tr {
+    border-top: 1px solid #ececf2;
+  }
+  th {
+    width: 9.5rem;
+    padding: 0.7rem 1rem 0.7rem 0;
+    text-align: left;
+    vertical-align: top;
+    font-weight: 400;
+  }
+  td {
+    padding: 0.7rem 0;
+    vertical-align: top;
+  }
+  td b {
+    font-weight: 600;
+  }
+  td small {
+    display: block;
+    margin-top: 0.15rem;
+    color: var(--ink-2);
+    font-size: 0.85rem;
+  }
+  .combo {
+    display: inline-flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.35rem;
+    font-size: 0.8rem;
+  }
+  .or {
+    color: var(--ink-2);
+  }
+  .tag {
+    display: inline-block;
+    margin-left: 0.5rem;
+    padding: 0.05rem 0.5rem;
+    border-radius: 999px;
+    background: var(--blue-soft);
+    color: var(--blue-deep);
+    font-size: 0.75rem;
+    font-weight: 600;
+    vertical-align: 0.1em;
+  }
+  .note p,
+  .note dd {
+    color: var(--ink-2);
+  }
+  .note p {
+    margin-top: 0.75rem;
+  }
+  dl {
+    display: grid;
+    gap: 0.4rem;
+    margin: 1rem 0 0;
+  }
+  dt {
+    font-weight: 700;
+    margin-top: 0.5rem;
+  }
+  dd {
+    margin: 0;
+  }
+  dd .key,
+  .note .key {
+    font-size: 0.75rem;
+    margin-inline: 0.1rem;
+  }
+  .more {
+    display: inline-flex;
+    gap: 0.5rem;
+    margin-top: 1rem;
+    font-weight: 700;
+    color: var(--blue);
+    text-decoration: none;
+  }
+  .more:hover {
+    text-decoration: underline;
+  }
+  .empty {
+    margin-top: 1.5rem;
+    color: var(--ink-2);
+  }
+  [data-row][hidden],
+  [data-group][hidden],
+  .empty[hidden] {
+    display: none;
+  }
+  @media (max-width: 60rem) {
+    .groups,
+    .intro {
+      grid-template-columns: 1fr;
+    }
+  }
+  @media (max-width: 30rem) {
+    th {
+      width: 7.5rem;
+    }
+  }
+  @media print {
+    .tools {
+      display: none;
+    }
+    .group {
+      break-inside: avoid;
+    }
+  }
+</style>
+
+<script>
+  const root = document.querySelector<HTMLElement>("[data-hk]");
+  if (root) {
+    const q = root.querySelector<HTMLInputElement>("[data-hk-q]")!;
+    const groups = [...root.querySelectorAll<HTMLElement>("[data-group]")];
+    const empty = root.querySelector<HTMLElement>("[data-hk-empty]")!;
+    q.addEventListener("input", () => {
+      const words = q.value.toLowerCase().split(/\s+/).filter(Boolean);
+      let any = false;
+      groups.forEach((g) => {
+        const title = g.querySelector("h2")!.textContent!.toLowerCase();
+        const rows = [...g.querySelectorAll<HTMLElement>("[data-row]")];
+        if (!rows.length) {
+          const show = words.every((w) => g.textContent!.toLowerCase().includes(w));
+          g.hidden = !show;
+          any ||= show;
+          return;
+        }
+        let shown = 0;
+        rows.forEach((r) => {
+          const text = `${title} ${r.textContent!.toLowerCase()}`;
+          r.hidden = !words.every((w) => text.includes(w));
+          if (!r.hidden) shown++;
+        });
+        g.hidden = shown === 0;
+        any ||= shown > 0;
+      });
+      empty.hidden = any;
+    });
+  }
+</script>

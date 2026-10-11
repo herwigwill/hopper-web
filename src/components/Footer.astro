@@ -1,0 +1,242 @@
+---
+import HopperMark from "./HopperMark.astro";
+import { site, featureIndex } from "../content/facts";
+const year = new Date().getFullYear();
+
+/**
+ * Footer links. Pages that don't exist yet point to "#" and are marked `soon`; give them a real href when the page
+ * ships (and remove `soon`). Privacy and Contact are real.
+ */
+const columns: { title: string; links: { label: string; href: string; soon?: boolean }[] }[] = [
+  {
+    title: "Product",
+    links: [
+      { label: "Features", href: "/features" },
+      { label: "Download", href: "#", soon: true },
+      { label: "Pricing", href: "#", soon: true },
+      { label: "Changelog", href: "#", soon: true },
+    ],
+  },
+  {
+    title: "Resources",
+    links: [
+      { label: "Getting started", href: "/getting-started" },
+      { label: "Keyboard shortcuts", href: "/features/hotkeys" },
+      { label: "Coming from Raycast", href: "#", soon: true },
+      { label: "Help", href: "/help" },
+    ],
+  },
+  {
+    title: "Company",
+    links: [
+      { label: "About", href: "/about" },
+      { label: "Blog", href: "/blog" },
+      { label: "Contact", href: `mailto:${site.contact}` },
+    ],
+  },
+  {
+    title: "Legal",
+    links: [
+      { label: "Privacy", href: "/privacy" },
+      { label: "Terms", href: "/terms" },
+    ],
+  },
+];
+
+const social = [
+  { label: "X", href: "#" },
+  { label: "YouTube", href: "#" },
+  { label: "GitHub", href: "#" },
+];
+---
+<footer class="site-footer on-dark">
+  <div class="wrap top">
+    <div class="brand">
+      <a href="/" class="home" aria-label="Hopper home"><HopperMark class="mark" /></a>
+      <p class="tag">Never lose your place.</p>
+      <a class="cta" href="/#join">Join the waitlist</a>
+    </div>
+    <nav class="cols" aria-label="Footer">
+      {columns.map((col) => (
+        <div class="col">
+          <p class="col-title">{col.title}</p>
+          <ul>
+            {col.links.map((l) => (
+              <li>
+                <a href={l.href}>{l.label}</a>
+                {l.soon && <span class="soon">Soon</span>}
+              </li>
+            ))}
+          </ul>
+        </div>
+      ))}
+    </nav>
+  </div>
+  <nav class="wrap index" aria-label="All features">
+    {featureIndex.map((col) => (
+      <div class="ix-col">
+        <p class="col-title">{col.title}</p>
+        <ul>
+          {col.items.map((it) => <li>{it.href ? <a href={it.href}>{it.label}</a> : <span>{it.label}</span>}</li>)}
+        </ul>
+      </div>
+    ))}
+  </nav>
+  <div class="wrap bottom">
+    <p>&copy; {year} Hopper. For {site.minimumOS} and later.</p>
+    <ul class="social" aria-label="Hopper elsewhere">
+      {social.map((s) => <li><a href={s.href}>{s.label}</a></li>)}
+    </ul>
+    <p class="marks">App names and icons on this site belong to their owners and are shown only to say which apps Hopper works with.</p>
+  </div>
+</footer>
+
+<style>
+  .site-footer {
+    background: var(--night);
+    color: #c9cdee;
+    padding-block: clamp(3.5rem, 3rem + 3vw, 5.5rem) 2rem;
+    font-size: var(--step--1);
+  }
+  .site-footer a {
+    color: #eef0ff;
+    text-decoration: none;
+  }
+  .site-footer a:hover {
+    color: var(--sun);
+  }
+  .top {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 2fr);
+    gap: 3rem;
+    padding-bottom: 3rem;
+    border-bottom: 1px solid #262c5c;
+  }
+  .brand {
+    display: grid;
+    align-content: start;
+    justify-items: start;
+    gap: 0.9rem;
+  }
+  .home {
+    display: block;
+    border-radius: 8px;
+    color: var(--white);
+  }
+  .home :global(.mark) {
+    display: block;
+    width: 1.75rem;
+    height: auto;
+    transition: transform 300ms var(--ease-hop);
+  }
+  .home:hover :global(.mark) {
+    transform: translateY(-4px) rotate(-4deg);
+  }
+  .tag {
+    font-family: var(--display);
+    font-size: var(--step-2);
+    font-weight: 800;
+    font-stretch: 80%;
+    letter-spacing: -0.02em;
+    line-height: 1.05;
+    color: var(--white);
+  }
+  .cta {
+    display: inline-flex;
+    align-items: center;
+    min-height: 2.5rem;
+    padding: 0 1rem;
+    border-radius: 999px;
+    background: var(--white);
+    color: var(--night) !important;
+    font-weight: 600;
+    margin-top: 0.25rem;
+  }
+  .cta:hover {
+    background: var(--sun);
+  }
+  .cols {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 2rem;
+  }
+  .col-title {
+    color: var(--white);
+    font-weight: 650;
+    margin-bottom: 0.9rem;
+  }
+  .col ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: 0.65rem;
+  }
+  .col li {
+    display: flex;
+    align-items: center;
+    gap: 0.45rem;
+    flex-wrap: wrap;
+  }
+  .soon {
+    padding: 0.05rem 0.4rem;
+    border-radius: 999px;
+    border: 1px solid #3a417a;
+    font-size: 0.7rem;
+    color: #aab0e0;
+  }
+  .bottom {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 0.75rem 2rem;
+    align-items: center;
+    padding-top: 1.75rem;
+    border-top: 1px solid #262c5c;
+  }
+  .social {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    gap: 1.25rem;
+  }
+  .marks {
+    grid-column: 1 / -1;
+    max-width: 62ch;
+    font-size: 0.8125rem;
+    color: #9da3d6;
+  }
+  /* The feature index: every feature by area, under the footer proper. */
+  .index {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(9.5rem, 1fr));
+    gap: 2.5rem 2rem;
+    padding-block: 3rem;
+  }
+  .ix-col ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: 0.7rem;
+  }
+  .ix-col li {
+    line-height: 1.35;
+  }
+  .ix-col span {
+    color: #b3b8e2;
+  }
+  @media (max-width: 56rem) {
+    .top {
+      grid-template-columns: 1fr;
+    }
+    .cols {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+  @media (max-width: 30rem) {
+    .bottom {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

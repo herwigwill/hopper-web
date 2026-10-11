@@ -1,0 +1,360 @@
+---
+import { apps, trail, site } from "../content/facts";
+const last = trail.length - 1;
+---
+<section class="back" aria-labelledby="back-title" data-back>
+  <div class="wrap grid">
+    <div class="copy">
+      <h2 id="back-title">A Back button for your whole Mac.</h2>
+      <p class="lede">Like Back in your browser, but it works across all your apps. One press takes you to whatever you had open before.</p>
+      <div class="controls" role="group" aria-label="Try Back and Forward">
+        <button type="button" class="step" data-step="-1" aria-label="Back">
+          <span class="keys" aria-hidden="true"><span class="key">{site.back[0]}</span><span class="key">{site.back[1]}</span><span class="key">{site.back[2]}</span></span>
+          <span class="step-label">Back</span>
+        </button>
+        <button type="button" class="step" data-step="1" aria-label="Forward" disabled>
+          <span class="keys" aria-hidden="true"><span class="key">{site.forward[0]}</span><span class="key">{site.forward[1]}</span><span class="key">{site.forward[2]}</span></span>
+          <span class="step-label">Forward</span>
+        </button>
+      </div>
+      <p class="try">Try it: press Back.</p>
+    </div>
+
+    <div class="scene" aria-hidden="true">
+      <ol class="path" data-path>
+        {trail.map((t, i) => (
+          <li class:list={["stop", { here: i === last }]} data-i={i}>
+            <img src={apps[t.app].icon} alt="" width="56" height="56" loading="lazy" />
+            <span class="stop-t">{t.title}</span>
+          </li>
+        ))}
+      </ol>
+      <svg class="hops" viewBox="0 0 1000 120" preserveAspectRatio="none" data-hops>
+        {trail.slice(1).map((_, i) => {
+          const x1 = 100 + i * 200, x2 = x1 + 200;
+          return <path d={`M${x1},100 Q${(x1 + x2) / 2},10 ${x2},100`} pathLength="1" data-hop={i} />;
+        })}
+      </svg>
+      <div class="now" data-now>
+        {trail.map((t, i) => (
+          <article class:list={["card", `c-${t.app}`]} data-card={i} hidden={i !== last}>
+            <header><img src={apps[t.app].icon} alt="" width="40" height="40" loading="lazy" /><span><b>{t.title}</b><small>{t.detail}</small></span></header>
+            <div class="peek">
+              {t.app === "notion" && (<><p class="pk-h">Goals</p><ul><li>Ship the new checkout to every plan</li><li>Lift paid conversion from 39% to 45%</li><li>Pricing page live a week before launch</li></ul></>)}
+              {t.app === "slack" && (<><p><b>Sam Ito</b> Can we ship the checkout fix before Thursday?</p><p><b>Priya Raman</b> Yes if the auth refresh bug is fixed.</p></>)}
+              {t.app === "chrome" && (<div class="pk-bars"><span style="--v:1">12,480</span><span style="--v:.71">8,902</span><span style="--v:.49">6,115</span><span style="--v:.39">4,870</span></div>)}
+              {t.app === "cursor" && (<pre><code>{`export async function onEvent(e: Event) {
+  if (e.type === "invoice.paid") {
+    await markPaid(e.data.invoice)
+  }
+}`}</code></pre>)}
+              {t.app === "claude" && (<><p class="pk-you">Tokens expire mid-request on slow networks.</p><p>Found it. I’ll refresh anything expiring in the next 30 seconds before sending.</p></>)}
+            </div>
+          </article>
+        ))}
+      </div>
+    </div>
+  </div>
+  <p class="visually-hidden" aria-live="polite" data-back-live></p>
+</section>
+
+<style>
+  .back {
+    padding-block: clamp(5rem, 4rem + 6vw, 10rem);
+    background: var(--white);
+    border-block: 1px solid var(--line);
+  }
+  .grid {
+    display: grid;
+    grid-template-columns: minmax(0, 0.85fr) minmax(0, 1.15fr);
+    gap: 3rem clamp(2rem, 5vw, 6rem);
+    align-items: center;
+  }
+  h2 {
+    max-width: 11ch;
+  }
+  .lede {
+    margin-top: 1.5rem;
+  }
+  .controls {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    margin-top: 2.25rem;
+  }
+  .step {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.5rem 1rem 0.5rem 0.5rem;
+    border: 1px solid var(--line);
+    border-radius: 14px;
+    background: var(--paper);
+    cursor: pointer;
+    font-weight: 600;
+    font-size: var(--step-0);
+  }
+  .step:hover:not(:disabled) {
+    border-color: var(--blue);
+  }
+  .step:disabled {
+    opacity: 0.45;
+    cursor: default;
+  }
+  .step .key {
+    font-size: 0.85rem;
+  }
+  .try {
+    margin-top: 0.9rem;
+    font-size: var(--step--1);
+    color: var(--ink-2);
+  }
+
+  .scene {
+    position: relative;
+    display: grid;
+    gap: 1.5rem;
+  }
+  .path {
+    position: relative;
+    z-index: 1;
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+  .stop {
+    display: grid;
+    justify-items: center;
+    gap: 0.5rem;
+    text-align: center;
+    transition: transform 350ms var(--ease-hop);
+  }
+  /* Faded stops dim their icon only, so their names keep readable contrast. */
+  .stop img {
+    opacity: 0.45;
+    transition: opacity 250ms ease, transform 350ms var(--ease-hop);
+  }
+  .stop img {
+    width: clamp(2.5rem, 4.5vw, 3.75rem);
+    height: auto;
+  }
+  .stop-t {
+    font-size: 0.8rem;
+    line-height: 1.25;
+    color: var(--ink-2);
+    max-width: 10ch;
+  }
+  .stop.past img {
+    opacity: 0.8;
+  }
+  .stop.here img {
+    opacity: 1;
+  }
+  .stop.here img {
+    transform: translateY(-6px) scale(1.12);
+  }
+  .stop.here .stop-t {
+    color: var(--ink);
+    font-weight: 600;
+  }
+  .hops {
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: -2.2rem;
+    width: 100%;
+    height: 3.5rem;
+    overflow: visible;
+  }
+  .hops path {
+    fill: none;
+    stroke: var(--line);
+    stroke-width: 2;
+    stroke-dasharray: 0.02 0.02;
+    vector-effect: non-scaling-stroke;
+  }
+  .hops path.lit {
+    stroke: var(--blue);
+    stroke-dasharray: none;
+  }
+
+  .now {
+    position: relative;
+    min-height: 15rem;
+  }
+  .card {
+    border-radius: 16px;
+    background: var(--paper);
+    border: 1px solid var(--line);
+    padding: 1.25rem;
+    min-height: 15rem;
+    animation: card-in 380ms var(--ease-hop) both;
+  }
+  .card.from-right {
+    animation-name: card-in-right;
+  }
+  @keyframes card-in {
+    from {
+      opacity: 0;
+      transform: translateX(-28px) scale(0.98);
+    }
+  }
+  @keyframes card-in-right {
+    from {
+      opacity: 0;
+      transform: translateX(28px) scale(0.98);
+    }
+  }
+  .card header {
+    display: flex;
+    gap: 0.9rem;
+    align-items: center;
+  }
+  .card header img {
+    width: 2.5rem;
+    height: 2.5rem;
+  }
+  .card header span {
+    display: grid;
+  }
+  .card b {
+    font-size: var(--step-1);
+    font-stretch: 90%;
+    line-height: 1.2;
+  }
+  .card small {
+    color: var(--ink-2);
+    font-size: var(--step--1);
+  }
+  .peek {
+    margin-top: 1.1rem;
+    padding: 1rem 1.1rem;
+    border-radius: 12px;
+    background: var(--white);
+    border: 1px solid var(--line);
+    font-family: var(--mac);
+    font-size: 0.92rem;
+    line-height: 1.5;
+    display: grid;
+    gap: 0.5rem;
+    min-height: 8.5rem;
+    align-content: start;
+  }
+  .peek ul {
+    margin: 0;
+    padding-left: 1.1rem;
+  }
+  .pk-h {
+    font-weight: 700;
+  }
+  .pk-you {
+    justify-self: end;
+    padding: 0.4rem 0.75rem;
+    border-radius: 12px;
+    background: #ece8dd;
+  }
+  .c-cursor .peek {
+    background: #181818;
+    border-color: #181818;
+    color: #d4d4d4;
+  }
+  .peek pre {
+    margin: 0;
+    font: 0.82rem/1.6 ui-monospace, "SF Mono", Menlo, monospace;
+    white-space: pre-wrap;
+  }
+  .pk-bars {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 0.75rem;
+    align-items: end;
+    height: 7rem;
+  }
+  .pk-bars span {
+    display: grid;
+    align-content: end;
+    font-size: 0.8rem;
+    font-weight: 600;
+  }
+  .pk-bars span::after {
+    content: "";
+    height: calc(var(--v) * 5rem);
+    border-radius: 6px 6px 2px 2px;
+    background: #5865f2;
+    margin-top: 0.3rem;
+  }
+
+  @media (max-width: 56rem) {
+    .grid {
+      grid-template-columns: 1fr;
+    }
+    .scene {
+      margin-top: 2rem;
+    }
+  }
+  @media (max-width: 30rem) {
+    .stop-t {
+      display: none;
+    }
+  }
+</style>
+
+<script>
+  import { trail, apps } from "../content/facts";
+  const root = document.querySelector<HTMLElement>("[data-back]");
+  if (root) {
+    let at = trail.length - 1;
+    const stops = [...root.querySelectorAll<HTMLElement>(".stop")];
+    const cards = [...root.querySelectorAll<HTMLElement>("[data-card]")];
+    const hops = [...root.querySelectorAll<SVGPathElement>("[data-hop]")];
+    const back = root.querySelector<HTMLButtonElement>('[data-step="-1"]')!;
+    const fwd = root.querySelector<HTMLButtonElement>('[data-step="1"]')!;
+    const live = root.querySelector<HTMLElement>("[data-back-live]")!;
+
+    const go = (to: number, source?: HTMLButtonElement) => {
+      if (to < 0 || to >= trail.length || to === at) return;
+      const dir = to < at ? -1 : 1;
+      at = to;
+      stops.forEach((s, i) => {
+        s.classList.toggle("here", i === at);
+        s.classList.toggle("past", i < at);
+      });
+      cards.forEach((c, i) => {
+        c.hidden = i !== at;
+        c.classList.toggle("from-right", dir > 0);
+        if (i === at) {
+          c.style.animation = "none";
+          void c.offsetWidth;
+          c.style.animation = "";
+        }
+      });
+      const from = at - dir;
+      hops.forEach((h, i) => h.classList.toggle("lit", i === Math.min(from, at)));
+      back.disabled = at === 0;
+      fwd.disabled = at === trail.length - 1;
+      const keys = (source ?? (dir < 0 ? back : fwd)).querySelectorAll(".key");
+      keys.forEach((k) => k.classList.add("is-down"));
+      setTimeout(() => keys.forEach((k) => k.classList.remove("is-down")), 160);
+      const t = trail[at];
+      live.textContent = `${dir < 0 ? "Back" : "Forward"} to ${t.title}, ${apps[t.app].name}.`;
+      // Keep focus on a button that still works.
+      if (document.activeElement === back && back.disabled) fwd.focus();
+      if (document.activeElement === fwd && fwd.disabled) back.focus();
+    };
+    back.addEventListener("click", () => go(at - 1, back));
+    fwd.addEventListener("click", () => go(at + 1, fwd));
+    root.querySelector(".controls")!.addEventListener("keydown", (e) => {
+      const k = (e as KeyboardEvent).key;
+      if (k === "ArrowLeft") {
+        e.preventDefault();
+        go(at - 1);
+      } else if (k === "ArrowRight") {
+        e.preventDefault();
+        go(at + 1);
+      }
+    });
+    stops.forEach((s, i) => s.classList.toggle("past", i < at));
+  }
+</script>

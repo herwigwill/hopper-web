@@ -1,0 +1,69 @@
+---
+import Base from "../layouts/Base.astro";
+import { site } from "../content/facts";
+const updated = "October 10, 2026";
+---
+<Base title="Terms · Hopper" description="The terms for using the Hopper website, joining the waitlist and testing early builds of Hopper." path="/terms">
+  <article class="wrap policy">
+    <h1>Terms</h1>
+    <p class="updated">Last updated {updated}</p>
+
+    <p class="lead">These terms cover this website, the Hopper waitlist and early test builds of Hopper. By using any of them, you agree to these terms. The app will ship with its own license when it launches.</p>
+
+    <h2>The website</h2>
+    <p>You can read, link to and share anything on this site. Please don’t copy the site’s design, code or artwork to make your own, or use the Hopper name and bunny in a way that suggests we made or endorse something we didn’t.</p>
+
+    <h2>The waitlist</h2>
+    <p>Joining is free and doesn’t promise you a build or a launch date. Use your own email address. How we handle it is on the <a href="/privacy">privacy page</a>, and you can leave any time with the unsubscribe link in every email.</p>
+
+    <h2>Test builds</h2>
+    <ul>
+      <li><b>They’re a preview.</b> Features may change between builds as we shape Hopper with testers.</li>
+      <li><b>Feedback is welcome.</b> If you send us ideas or bug reports, we may use them to improve Hopper without owing you anything for them.</li>
+      <li><b>Please don’t</b> resell builds, share them outside the test, or try to get around anything that limits who can use them.</li>
+    </ul>
+
+    <h2>No warranty</h2>
+    <p>The website, the waitlist and test builds are provided “as is”, without warranties of any kind. To the extent the law allows, we aren’t liable for indirect or consequential losses from using them.</p>
+
+    <h2>Changes</h2>
+    <p>We may update these terms as Hopper gets closer to launch. When we do, we’ll change the date at the top. If a change matters, we’ll email people on the waitlist.</p>
+
+    <h2>Contact</h2>
+    <p>Questions about these terms? Email <a href={`mailto:${site.contact}`}>{site.contact}</a>.</p>
+  </article>
+</Base>
+
+<style>
+  .policy {
+    max-width: 44rem;
+    padding-block: 4rem 6rem;
+  }
+  h1 {
+    font-size: var(--step-3);
+  }
+  .updated {
+    margin-top: 1rem;
+    color: var(--ink-2);
+    font-size: var(--step--1);
+  }
+  .lead {
+    margin-top: 2rem;
+    font-size: var(--step-1);
+    line-height: 1.5;
+  }
+  h2 {
+    margin-top: 2.75rem;
+    font-size: var(--step-2);
+    line-height: 1.1;
+  }
+  p,
+  ul {
+    margin-top: 0.9rem;
+  }
+  ul {
+    padding-left: 1.2rem;
+    display: grid;
+    gap: 0.5rem;
+  }
+</style>

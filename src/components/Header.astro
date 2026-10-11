@@ -1,0 +1,79 @@
+---
+// With build.format "file", the built home page reports "/index.html", so normalize before comparing.
+const path = Astro.url.pathname.replace(/(index)?\.html$/, "");
+const onHome = path === "/" || path === "";
+const onFeatures = path.startsWith("/features");
+const onBlog = path.startsWith("/blog");
+---
+<header class="site-header">
+  <div class="wrap bar">
+    <nav class="nav" aria-label="Main">
+      <a class="link" href="/" aria-current={onHome ? "page" : undefined}>Home</a>
+      <a class="link" href="/features" aria-current={onFeatures ? "page" : undefined}>Features</a>
+      <a class="link" href="/blog" aria-current={onBlog ? "page" : undefined}>Blog</a>
+    </nav>
+    <a class="join" href="/#join">Join the waitlist</a>
+  </div>
+</header>
+
+<style>
+  .site-header {
+    position: sticky;
+    top: 0;
+    z-index: 50;
+    background: color-mix(in srgb, var(--paper) 88%, transparent);
+    backdrop-filter: saturate(1.4) blur(12px);
+    -webkit-backdrop-filter: saturate(1.4) blur(12px);
+    border-bottom: 1px solid transparent;
+    transition: border-color 200ms ease;
+    /* Stays put while the page under it hops (global.css). */
+    view-transition-name: site-header;
+  }
+  .nav {
+    display: flex;
+    align-items: center;
+    gap: clamp(0.25rem, 1.5vw, 1rem);
+    margin-left: -0.5rem;
+  }
+  .link {
+    display: inline-flex;
+    align-items: center;
+    min-height: 2.5rem;
+    padding: 0 0.5rem;
+    font-weight: 600;
+    font-size: var(--step--1);
+    text-decoration: none;
+    border-radius: 8px;
+  }
+  .link:hover {
+    color: var(--blue);
+  }
+  .link[aria-current="page"] {
+    color: var(--blue);
+    text-decoration: underline;
+    text-decoration-thickness: 2px;
+    text-underline-offset: 0.45em;
+  }
+  .bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 4rem;
+  }
+  .join {
+    display: inline-flex;
+    align-items: center;
+    min-height: 2.5rem;
+    padding: 0 1rem;
+    border-radius: 999px;
+    background: var(--ink);
+    color: var(--white);
+    font-weight: 600;
+    font-size: var(--step--1);
+    text-decoration: none;
+    transition: background 150ms ease;
+  }
+  .join:hover {
+    background: var(--blue);
+  }
+</style>

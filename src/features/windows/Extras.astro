@@ -1,0 +1,502 @@
+---
+/**
+ * The rest of Window Management (ADR-055, ADR-052): Move / Resize Window to typed values, Focus Next / Previous App
+ * Window, Move to Next Display and Minimize on This Display, and Respect Stage Manager. Four small working demos.
+ */
+import MacWindow from "../../components/MacWindow.astro";
+import { glyphSVG } from "../../scripts/windows";
+---
+<section class="ex" id="extras" aria-labelledby="ex-title" data-ex>
+  <div class="wrap">
+    <div class="head">
+      <p class="kicker">And everything else</p>
+      <h2 id="ex-title">The small moves you make all day.</h2>
+    </div>
+
+    <div class="cards">
+      <!-- Move / Resize Window -->
+      <article class="card" id="exact" aria-labelledby="ex-exact">
+        <h3 id="ex-exact">Exact sizes and spots</h3>
+        <p class="line">Move Window and Resize Window take numbers, in points or percent, typed right next to the command.</p>
+        <div class="desk-wrap" aria-hidden="true">
+          <div class="desk" data-exact-desk>
+            <MacWindow app="notion" title="Q4 Launch Plan" at={{ x: 0.1, y: 0.1, w: 0.5, h: 0.6 }} front />
+          </div>
+        </div>
+        <div class="argrow" data-exact>
+          <div class="seg" role="radiogroup" aria-label="Command">
+            <button type="button" role="radio" aria-checked="true" data-mode="move">Move Window</button>
+            <button type="button" role="radio" aria-checked="false" tabindex="-1" data-mode="resize">Resize Window</button>
+          </div>
+          <label><span data-a-label>X</span><input type="text" value="10%" data-a autocomplete="off" inputmode="decimal" /></label>
+          <label><span data-b-label>Y</span><input type="text" value="10%" data-b autocomplete="off" inputmode="decimal" /></label>
+        </div>
+        <p class="out" role="status" data-exact-out></p>
+      </article>
+
+      <!-- Focus Next App Window -->
+      <article class="card" id="focus" aria-labelledby="ex-focus">
+        <h3 id="ex-focus">Every window of the app</h3>
+        <p class="line">Focus Next App Window steps through the app’s windows in the order you opened them, so each one gets its turn.</p>
+        <div class="desk-wrap" aria-hidden="true">
+          <div class="desk" data-focus-desk>
+            <MacWindow id="c1" app="chrome" title="Checkout funnel, Q4" at={{ x: 0.06, y: 0.06, w: 0.55, h: 0.6 }} z={1} />
+            <MacWindow id="c2" app="chrome" title="Pricing experiments" at={{ x: 0.24, y: 0.2, w: 0.55, h: 0.6 }} z={2} />
+            <MacWindow id="c3" app="chrome" title="Pull request #482" at={{ x: 0.4, y: 0.34, w: 0.55, h: 0.6 }} z={3} front />
+          </div>
+        </div>
+        <div class="btns">
+          <button type="button" class="cmd" data-focus="-1"><span set:html={glyphSVG("focus-previous-window")} />Previous</button>
+          <button type="button" class="cmd" data-focus="1"><span set:html={glyphSVG("focus-next-window")} />Focus Next App Window</button>
+        </div>
+        <p class="out" role="status" data-focus-out>Window 3 of 3 is in front.</p>
+      </article>
+
+      <!-- Stage Manager -->
+      <article class="card" id="stage-manager" aria-labelledby="ex-stage">
+        <h3 id="ex-stage">Plays nice with Stage Manager</h3>
+        <p class="line">With Stage Manager’s strip showing, windows leave room for it, so nothing lands underneath.</p>
+        <div class="desk-wrap" aria-hidden="true">
+          <div class="desk sm" data-sm-desk>
+            <div class="strip" data-strip><i></i><i></i><i></i></div>
+            <MacWindow app="cursor" title="webhooks.ts — web" at={{ x: 0.132, y: 0, w: 0.868, h: 1 }} front />
+          </div>
+        </div>
+        <label class="switch">
+          <input type="checkbox" checked data-sm-toggle />
+          <span>Respect Stage Manager</span>
+        </label>
+        <div class="btns">
+          <button type="button" class="cmd" data-sm="maximize"><span set:html={glyphSVG("maximize")} />Maximize</button>
+          <button type="button" class="cmd" data-sm="left-half"><span set:html={glyphSVG("left-half")} />Left Half</button>
+        </div>
+      </article>
+
+      <!-- Displays -->
+      <article class="card wide" id="displays" aria-labelledby="ex-displays">
+        <h3 id="ex-displays">Two displays, no dragging</h3>
+        <p class="line">Send the window to your other display at the same size and in the same spot. Or minimize everything on one display and leave the other alone.</p>
+        <div class="pair" aria-hidden="true" data-pair>
+          <div class="screen"><div class="desk" data-d="0"></div><span>Built-in Display</span></div>
+          <div class="screen big"><div class="desk" data-d="1"></div><span>Studio Display</span></div>
+          <div class="layer" data-layer>
+            <MacWindow id="dn" app="notion" title="Q4 Launch Plan" at={{ x: 0, y: 0, w: 0, h: 0 }} z={2} front />
+            <MacWindow id="ds" app="slack" title="#launch" at={{ x: 0, y: 0, w: 0, h: 0 }} z={1} />
+            <MacWindow id="dc" app="chrome" title="Checkout funnel, Q4" at={{ x: 0, y: 0, w: 0, h: 0 }} z={1} />
+          </div>
+        </div>
+        <div class="btns">
+          <button type="button" class="cmd" data-disp="next"><span set:html={glyphSVG("next-display")} />Move to Next Display</button>
+          <button type="button" class="cmd" data-disp="min"><span set:html={glyphSVG("minimize-on-display")} />Minimize on This Display</button>
+          <button type="button" class="cmd ghost" data-disp="reset">Bring them back</button>
+        </div>
+        <p class="out" role="status" data-disp-out>Notion is in front, on the built-in display.</p>
+      </article>
+
+    </div>
+  </div>
+</section>
+
+<style>
+  .ex {
+    padding-block: clamp(5rem, 4rem + 6vw, 9rem);
+  }
+  .kicker {
+    font-size: var(--step--1);
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--blue);
+    margin-bottom: 1rem;
+  }
+  h2 {
+    max-width: 14ch;
+  }
+  .cards {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 1.25rem;
+    margin-top: clamp(2.5rem, 2rem + 2vw, 4rem);
+  }
+  .card {
+    display: flex;
+    flex-direction: column;
+    gap: 0.9rem;
+    padding: clamp(1.25rem, 2vw, 1.75rem);
+    border-radius: 22px;
+    background: var(--white);
+    border: 1px solid var(--line);
+    scroll-margin-top: 6rem;
+  }
+  .card.wide {
+    grid-column: 1 / -1;
+  }
+  h3 {
+    font-family: var(--display);
+    font-stretch: 85%;
+    font-weight: 800;
+    font-size: var(--step-2);
+    line-height: 1;
+  }
+  .line {
+    color: var(--ink-2);
+    max-width: 52ch;
+  }
+  .desk-wrap,
+  .screen .desk {
+    border-radius: 10px;
+    overflow: hidden;
+    background:
+      radial-gradient(90% 80% at 20% 100%, #6a3df0 0%, transparent 60%),
+      radial-gradient(80% 70% at 100% 0%, #31c0ff 0%, transparent 55%),
+      #2534c9;
+  }
+  .argrow {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.45rem;
+    border-radius: 12px;
+    background: rgb(30 31 38 / 0.95);
+    color: #fff;
+  }
+  .argrow label {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    font: 600 0.8rem var(--mac);
+    color: rgb(235 235 245 / 0.75);
+  }
+  .argrow input {
+    width: 5.5rem;
+    min-height: 2.1rem;
+    padding: 0 0.6rem;
+    border-radius: 8px;
+    border: 1px solid transparent;
+    background: rgb(255 255 255 / 0.1);
+    color: #fff;
+    font: 500 0.9rem var(--mac);
+  }
+  .argrow input[aria-invalid="true"] {
+    border-color: #ff8f8f;
+  }
+  .argrow input:focus-visible {
+    outline: 2px solid var(--sun);
+    outline-offset: 1px;
+  }
+  .seg {
+    display: inline-flex;
+    gap: 0.2rem;
+    margin-right: auto;
+  }
+  .seg button {
+    min-height: 2.1rem;
+    padding: 0 0.7rem;
+    border: 0;
+    border-radius: 8px;
+    background: transparent;
+    color: rgb(235 235 245 / 0.75);
+    font: 600 0.8rem var(--mac);
+    cursor: pointer;
+  }
+  .seg button[aria-checked="true"] {
+    background: rgb(255 255 255 / 0.14);
+    color: #fff;
+  }
+  .seg :focus-visible {
+    outline-color: var(--sun);
+  }
+  .btns {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+  .cmd {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    min-height: 2.6rem;
+    padding: 0 0.9rem 0 0.65rem;
+    border: 1px solid #c9cde0;
+    border-radius: 12px;
+    background: linear-gradient(#fff, #f1f2f7);
+    box-shadow: 0 2px 0 #c2c7dc;
+    font-weight: 700;
+    font-size: var(--step--1);
+    cursor: pointer;
+    transition: transform 90ms ease, box-shadow 90ms ease, border-color 150ms ease;
+  }
+  .cmd:hover {
+    border-color: var(--blue);
+  }
+  .cmd:active {
+    transform: translateY(2px);
+    box-shadow: none;
+  }
+  .cmd.ghost {
+    padding: 0 0.9rem;
+    background: transparent;
+    box-shadow: none;
+    font-weight: 600;
+  }
+  .cmd :global(.glyph) {
+    width: 1.4rem;
+    color: var(--blue);
+  }
+  .out {
+    min-height: 1.5em;
+    font-size: var(--step--1);
+    font-weight: 600;
+    color: var(--blue-deep);
+  }
+
+  /* Displays */
+  .pair {
+    position: relative;
+    display: grid;
+    grid-template-columns: 1fr 1.33fr;
+    gap: clamp(0.75rem, 2vw, 1.5rem);
+    align-items: end;
+  }
+  .screen {
+    display: grid;
+    gap: 0.5rem;
+  }
+  .screen .desk {
+    box-shadow: 0 0 0 5px #15172a, 0 0 0 6px #3a3d55;
+  }
+  .screen span {
+    margin-top: 0.3rem;
+    text-align: center;
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: var(--ink-2);
+  }
+  .layer {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+  }
+
+  /* Stage Manager */
+  .strip {
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: calc(190 / 1440 * 100%);
+    display: grid;
+    align-content: center;
+    justify-items: center;
+    gap: 6%;
+    transition: opacity 300ms ease;
+  }
+  .strip i {
+    width: 62%;
+    aspect-ratio: 4 / 3;
+    border-radius: 4px;
+    background: rgb(255 255 255 / 0.85);
+    box-shadow: 0 6px 12px -6px rgb(0 0 0 / 0.5);
+    transform: perspective(200px) rotateY(18deg);
+  }
+  .switch {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.6rem;
+    font-weight: 600;
+    cursor: pointer;
+  }
+  .switch input {
+    width: 1.1rem;
+    height: 1.1rem;
+    margin: 0;
+    accent-color: var(--blue);
+  }
+
+  @media (max-width: 75rem) {
+    .cards {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+  @media (max-width: 56rem) {
+    .cards {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>
+
+<script>
+  import { apply, layoutRect, type Rect } from "../../scripts/windows";
+  import { check, radioKeys } from "../../scripts/controls";
+
+  const root = document.querySelector<HTMLElement>("[data-ex]");
+  if (root) {
+    const W = 1440, H = 860;
+    const rectOf = (el: HTMLElement): Rect => {
+      const s = el.style;
+      return { x: +s.getPropertyValue("--x"), y: +s.getPropertyValue("--y"), w: +s.getPropertyValue("--w"), h: +s.getPropertyValue("--h") };
+    };
+    const place = (el: HTMLElement, r: Rect) => apply(el, { rect: r, gapped: false }, 0);
+
+    /* Move / Resize Window (ExactWindowChange): X / Y from the visible area's top-left; Width / Height keep the top-left;
+       points or %; kept on the display. */
+    {
+      const win = root.querySelector<HTMLElement>("[data-exact-desk] .mw")!;
+      const a = root.querySelector<HTMLInputElement>("[data-a]")!;
+      const b = root.querySelector<HTMLInputElement>("[data-b]")!;
+      const aL = root.querySelector<HTMLElement>("[data-a-label]")!;
+      const bL = root.querySelector<HTMLElement>("[data-b-label]")!;
+      const out = root.querySelector<HTMLElement>("[data-exact-out]")!;
+      const modes = [...root.querySelectorAll<HTMLButtonElement>("[data-mode]")];
+      let mode: "move" | "resize" = "move";
+      let r = rectOf(win);
+      const parse = (t: string, extent: number) => {
+        const m = /^\s*(-?\d*\.?\d+)\s*(%|pt|px)?\s*$/i.exec(t);
+        if (!m) return null;
+        return m[2] === "%" ? (Number(m[1]) / 100) * extent : Number(m[1]);
+      };
+      const run = () => {
+        const va = parse(a.value, W), vb = parse(b.value, H);
+        a.setAttribute("aria-invalid", String(va === null));
+        b.setAttribute("aria-invalid", String(vb === null));
+        if (va === null || vb === null) {
+          out.textContent = "Type a number, like “200” or “25%”.";
+          return;
+        }
+        if (mode === "move") {
+          r = { ...r, x: Math.min(Math.max(va / W, 0), 1 - r.w), y: Math.min(Math.max(vb / H, 0), 1 - r.h) };
+          out.textContent = `Moved to ${Math.round(r.x * W)}, ${Math.round(r.y * H)}.`;
+        } else {
+          const w = Math.min(Math.max(va / W, 0.08), 1 - r.x), h = Math.min(Math.max(vb / H, 0.1), 1 - r.y);
+          r = { ...r, w, h };
+          out.textContent = `Resized to ${Math.round(w * W)} × ${Math.round(h * H)}, top-left kept.`;
+        }
+        place(win, r);
+      };
+      modes.forEach((m) =>
+        m.addEventListener("click", () => {
+          mode = m.dataset.mode as typeof mode;
+          check(modes, (x) => x === m);
+          aL.textContent = mode === "move" ? "X" : "Width";
+          bL.textContent = mode === "move" ? "Y" : "Height";
+          a.value = mode === "move" ? `${Math.round(r.x * 100)}%` : `${Math.round(r.w * 100)}%`;
+          b.value = mode === "move" ? `${Math.round(r.y * 100)}%` : `${Math.round(r.h * 100)}%`;
+          out.textContent = "";
+        }),
+      );
+      root.querySelector<HTMLElement>(".seg")!.addEventListener("keydown", (e) => radioKeys(e, modes));
+      a.addEventListener("input", run);
+      b.addEventListener("input", run);
+    }
+
+    /* Focus Next / Previous App Window: opening order, wrapping. */
+    {
+      const wins = [...root.querySelectorAll<HTMLElement>("[data-focus-desk] .mw")];
+      const out = root.querySelector<HTMLElement>("[data-focus-out]")!;
+      let at = wins.length - 1;
+      let z = wins.length;
+      root.querySelectorAll<HTMLButtonElement>("[data-focus]").forEach((btn) =>
+        btn.addEventListener("click", () => {
+          at = (at + Number(btn.dataset.focus) + wins.length) % wins.length;
+          wins.forEach((w, i) => w.classList.toggle("is-front", i === at));
+          wins[at].style.setProperty("--z", String(++z));
+          wins[at].animate([{ transform: "translateY(6px) scale(0.985)" }, { transform: "none" }], { duration: 360, easing: "cubic-bezier(.22,1.2,.36,1)" });
+          out.textContent = `Window ${at + 1} of ${wins.length} is in front: ${wins[at].querySelector(".mw-title")!.textContent!.trim()}.`;
+        }),
+      );
+    }
+
+    /* Displays: Move to Next Display keeps the size in points (no bigger than the display) and the place in the room
+       around it; Minimize on This Display minimizes every window on the front window's display. */
+    {
+      const pair = root.querySelector<HTMLElement>("[data-pair]")!;
+      const desks = [...root.querySelectorAll<HTMLElement>("[data-d]")];
+      const out = root.querySelector<HTMLElement>("[data-disp-out]")!;
+      const size = [{ w: 1440, h: 860 }, { w: 1920, h: 1146 }];
+      type DW = { el: HTMLElement; name: string; d: number; x: number; y: number; w: number; h: number; min: boolean };
+      const el = (id: string) => root.querySelector<HTMLElement>(`[data-layer] [data-win="${id}"]`)!;
+      const initial = (): DW[] => [
+        { el: el("dn"), name: "Notion", d: 0, x: 0.06, y: 0.08, w: 760, h: 560, min: false },
+        { el: el("ds"), name: "Slack", d: 0, x: 0.6, y: 0.5, w: 620, h: 400, min: false },
+        { el: el("dc"), name: "Chrome", d: 1, x: 0.5, y: 0.3, w: 1100, h: 720, min: false },
+      ];
+      let wins = initial();
+      let front = wins[0];
+      const draw = (hop?: DW) => {
+        const p = pair.getBoundingClientRect();
+        wins.forEach((w) => {
+          const d = desks[w.d].getBoundingClientRect();
+          const k = d.width / size[w.d].w;
+          const ww = Math.min(w.w, size[w.d].w), hh = Math.min(w.h, size[w.d].h);
+          // x / y are where the window sits in the room around it (0 = left / top edge, 1 = right / bottom).
+          const st = w.el.style;
+          st.setProperty("--pt", `${k}px`);
+          st.left = `${d.left - p.left + w.x * (size[w.d].w - ww) * k}px`;
+          st.top = `${d.top - p.top + w.y * (size[w.d].h - hh) * k}px`;
+          st.width = `${ww * k}px`;
+          st.height = `${hh * k}px`;
+          w.el.classList.toggle("is-min", w.min);
+          w.el.classList.toggle("is-front", w === front);
+        });
+        if (hop && !matchMedia("(prefers-reduced-motion: reduce)").matches)
+          hop.el.animate([{ transform: "none" }, { transform: "translateY(-18%) scale(0.94)" }, { transform: "none" }], { duration: 520, easing: "ease-out" });
+      };
+      const name = (d: number) => (d === 0 ? "the built-in display" : "the Studio Display");
+      root.querySelectorAll<HTMLButtonElement>("[data-disp]").forEach((btn) =>
+        btn.addEventListener("click", () => {
+          const what = btn.dataset.disp;
+          if (what === "reset") {
+            wins = initial();
+            front = wins[0];
+            draw();
+            out.textContent = "Everything’s back.";
+            return;
+          }
+          if (front.min) front.min = false;
+          if (what === "next") {
+            front.d = (front.d + 1) % desks.length;
+            draw(front);
+            out.textContent = `${front.name} moved to ${name(front.d)}, same size, same spot.`;
+          } else {
+            const on = wins.filter((w) => w.d === front.d);
+            on.forEach((w) => (w.min = true));
+            draw();
+            const other = wins.filter((w) => w.d !== front.d).length;
+            out.textContent = `Minimized ${on.length} window${on.length > 1 ? "s" : ""} on ${name(front.d)}. ${other ? "The other display wasn’t touched." : ""}`;
+          }
+        }),
+      );
+      wins.forEach((w) => w.el.style.setProperty("transition-duration", "520ms"));
+      new ResizeObserver(() => {
+        wins.forEach((w) => (w.el.style.transition = "none"));
+        draw();
+        void pair.offsetWidth;
+        wins.forEach((w) => (w.el.style.transition = ""));
+      }).observe(pair);
+      draw();
+    }
+
+    /* Respect Stage Manager: layouts go in the visible area less a 190-point strip on its side. */
+    {
+      const win = root.querySelector<HTMLElement>("[data-sm-desk] .mw")!;
+      const strip = root.querySelector<HTMLElement>("[data-strip]")!;
+      const toggle = root.querySelector<HTMLInputElement>("[data-sm-toggle]")!;
+      let cmd: "maximize" | "left-half" = "maximize";
+      const run = () => {
+        const room = toggle.checked ? 190 / 1440 : 0;
+        const r = layoutRect(cmd)!;
+        place(win, { x: room + r.x * (1 - room), y: r.y, w: r.w * (1 - room), h: r.h });
+        strip.style.opacity = "1";
+      };
+      root.querySelectorAll<HTMLButtonElement>("[data-sm]").forEach((b) =>
+        b.addEventListener("click", () => {
+          cmd = b.dataset.sm as typeof cmd;
+          run();
+        }),
+      );
+      toggle.addEventListener("change", run);
+      run();
+    }
+  }
+</script>

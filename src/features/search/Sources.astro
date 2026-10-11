@@ -1,0 +1,210 @@
+---
+/**
+ * What Hopper reads (STATUS.md), and the personal sources that stay off until switched on (ADR-018). The switches
+ * mirror onboarding's; everything is read on the Mac.
+ */
+import { apps, sourceGroups, type SourceGlyph } from "../../content/facts";
+
+/* Line glyphs for sources that aren't one app (no look-alike app icons). */
+const glyphs: Record<SourceGlyph, string> = {
+  bookmark: '<path d="M7 4h10v16l-5-4-5 4z"/>',
+  history: '<path d="M4.5 12a7.5 7.5 0 1 0 2.2-5.3"/><path d="M4.5 4.5v3h3"/><path d="M12 8.5V12l2.5 1.5"/>',
+  sessions: '<path d="M5 5h14v10H10l-5 4z"/><path d="M9 9.5h6"/>',
+  contacts: '<circle cx="12" cy="9" r="3.5"/><path d="M5.5 19.5a6.5 6.5 0 0 1 13 0"/>',
+  calendar: '<rect x="4" y="5.5" width="16" height="14" rx="2.5"/><path d="M4 10h16M9 3.5v3.5M15 3.5v3.5"/>',
+  apps: '<rect x="4" y="4" width="6.5" height="6.5" rx="1.8"/><rect x="13.5" y="4" width="6.5" height="6.5" rx="1.8"/><rect x="4" y="13.5" width="6.5" height="6.5" rx="1.8"/><rect x="13.5" y="13.5" width="6.5" height="6.5" rx="1.8"/>',
+  windows: '<rect x="3.5" y="5" width="17" height="14" rx="2.5"/><path d="M3.5 9h17"/>',
+  files: '<path d="M3.5 7.5a2 2 0 0 1 2-2h4l2 2h7a2 2 0 0 1 2 2v7.5a2 2 0 0 1-2 2h-13a2 2 0 0 1-2-2z"/>',
+  tv: '<rect x="3.5" y="5" width="17" height="11.5" rx="2.5"/><path d="M8.5 20h7"/>',
+};
+const glyphSVG = (g: SourceGlyph) =>
+  `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">${glyphs[g]}</svg>`;
+---
+<section class="so on-dark" id="sources" aria-labelledby="so-title" data-so>
+  <div class="wrap">
+    <div class="head">
+      <h2 id="so-title">You choose what Hopper can search.</h2>
+      <p class="lede">Search happens on your Mac and nothing is ever uploaded. Personal apps stay off until you turn them on, and private windows are never seen.</p>
+    </div>
+    <div class="groups">
+      {sourceGroups.map((g) => (
+        <div class="group">
+          <h3>{g.title}</h3>
+          <ul>
+            {g.items.map((it) => (
+              <li>
+                <span class="ic">{it.icon ? <img src={apps[it.icon].icon} alt="" width="22" height="22" loading="lazy" /> : it.glyph ? <span class="gl" aria-hidden="true" set:html={glyphSVG(it.glyph)} /> : <i aria-hidden="true"></i>}</span>
+                <span class="nm">{it.name}</span>
+                {it.personal ? (
+                  <button type="button" class="sw" role="switch" aria-checked="false" aria-label={it.name} data-src={it.name}><span></span></button>
+                ) : (
+                  <span class="on">On</span>
+                )}
+              </li>
+            ))}
+          </ul>
+        </div>
+      ))}
+    </div>
+    <p class="say" role="status" data-so-say></p>
+  </div>
+</section>
+
+<style>
+  .so {
+    background: var(--night);
+    color: #eef0ff;
+    padding-block: clamp(5rem, 4rem + 6vw, 9rem);
+    scroll-margin-top: 4rem;
+  }
+  .head {
+    display: grid;
+    grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr);
+    gap: 1rem 4rem;
+    align-items: end;
+  }
+  h2 {
+    max-width: 12ch;
+  }
+  .lede {
+    color: #b9bfe6;
+  }
+  .groups {
+    display: grid;
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+    gap: 1rem;
+    margin-top: clamp(2.5rem, 2rem + 2vw, 4rem);
+  }
+  .group {
+    padding: 1.1rem;
+    border-radius: 18px;
+    background: var(--night-2);
+    box-shadow: inset 0 0 0 1px #2c3470;
+  }
+  h3 {
+    font-size: var(--step--1);
+    font-weight: 700;
+    color: #fff;
+    margin-bottom: 0.75rem;
+  }
+  ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: 0.55rem;
+  }
+  li {
+    display: flex;
+    align-items: center;
+    gap: 0.55rem;
+    min-height: 2rem;
+    font-size: var(--step--1);
+  }
+  .ic {
+    display: grid;
+    place-items: center;
+    width: 22px;
+    height: 22px;
+    flex: none;
+  }
+  .ic img {
+    width: 22px;
+    height: 22px;
+  }
+  .gl {
+    display: grid;
+    place-items: center;
+    width: 22px;
+    height: 22px;
+    border-radius: 6px;
+    background: #2f3878;
+    color: #c9d0ff;
+  }
+  .gl :global(svg) {
+    width: 15px;
+    height: 15px;
+  }
+  .ic i {
+    width: 14px;
+    height: 14px;
+    border-radius: 4px;
+    background: #3b437a;
+  }
+  .nm {
+    flex: 1;
+    min-width: 0;
+    line-height: 1.25;
+  }
+  .on {
+    font-size: 0.72rem;
+    font-weight: 600;
+    color: #8fe3a5;
+  }
+  .sw {
+    position: relative;
+    flex: none;
+    width: 2.2rem;
+    height: 1.3rem;
+    padding: 0;
+    border: 0;
+    border-radius: 1rem;
+    background: #3b437a;
+    cursor: pointer;
+    transition: background 200ms ease;
+  }
+  .sw span {
+    position: absolute;
+    top: 0.15rem;
+    left: 0.15rem;
+    width: 1rem;
+    height: 1rem;
+    border-radius: 50%;
+    background: #fff;
+    transition: transform 280ms var(--ease-hop);
+  }
+  .sw[aria-checked="true"] {
+    background: var(--blue);
+  }
+  .sw[aria-checked="true"] span {
+    transform: translateX(0.9rem);
+  }
+  .say {
+    margin-top: 1.5rem;
+    min-height: 1.5em;
+    font-size: var(--step--1);
+    color: #b9bfe6;
+  }
+  @media (max-width: 75rem) {
+    .groups {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+  }
+  @media (max-width: 56rem) {
+    .head {
+      grid-template-columns: 1fr;
+    }
+    .groups {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+  @media (max-width: 30rem) {
+    .groups {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>
+
+<script>
+  const root = document.querySelector<HTMLElement>("[data-so]");
+  if (root) {
+    const say = root.querySelector<HTMLElement>("[data-so-say]")!;
+    root.querySelectorAll<HTMLButtonElement>("[data-src]").forEach((b) =>
+      b.addEventListener("click", () => {
+        const on = b.getAttribute("aria-checked") !== "true";
+        b.setAttribute("aria-checked", String(on));
+        say.textContent = on ? `${b.dataset.src} is on. Hopper can find it now, without it leaving your Mac.` : `${b.dataset.src} is off. Hopper won’t look in it.`;
+      }),
+    );
+  }
+</script>

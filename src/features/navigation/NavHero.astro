@@ -1,0 +1,640 @@
+---
+/**
+ * The Navigation page's hero: a small Mac you move around with the four moves (ADR-024…026), by button or with the
+ * real keys (⌃⌥← / ⌃⌥→, a double tap of ⌘ or ⌥). Changing app hops the window in; changing tab or session in the
+ * same app only moves the highlight, which is the difference between Toggle and Toggle Tab.
+ */
+import { apps, navMoves, navPlaces } from "../../content/facts";
+
+const here = navPlaces[navPlaces.length - 1];
+const urls: Record<string, string> = { funnel: "analytics.internal/checkout?range=q4", pr: "github.com/northwind/web/pull/482" };
+const tabsOf = (app: string) => navPlaces.filter((p) => p.app === app);
+---
+<section class="nh" aria-labelledby="nh-title" data-nh>
+  <div class="wrap intro">
+    <nav class="crumbs" aria-label="Breadcrumb">
+      <a href="/features">Features</a><span aria-hidden="true">/</span><span aria-current="page">Navigation</span>
+    </nav>
+    <h1 id="nh-title">Move like&nbsp;butter.</h1>
+    <p class="lede">Four keys take you across apps, tabs and coding sessions. No switcher to scroll through and nothing to hunt for.</p>
+  </div>
+
+  <div class="wrap">
+    <div class="stage on-blue">
+      <div class="screen" aria-hidden="true" data-screen>
+        <div class="menubar"><span class="mb-apple"></span><b data-mb-app>{apps[here.app].short}</b><span>File</span><span>Edit</span><span class="clock">9:41 AM</span></div>
+        <div class="desk">
+          <!-- One window per app; the front one is where you are. -->
+          <article class="win w-notion" data-app="notion">
+            <header><i></i><i></i><i></i><span><img src={apps.notion.icon} alt="" width="14" height="14" />Q4 Launch Plan</span></header>
+            <div class="body split">
+              <aside><p class="on">Q4 Launch Plan</p><p>Roadmap</p><p>Meeting notes</p></aside>
+              <div class="doc"><b>Q4 Launch Plan</b><s style="--w:70%"></s><s style="--w:88%"></s><s style="--w:54%"></s><s style="--w:76%"></s></div>
+            </div>
+          </article>
+          <article class="win w-chrome" data-app="chrome">
+            <header class="tabs">
+              <i></i><i></i><i></i>
+              {tabsOf("chrome").map((t) => <span class="tab" data-tab={t.id}><img src={apps.chrome.icon} alt="" width="12" height="12" />{t.title}</span>)}
+            </header>
+            <div class="body">
+              <p class="omni" data-omni>{urls.pr}</p>
+              <div class="page" data-page="funnel"><b>Checkout funnel</b><div class="bars"><span style="--v:1"></span><span style="--v:.71"></span><span style="--v:.49"></span><span style="--v:.39"></span></div></div>
+              <div class="page" data-page="pr"><b>Fix token refresh race <em>Open</em></b><s style="--w:80%"></s><s style="--w:62%"></s><code>+ await refresh(token)</code></div>
+            </div>
+          </article>
+          <article class="win w-slack" data-app="slack">
+            <header><i></i><i></i><i></i><span><img src={apps.slack.icon} alt="" width="14" height="14" />#launch</span></header>
+            <div class="body split">
+              <aside><p class="ws">Northwind</p><p># general</p><p class="on"># launch</p><p># design</p></aside>
+              <div class="msgs"><p><b>Sam Ito</b>Can we ship the checkout fix Thursday?</p><p><b>Priya Raman</b>Yes, once the auth bug is fixed.</p></div>
+            </div>
+          </article>
+          <article class="win w-claude" data-app="claude">
+            <header><i></i><i></i><i></i><span><img src={apps.claude.icon} alt="" width="14" height="14" />Claude</span></header>
+            <div class="body split">
+              <aside><p class="ws">Code</p>{tabsOf("claude").map((t) => <p data-tab={t.id}>{t.title}</p>)}</aside>
+              <div class="chat"><b data-chat-title>{here.title}</b><s style="--w:64%"></s><s class="me" style="--w:48%"></s><s style="--w:72%"></s></div>
+            </div>
+          </article>
+        </div>
+      </div>
+
+      <ol class="trail" aria-label="Where you’ve been, newest first" data-trail></ol>
+
+      <div class="moves" role="group" aria-label="Move around">
+        {navMoves.map((m) => (
+          <button type="button" class="move" id={m.id} data-move={m.id} aria-describedby={`nh-sub-${m.id}`}>
+            <span class="keys" aria-hidden="true">{m.keys.map((k) => <span class="key">{k}</span>)}</span>
+            <b>{m.title}</b>
+            <small id={`nh-sub-${m.id}`}>{m.sub}</small>
+          </button>
+        ))}
+      </div>
+    </div>
+    <p class="under"><span class="kbd-hint">Your real keys work here too. </span><span data-nh-say>You’re in Claude, in a Claude Code session. Press Back.</span></p>
+    <p class="visually-hidden" aria-live="polite" data-nh-live></p>
+  </div>
+</section>
+
+<style>
+  .nh {
+    padding-top: clamp(1.5rem, 1rem + 2.5vw, 3.5rem);
+    padding-bottom: clamp(4rem, 3rem + 5vw, 8rem);
+  }
+  .intro {
+    display: grid;
+    grid-template-columns: minmax(0, 1.3fr) minmax(0, 1fr);
+    gap: 1.5rem clamp(2rem, 5vw, 5rem);
+    align-items: end;
+  }
+  .crumbs {
+    grid-column: 1 / -1;
+    display: flex;
+    gap: 0.6rem;
+    font-size: var(--step--1);
+    font-weight: 600;
+    color: var(--ink-2);
+  }
+  .crumbs a {
+    color: var(--blue);
+    text-decoration: none;
+  }
+  .crumbs a:hover {
+    text-decoration: underline;
+  }
+  h1 {
+    max-width: 9ch;
+    font-size: clamp(3rem, 1.6rem + 5.2vw, 6.25rem);
+    view-transition-name: title-navigation;
+  }
+  .lede {
+    padding-bottom: 0.5rem;
+  }
+  .stage {
+    margin-top: clamp(2rem, 1.5rem + 2.5vw, 3.5rem);
+    padding: clamp(1rem, 3vw, 2.75rem) clamp(1rem, 5vw, 5rem);
+    border-radius: clamp(18px, 2vw, 28px);
+    background:
+      radial-gradient(120% 90% at 85% 0%, #4a58ff 0%, transparent 55%),
+      var(--blue);
+    view-transition-name: stage-navigation;
+  }
+
+  /* The little Mac */
+  .screen {
+    container-type: inline-size;
+    max-width: 52rem;
+    margin-inline: auto;
+    border-radius: 12px;
+    overflow: hidden;
+    background:
+      radial-gradient(90% 80% at 20% 100%, #6a3df0 0%, transparent 60%),
+      radial-gradient(80% 70% at 100% 0%, #31c0ff 0%, transparent 55%),
+      #2534c9;
+    box-shadow: 0 0 0 1px rgb(255 255 255 / 0.18), 0 30px 60px -30px rgb(6 8 40 / 0.7);
+  }
+  .menubar {
+    display: flex;
+    gap: 0.9rem;
+    align-items: center;
+    height: 1.5rem;
+    padding: 0 0.8rem;
+    font: 0.72rem var(--mac);
+    color: #fff;
+    background: rgb(12 18 90 / 0.3);
+  }
+  .mb-apple {
+    width: 0.65rem;
+    height: 0.75rem;
+    border-radius: 40% 40% 45% 45%;
+    background: rgb(255 255 255 / 0.9);
+  }
+  .clock {
+    margin-left: auto;
+  }
+  .desk {
+    position: relative;
+    aspect-ratio: 16 / 8.2;
+    font: clamp(9px, 1.6cqw, 13px) / 1.35 var(--mac);
+  }
+  .win {
+    position: absolute;
+    inset: 9% 12% 8%;
+    display: flex;
+    flex-direction: column;
+    border-radius: 0.8em;
+    overflow: hidden;
+    background: #fff;
+    color: #1d2033;
+    box-shadow: 0 1.5em 3em -1em rgb(6 8 40 / 0.55);
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(6%) scale(0.94);
+  }
+  .win.is-front {
+    opacity: 1;
+    visibility: visible;
+    transform: none;
+    z-index: 2;
+  }
+  .win.hop {
+    animation: win-hop 520ms var(--ease-hop);
+  }
+  .win.leave {
+    visibility: visible;
+    z-index: 1;
+    animation: win-leave 360ms var(--ease-out) forwards;
+  }
+  @keyframes win-hop {
+    0% { opacity: 0; transform: translateY(14%) scale(0.9); }
+    55% { opacity: 1; transform: translateY(-3%) scale(1.01); }
+    100% { opacity: 1; transform: none; }
+  }
+  @keyframes win-leave {
+    0% { opacity: 1; transform: none; }
+    100% { opacity: 0; transform: translateY(-6%) scale(0.95); }
+  }
+  .win header {
+    display: flex;
+    align-items: center;
+    gap: 0.45em;
+    min-height: 2.4em;
+    padding: 0 0.9em;
+    background: #f1f2f6;
+    border-bottom: 1px solid #e2e4ec;
+    white-space: nowrap;
+  }
+  .win header i {
+    width: 0.8em;
+    height: 0.8em;
+    border-radius: 50%;
+    background: #ff5f57;
+    flex: none;
+  }
+  .win header i:nth-child(2) {
+    background: #febc2e;
+  }
+  .win header i:nth-child(3) {
+    background: #28c840;
+    margin-right: 0.6em;
+  }
+  .win header > span:not(.tab) {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45em;
+    margin-inline: auto;
+    font-weight: 600;
+    transform: translateX(-2em);
+  }
+  .win img {
+    width: 1.15em;
+    height: 1.15em;
+  }
+  .tabs {
+    gap: 0.3em;
+    overflow: hidden;
+  }
+  .tab {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4em;
+    min-width: 0;
+    max-width: 14em;
+    padding: 0.35em 0.8em;
+    border-radius: 0.5em 0.5em 0 0;
+    color: #4a4f68;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    transition: background 200ms ease, color 200ms ease;
+  }
+  .tab.on {
+    background: #fff;
+    color: #1d2033;
+    font-weight: 600;
+    box-shadow: 0 -1px 0 #e2e4ec inset;
+  }
+  .body {
+    flex: 1;
+    min-height: 0;
+    padding: 1em 1.2em;
+  }
+  .body.split {
+    display: grid;
+    grid-template-columns: 11em 1fr;
+    padding: 0;
+  }
+  aside {
+    padding: 0.9em 0.6em;
+    background: #f6f6f9;
+    border-right: 1px solid #ececf2;
+    color: #4a4f68;
+  }
+  aside p {
+    padding: 0.3em 0.55em;
+    border-radius: 0.4em;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    transition: background 200ms ease, color 200ms ease;
+  }
+  aside .ws {
+    font-weight: 700;
+    color: #1d2033;
+  }
+  aside .on {
+    background: #e3e6ff;
+    color: #1b26b5;
+    font-weight: 600;
+  }
+  .w-slack aside {
+    background: #3f0e40;
+    color: #d8c8d8;
+  }
+  .w-slack aside .ws {
+    color: #fff;
+  }
+  .w-slack aside .on {
+    background: #1164a3;
+    color: #fff;
+  }
+  .w-claude aside {
+    background: #f4f1ea;
+  }
+  .w-claude aside .on {
+    background: #e8dfcf;
+    color: #3b2a12;
+  }
+  .doc,
+  .chat,
+  .msgs {
+    display: flex;
+    flex-direction: column;
+    gap: 0.7em;
+    padding: 1.1em 1.3em;
+    min-width: 0;
+  }
+  .doc b,
+  .chat b,
+  .page b {
+    font-size: 1.35em;
+    line-height: 1.15;
+  }
+  s {
+    display: block;
+    width: var(--w);
+    height: 0.6em;
+    border-radius: 1em;
+    background: #e3e5ee;
+    text-decoration: none;
+  }
+  .chat s {
+    height: 1.9em;
+    border-radius: 0.8em;
+    background: #f1ede4;
+  }
+  .chat s.me {
+    align-self: flex-end;
+    background: #e3e6ff;
+  }
+  .msgs p {
+    display: flex;
+    flex-direction: column;
+  }
+  .msgs b {
+    font-size: 0.95em;
+  }
+  .omni {
+    padding: 0.35em 0.8em;
+    border-radius: 1em;
+    background: #f1f2f6;
+    color: #4a4f68;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .page {
+    display: none;
+    flex-direction: column;
+    gap: 0.7em;
+    padding-top: 1em;
+  }
+  .page.on {
+    display: flex;
+    animation: fade 260ms ease;
+  }
+  @keyframes fade {
+    from { opacity: 0; }
+  }
+  .page em {
+    margin-left: 0.4em;
+    padding: 0.1em 0.6em;
+    border-radius: 1em;
+    background: #1f883d;
+    color: #fff;
+    font: 600 0.55em var(--mac);
+    vertical-align: middle;
+  }
+  .page code {
+    align-self: flex-start;
+    padding: 0.3em 0.6em;
+    border-radius: 0.4em;
+    background: #e6ffec;
+    color: #116329;
+    font-size: 0.95em;
+  }
+  .bars {
+    display: flex;
+    align-items: flex-end;
+    gap: 0.8em;
+    height: 7em;
+  }
+  .bars span {
+    flex: 1;
+    height: calc(var(--v) * 100%);
+    border-radius: 0.3em 0.3em 0 0;
+    background: #4f5cff;
+  }
+
+  /* Trail */
+  .trail {
+    list-style: none;
+    display: flex;
+    flex-direction: row-reverse;
+    justify-content: center;
+    gap: 0.4rem;
+    max-width: 52rem;
+    margin: 1rem auto 0;
+    padding: 0;
+  }
+  .trail :global(li) {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    min-width: 0;
+    flex: 0 1 auto;
+    padding: 0.3rem 0.6rem 0.3rem 0.35rem;
+    border-radius: 999px;
+    background: rgb(255 255 255 / 0.12);
+    color: #fff;
+    font-size: 0.8rem;
+    font-weight: 600;
+    transition: background 200ms ease, color 200ms ease;
+  }
+  .trail :global(li span) {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .trail :global(li img) {
+    width: 20px;
+    height: 20px;
+    flex: none;
+  }
+  .trail :global(li.here) {
+    background: var(--white);
+    color: var(--blue-deep);
+  }
+
+  /* The four moves */
+  .moves {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 0.6rem;
+    max-width: 52rem;
+    margin: 1.25rem auto 0;
+  }
+  .move {
+    display: grid;
+    justify-items: start;
+    align-content: start;
+    gap: 0.35rem;
+    padding: 0.85rem 0.9rem;
+    border: 0;
+    border-radius: 14px;
+    background: rgb(255 255 255 / 0.14);
+    color: #fff;
+    text-align: left;
+    cursor: pointer;
+    scroll-margin-top: 8rem;
+    transition: background 150ms ease, transform 200ms var(--ease-hop);
+  }
+  .move:hover {
+    background: rgb(255 255 255 / 0.24);
+  }
+  .move.fired {
+    background: var(--white);
+    color: var(--blue-deep);
+  }
+  .move.fired small {
+    color: var(--ink-2);
+  }
+  .move .keys {
+    font-size: 0.8rem;
+    margin-bottom: 0.2rem;
+  }
+  .move b {
+    font-size: var(--step-0);
+  }
+  .move small {
+    font-size: 0.8rem;
+    line-height: 1.3;
+    color: #dfe3ff;
+  }
+  .under {
+    margin-top: 1.25rem;
+    min-height: 3em;
+    color: var(--ink-2);
+  }
+  @media (hover: none) {
+    .kbd-hint {
+      display: none;
+    }
+  }
+  @media (max-width: 56rem) {
+    .intro {
+      grid-template-columns: 1fr;
+    }
+    .moves {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+    .trail :global(li span) {
+      display: none;
+    }
+    .trail :global(li) {
+      padding: 0.3rem;
+    }
+    .body.split {
+      grid-template-columns: 8.5em 1fr;
+    }
+    .win {
+      inset: 6% 5% 6%;
+    }
+  }
+  @media (max-width: 30rem) {
+    .desk {
+      aspect-ratio: 4 / 3;
+    }
+    .move small {
+      display: none;
+    }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .win.hop,
+    .win.leave,
+    .page.on {
+      animation: none;
+    }
+    .win.leave {
+      visibility: hidden;
+    }
+  }
+</style>
+
+<script>
+  import { apps, navMoves, type NavMove } from "../../content/facts";
+  import { Timeline, place, type PlaceId } from "../../scripts/navigation";
+  import { escape } from "../../scripts/launcher";
+
+  const root = document.querySelector<HTMLElement>("[data-nh]");
+  if (root) {
+    const t = new Timeline();
+    const wins = [...root.querySelectorAll<HTMLElement>(".win")];
+    const trail = root.querySelector<HTMLElement>("[data-trail]")!;
+    const say = root.querySelector<HTMLElement>("[data-nh-say]")!;
+    const live = root.querySelector<HTMLElement>("[data-nh-live]")!;
+    const mbApp = root.querySelector<HTMLElement>("[data-mb-app]")!;
+    const omni = root.querySelector<HTMLElement>("[data-omni]")!;
+    const chatTitle = root.querySelector<HTMLElement>("[data-chat-title]")!;
+    const urls: Record<string, string> = { funnel: "analytics.internal/checkout?range=q4", pr: "github.com/northwind/web/pull/482" };
+    let shownApp = "";
+
+    const show = (id: PlaceId) => {
+      const p = place(id);
+      if (p.app !== shownApp) {
+        wins.forEach((w) => {
+          w.classList.remove("hop", "leave");
+          if (w.dataset.app === shownApp) w.classList.add("leave");
+        });
+        const w = wins.find((x) => x.dataset.app === p.app)!;
+        void w.offsetWidth;
+        wins.forEach((x) => x.classList.toggle("is-front", x === w));
+        if (shownApp) w.classList.add("hop");
+        shownApp = p.app;
+      }
+      mbApp.textContent = apps[p.app].short;
+      root.querySelectorAll<HTMLElement>(`.w-${p.app} [data-tab]`).forEach((el) => el.classList.toggle("on", el.dataset.tab === id));
+      if (p.app === "chrome") {
+        omni.textContent = urls[id];
+        root.querySelectorAll<HTMLElement>("[data-page]").forEach((el) => el.classList.toggle("on", el.dataset.page === id));
+      }
+      if (p.app === "claude") chatTitle.textContent = p.title;
+    };
+
+    const drawTrail = () => {
+      const { ids, at } = t.trail();
+      trail.innerHTML = ids
+        .map((id, i) => {
+          const p = place(id);
+          return `<li class="${i === at ? "here" : ""}"${i === at ? ' aria-current="location"' : ""}><img src="${apps[p.app].icon}" alt="" width="20" height="20" /><span>${escape(p.title)}</span><span class="visually-hidden">, ${escape(p.kind)}</span></li>`;
+        })
+        .join("");
+    };
+
+    const titleOf = (m: NavMove) => navMoves.find((x) => x.id === m)!.title;
+    const run = (m: NavMove) => {
+      const out = t.move(m);
+      const btn = root.querySelector<HTMLElement>(`[data-move="${m}"]`)!;
+      btn.classList.remove("fired");
+      void btn.offsetWidth;
+      btn.classList.add("fired");
+      setTimeout(() => btn.classList.remove("fired"), 450);
+      let msg: string;
+      if (out.to) {
+        const p = place(out.to);
+        show(out.to);
+        drawTrail();
+        msg = `${titleOf(m)}: ${p.title}, a ${p.kind}.`;
+        if (m === "toggle") msg += ` ${apps[p.app].short} comes back on the tab it was on.`;
+        if (m === "toggle-tab" && p.app === "claude") msg += " Same app, other session.";
+      } else msg = `${titleOf(m)}: ${out.note}`;
+      say.textContent = msg;
+      live.textContent = msg;
+    };
+
+    root.querySelectorAll<HTMLButtonElement>("[data-move]").forEach((b) => b.addEventListener("click", () => run(b.dataset.move as NavMove)));
+
+    show(t.here);
+    drawTrail();
+
+    /* The real keys, while the demo is on screen: ⌃⌥← / ⌃⌥→, and a double tap of ⌘ or ⌥ (each tap pressed and
+       released on its own, two within 0.35 s, as ModifierGestureDetector does). */
+    let inView = false;
+    new IntersectionObserver(([e]) => (inView = e.isIntersecting), { threshold: 0.25 }).observe(root.querySelector(".stage")!);
+    let down: { key: string; at: number; clean: boolean } | null = null;
+    let lastTap: { key: string; at: number } | null = null;
+    document.addEventListener("keydown", (e) => {
+      if (!inView) return;
+      if (e.ctrlKey && e.altKey && !e.metaKey && (e.key === "ArrowLeft" || e.key === "ArrowRight")) {
+        e.preventDefault();
+        run(e.key === "ArrowLeft" ? "back" : "forward");
+        return;
+      }
+      if ((e.key === "Meta" || e.key === "Alt") && !e.repeat) down = { key: e.key, at: performance.now(), clean: true };
+      else if (down) down.clean = false;
+    });
+    document.addEventListener("keyup", (e) => {
+      if (!inView || !down || e.key !== down.key) return;
+      const now = performance.now();
+      const tap = down.clean && now - down.at < 300;
+      const key = down.key;
+      down = null;
+      if (!tap) return (lastTap = null);
+      if (lastTap && lastTap.key === key && now - lastTap.at < 350) {
+        lastTap = null;
+        run(key === "Meta" ? "toggle" : "toggle-tab");
+      } else lastTap = { key, at: now };
+    });
+    window.addEventListener("blur", () => ((down = null), (lastTap = null)));
+  }
+</script>

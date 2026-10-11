@@ -1,0 +1,250 @@
+---
+/**
+ * Hub: Windows. A small display that rearranges itself, and the way into /features/windows. The stage and heading
+ * share view-transition names with that page's hero, so following the link morphs one into the other (the hop).
+ */
+import MacWindow from "../../components/MacWindow.astro";
+import { glyphSVG } from "../../scripts/windows";
+
+const arrangements = [
+  { id: "halves", label: "Halves", glyph: "left-half" },
+  { id: "thirds", label: "Thirds", glyph: "center-third" },
+  { id: "quarters", label: "Quarters", glyph: "top-left-quarter" },
+  { id: "focus", label: "Almost Maximize", glyph: "almost-maximize" },
+] as const;
+---
+<section class="pw" id="windows" aria-labelledby="pw-title" data-pw>
+  <div class="wrap grid">
+    <div class="copy">
+      <p class="kicker">Windows</p>
+      <h2 id="pw-title" class="pw-title">Every window, right where you want it.</h2>
+      <p class="lede">42 window commands, sizes you make yourself, whole layouts on one key, and your Rectangle shortcuts if you have them.</p>
+      <ul class="bullets">
+        <li>Halves that go ½, ⅔, ⅓ when you press again</li>
+        <li>A gap between windows, if you like one</li>
+        <li>Layouts that open the apps they need</li>
+      </ul>
+      <a class="cta" href="/features/windows">Explore window management<span aria-hidden="true">→</span></a>
+    </div>
+
+    <div class="stage-wrap">
+      <div class="stage on-blue">
+        <div class="display" aria-hidden="true">
+          <div class="menubar"><span class="mb-apple"></span><b>Notion</b><span>File</span><span>Edit</span><span class="clock">9:41 AM</span></div>
+          <div class="desk" data-pw-desk>
+            <MacWindow app="notion" title="Q4 Launch Plan" at={{ x: 0, y: 0, w: 0.5, h: 1 }} z={3} front />
+            <MacWindow app="chrome" title="Checkout funnel, Q4" at={{ x: 0.5, y: 0, w: 0.5, h: 0.5 }} z={2} />
+            <MacWindow app="slack" title="#launch" at={{ x: 0.5, y: 0.5, w: 0.5, h: 0.5 }} z={1} />
+          </div>
+        </div>
+        <div class="picks" role="radiogroup" aria-label="Arrange the windows">
+          {arrangements.map((a, i) => (
+            <button type="button" role="radio" aria-checked={i === 0 ? "true" : "false"} tabindex={i === 0 ? 0 : -1} data-arr={a.id}>
+              <span set:html={glyphSVG(a.glyph)} />{a.label}
+            </button>
+          ))}
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .pw {
+    padding-block: clamp(5rem, 4rem + 6vw, 9rem);
+  }
+  .grid {
+    display: grid;
+    grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.2fr);
+    gap: 3rem clamp(2rem, 5vw, 5rem);
+    align-items: center;
+  }
+  .kicker {
+    font-size: var(--step--1);
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--blue);
+    margin-bottom: 1rem;
+  }
+  h2 {
+    max-width: 11ch;
+    view-transition-name: title-windows;
+  }
+  .lede {
+    margin-top: 1.5rem;
+  }
+  .bullets {
+    margin: 1.5rem 0 0;
+    padding: 0;
+    list-style: none;
+    display: grid;
+    gap: 0.5rem;
+  }
+  .bullets li {
+    display: flex;
+    gap: 0.6rem;
+    align-items: baseline;
+  }
+  .bullets li::before {
+    content: "";
+    flex: none;
+    width: 0.55rem;
+    height: 0.55rem;
+    border-radius: 2px;
+    background: var(--blue);
+    transform: translateY(-0.05rem);
+  }
+  .cta {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.6rem;
+    margin-top: 2rem;
+    min-height: 3rem;
+    padding: 0 1.4rem;
+    border-radius: 999px;
+    background: var(--ink);
+    color: var(--white);
+    font-weight: 700;
+    text-decoration: none;
+    transition: background 150ms ease;
+  }
+  .cta span {
+    transition: transform 300ms var(--ease-hop);
+  }
+  .cta:hover {
+    background: var(--blue);
+  }
+  .cta:hover span {
+    transform: translateX(4px);
+  }
+
+  .stage {
+    padding: clamp(0.9rem, 2vw, 1.5rem);
+    border-radius: clamp(18px, 2vw, 28px);
+    background:
+      radial-gradient(120% 90% at 85% 0%, #4a58ff 0%, transparent 55%),
+      var(--blue);
+    view-transition-name: stage-windows;
+  }
+  .display {
+    border-radius: 12px;
+    overflow: hidden;
+    background:
+      radial-gradient(90% 80% at 20% 100%, #6a3df0 0%, transparent 60%),
+      radial-gradient(80% 70% at 100% 0%, #31c0ff 0%, transparent 55%),
+      #2534c9;
+    box-shadow: 0 0 0 1px rgb(255 255 255 / 0.18), 0 30px 60px -30px rgb(6 8 40 / 0.7);
+  }
+  .menubar {
+    display: flex;
+    gap: 0.9rem;
+    align-items: center;
+    height: 1.5rem;
+    padding: 0 0.8rem;
+    font: 0.72rem var(--mac);
+    color: #fff;
+    background: rgb(12 18 90 / 0.3);
+  }
+  .mb-apple {
+    width: 0.65rem;
+    height: 0.75rem;
+    border-radius: 40% 40% 45% 45%;
+    background: rgb(255 255 255 / 0.9);
+  }
+  .clock {
+    margin-left: auto;
+  }
+  .desk {
+    margin-bottom: 0.6rem;
+  }
+  .picks {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+    margin-top: 0.9rem;
+  }
+  .picks button {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45rem;
+    min-height: 2.4rem;
+    padding: 0 0.85rem 0 0.6rem;
+    border: 0;
+    border-radius: 10px;
+    background: rgb(255 255 255 / 0.14);
+    color: #fff;
+    font-weight: 600;
+    font-size: var(--step--1);
+    cursor: pointer;
+  }
+  .picks button:hover {
+    background: rgb(255 255 255 / 0.24);
+  }
+  .picks button[aria-checked="true"] {
+    background: var(--white);
+    color: var(--blue-deep);
+  }
+  .picks :global(.glyph) {
+    width: 1.35rem;
+  }
+  @media (max-width: 56rem) {
+    .grid {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>
+
+<script>
+  import { apply, layoutRect } from "../../scripts/windows";
+  import { check, radioKeys } from "../../scripts/controls";
+  import { reducedMotion } from "../../scripts/launcher";
+  import type { WindowCommandId } from "../../content/facts";
+
+  const root = document.querySelector<HTMLElement>("[data-pw]");
+  if (root) {
+    const desk = root.querySelector<HTMLElement>("[data-pw-desk]")!;
+    const win = (a: string) => desk.querySelector<HTMLElement>(`[data-win="${a}"]`)!;
+    const btns = [...root.querySelectorAll<HTMLButtonElement>("[data-arr]")];
+    const sets: Record<string, [string, WindowCommandId][]> = {
+      halves: [["notion", "left-half"], ["chrome", "top-right-quarter"], ["slack", "bottom-right-quarter"]],
+      thirds: [["notion", "first-third"], ["slack", "center-third"], ["chrome", "last-third"]],
+      quarters: [["chrome", "top-left-quarter"], ["notion", "right-half"], ["slack", "bottom-left-quarter"]],
+      focus: [["chrome", "almost-maximize"]],
+    };
+    const arrange = (id: string) => {
+      check(btns, (b) => b.dataset.arr === id);
+      const set = sets[id];
+      set.forEach(([a, cmd], i) => {
+        apply(win(a), { rect: layoutRect(cmd) ?? { x: 0.05, y: 0.05, w: 0.9, h: 0.9 }, gapped: cmd !== "almost-maximize" }, 12);
+        win(a).style.setProperty("--z", String(10 - i));
+      });
+      ["notion", "chrome", "slack"].forEach((a) => win(a).classList.toggle("is-front", a === set[0][0]));
+    };
+    let timer = 0;
+    let order = 0;
+    const ids = Object.keys(sets);
+    const stopAuto = () => clearInterval(timer);
+    btns.forEach((b) =>
+      b.addEventListener("click", () => {
+        stopAuto();
+        arrange(b.dataset.arr!);
+      }),
+    );
+    root.querySelector<HTMLElement>(".picks")!.addEventListener("keydown", (e) => radioKeys(e, btns));
+    arrange("halves");
+    if (!reducedMotion()) {
+      let touched = false;
+      btns.forEach((b) => b.addEventListener("pointerdown", () => (touched = true)));
+      new IntersectionObserver(([e]) => {
+        stopAuto();
+        if (e.isIntersecting && !touched)
+          timer = window.setInterval(() => {
+            if (touched) return stopAuto();
+            order = (order + 1) % ids.length;
+            arrange(ids[order]);
+          }, 2600);
+      }, { threshold: 0.4 }).observe(desk);
+    }
+  }
+</script>

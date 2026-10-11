@@ -1,0 +1,89 @@
+---
+/** A post in a list: its cover, title, one line and date. `big` is the newest post on /blog. */
+import Cover from "./Cover.astro";
+import { authors } from "../../content/authors";
+import { postPath, formatDate, isoDate, readingMinutes, type Post } from "../../lib/blog";
+
+interface Props {
+  post: Post;
+  big?: boolean;
+  headingLevel?: 2 | 3;
+}
+const { post, big = false, headingLevel = 3 } = Astro.props;
+const { data } = post;
+const H = `h${headingLevel}` as "h2" | "h3";
+---
+<a class:list={["card", { big }]} href={postPath(post)}>
+  <Cover cover={data.cover} alt={data.coverAlt} />
+  <div class="text">
+    <p class="tag">{data.feature.label}</p>
+    <H class="title">{data.title}</H>
+    <p class="desc">{data.description}</p>
+    <p class="meta">
+      {authors[data.author].name} · <time datetime={isoDate(data.date)}>{formatDate(data.date)}</time> · {readingMinutes(post)} min read
+    </p>
+  </div>
+</a>
+
+<style>
+  .card {
+    display: grid;
+    gap: 1.25rem;
+    color: inherit;
+    text-decoration: none;
+  }
+  .card.big {
+    grid-template-columns: minmax(0, 1.35fr) minmax(0, 1fr);
+    gap: clamp(1.5rem, 4vw, 3.5rem);
+    align-items: center;
+  }
+  .card :global(.cover) {
+    transition: transform 380ms var(--ease-hop);
+  }
+  .card:hover :global(.cover),
+  .card:focus-visible :global(.cover) {
+    transform: translateY(-6px);
+  }
+  .tag {
+    font-size: var(--step--1);
+    font-weight: 700;
+    color: var(--blue);
+  }
+  .title {
+    margin-top: 0.4rem;
+    font-size: var(--step-1);
+    line-height: 1.1;
+  }
+  .big .title {
+    font-size: clamp(2rem, 1.3rem + 2.4vw, 3.25rem);
+    line-height: 1;
+  }
+  .card:hover .title {
+    text-decoration: underline;
+    text-decoration-thickness: 2px;
+    text-underline-offset: 0.12em;
+  }
+  .desc {
+    margin-top: 0.6rem;
+    color: var(--ink-2);
+  }
+  .big .desc {
+    font-size: var(--step-1);
+    line-height: 1.4;
+  }
+  .meta {
+    margin-top: 0.9rem;
+    font-size: var(--step--1);
+    color: var(--ink-2);
+  }
+  @media (max-width: 56rem) {
+    .card.big {
+      grid-template-columns: 1fr;
+    }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .card :global(.cover) {
+      transition: none;
+    }
+  }
+</style>
