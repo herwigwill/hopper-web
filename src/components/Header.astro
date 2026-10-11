@@ -1,6 +1,7 @@
 ---
-const path = Astro.url.pathname;
-const onHome = path === "/";
+// With build.format "file", the built home page reports "/index.html", so normalize before comparing.
+const path = Astro.url.pathname.replace(/(index)?\.html$/, "");
+const onHome = path === "/" || path === "";
 const onFeatures = path.startsWith("/features");
 const onBlog = path.startsWith("/blog");
 ---
