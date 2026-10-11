@@ -1,0 +1,96 @@
+---
+/**
+ * Joining the waitlist. The site is static (GitHub Pages) with no service behind it, so the button opens the
+ * visitor's email app with a ready note to us. They press Send; we keep the list in our inbox.
+ */
+import { site } from "../content/facts";
+
+interface Props {
+  tone?: "paper" | "blue";
+}
+const { tone = "paper" } = Astro.props;
+
+const body = [
+  "Hi Hopper team,",
+  "",
+  "Please add me to the waitlist.",
+  "",
+  "Optional, helps you pick early testers:",
+  "- What I use to find things on my Mac today: ",
+  "- Do I run AI coding agents like Claude Code, Cursor or Codex: ",
+].join("\n");
+const href = `mailto:${site.contact}?subject=${encodeURIComponent("Join the Hopper waitlist")}&body=${encodeURIComponent(body)}`;
+---
+<div class:list={["waitlist", `tone-${tone}`]}>
+  <a class="send" href={href}>
+    <span class="label">Join the waitlist</span>
+    <span class="enter" aria-hidden="true">↵</span>
+  </a>
+  <p class="note">Opens an email to {site.contact}. Press Send and you’re on the list. For {site.minimumOS} and later.</p>
+</div>
+
+<style>
+  .waitlist {
+    width: 100%;
+    max-width: 34rem;
+  }
+  .send {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.75rem;
+    min-height: 3.5rem;
+    padding: 0 0.7rem 0 1.4rem;
+    border-radius: 14px;
+    background: var(--blue);
+    color: var(--white);
+    font-weight: 650;
+    font-size: 1.125rem;
+    text-decoration: none;
+    white-space: nowrap;
+    transition: background 150ms ease;
+  }
+  .send:hover {
+    background: var(--blue-deep);
+  }
+  .send:focus-visible {
+    outline-offset: 3px;
+  }
+  .tone-blue .send {
+    background: var(--white);
+    color: var(--blue);
+    box-shadow: 0 18px 40px -20px rgb(10 14 60 / 0.5);
+  }
+  .tone-blue .send:hover {
+    background: var(--paper);
+  }
+  .tone-blue .send:focus-visible {
+    outline-color: var(--sun);
+  }
+  .enter {
+    display: inline-grid;
+    place-items: center;
+    width: 2rem;
+    height: 2rem;
+    border-radius: 7px;
+    background: rgb(255 255 255 / 0.18);
+    font-family: var(--mac);
+    font-size: 1rem;
+  }
+  .tone-blue .enter {
+    background: rgb(43 59 245 / 0.12);
+  }
+  .note {
+    margin-top: 0.75rem;
+    font-size: var(--step--1);
+    color: var(--ink-2);
+  }
+  .tone-blue .note {
+    color: rgb(255 255 255 / 0.82);
+  }
+  @media (max-width: 30rem) {
+    .send {
+      display: flex;
+      justify-content: center;
+    }
+  }
+</style>

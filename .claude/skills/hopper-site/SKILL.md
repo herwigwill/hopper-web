@@ -5,7 +5,7 @@ description: How the Hopper marketing site (hopper-web) is built and maintained.
 
 # Building and maintaining hopper-web
 
-File map, deploy and waitlist setup: `README.md`. This file is what the README doesn't say.
+File map, deploy and waitlist: `README.md`. This file is what the README doesn't say.
 
 ## Source of truth
 - `src/content/facts.ts`: every product claim and all demo data. Comment each fact with its source (ADR number,
@@ -47,7 +47,7 @@ Feature pages end with `<MoreFeatures current="id" />`; marketing pages end with
 
 ## Gotchas
 - **Scoped CSS doesn't reach `innerHTML` nodes.** Style re-rendered markup with `.parent :global(.child)`.
-- **CSP `script-src 'self'`** (vercel.json, enforced by `npm run serve` in tests): no inline scripts, no third-party
+- **CSP `script-src 'self'`** (meta tag in `Base.astro`, build only; enforced in tests): no inline scripts, no third-party
   requests. Astro `<script>` bundles are fine. JSON-LD `is:inline` is data, so it's fine.
 - **Global class collisions**: `global.css` and `desk.css` define global classes (`.key`, `.keys`, `.wrap`, `.lede`,
   `.mw`...). Give section classes distinctive names; grep before naming.

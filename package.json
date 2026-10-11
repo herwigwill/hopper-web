@@ -11,7 +11,7 @@
     "dev": "astro dev",
     "build": "astro build",
     "serve": "node --env-file-if-exists=.env scripts/serve.mjs",
-    "check": "astro check && tsc --noEmit -p api",
+    "check": "astro check",
     "test": "playwright test",
     "verify": "npm run check && npm run build && npm test",
     "og": "node scripts/og.mjs",

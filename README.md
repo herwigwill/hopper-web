@@ -8,9 +8,9 @@ accessible and honest about what Hopper does today. Agents working here: start w
 
 ```bash
 npm install
-npm run dev        # http://localhost:4321, with /api/waitlist working (dry run without a Loops key)
+npm run dev        # http://localhost:4321
 npm run verify     # type checks, production build, all browser tests
-npm run build && npm run serve   # the production build at http://localhost:4322, served like Vercel serves it
+npm run build && npm run serve   # the production build at http://localhost:4322, served like GitHub Pages serves it
 ```
 
 Node 22 or later. Tests need Playwright's Chromium (`npx playwright install chromium`); add WebKit with
@@ -20,10 +20,9 @@ Node 22 or later. Tests need Playwright's Chromium (`npx playwright install chro
 
 - **Astro, static output.** Every page is plain HTML; the only JavaScript is the small script for each interactive
   moment (about 7 KB gzipped for the whole page). No UI framework.
-- **One Vercel Function**, `api/waitlist.ts`, for sign-ups. Its logic lives in `api/_lib/waitlist.ts`, which the dev
-  server and `scripts/serve.mjs` also run, so local and production behave the same.
+- **No server.** Hosted on GitHub Pages; the waitlist is an email link.
 - **Self-hosted font** (Archivo, variable weight and width, subset) and locally stored app icons. No third-party
-  requests except Vercel's own analytics on the live domain.
+  requests and no analytics.
 
 ```
 src/
@@ -43,10 +42,9 @@ src/
                         the real keys), places vs apps, History, Recently Closed, Now Playing
   features/windows/     /features/windows: the command launcher + display, Repeat a Half, custom commands,
                         layouts, hotkey presets
-  components/           the few things that repeat: Launcher, MacWindow, WaitlistForm, Header, Footer, HopperMark
-  scripts/              client scripts (hero, waitlist, shared launcher logic, analytics)
+  components/           the few things that repeat: Launcher, MacWindow, Waitlist, Header, Footer, HopperMark
+  scripts/              client scripts (hero, shared launcher logic, anchors)
   styles/               global tokens and the launcher recreation's styles
-api/                    the waitlist Vercel Function
 public/icons            app icons (see ASSETS.md)
 scripts/                local server, OG image generator, icon tile generator
 tests/                  Playwright: content, accessibility (axe), layout, links, metadata, CLS, demos, waitlist
@@ -61,28 +59,26 @@ mirrors it; `public/hop.js` picks the direction. Elements with the same `view-tr
 it off; browsers without view transitions just navigate. In-page jumps from the features launcher scroll, then the
 section "lands" (`.hop-land`).
 
-## Waitlist setup (Loops)
+## The waitlist
 
-1. Create a Loops account, then **Settings → API** → create a key.
-2. Optional: create a mailing list and copy its id; turn on double opt-in for it if you want confirmed emails.
-3. In Vercel → Project → Settings → Environment Variables, set `LOOPS_API_KEY`, `WAITLIST_SECRET`
-   (any long random string) and optionally `LOOPS_MAILING_LIST_ID`. See `.env.example`.
-4. Recommended: a Vercel WAF rate-limit rule on `/api/waitlist` (e.g. 20 requests / minute / IP).
+No service and no server: "Join the waitlist" is a `mailto:` link (`components/Waitlist.astro`) that opens the
+visitor's email app with a ready note to `hello@addhopper.com`. The list lives in that inbox.
 
-Without `LOOPS_API_KEY`, sign-ups are a dry run locally (the response says so) and **refused in production**, so a
-missing key can never silently lose emails. The optional follow-up answers are saved as Loops contact properties
-`launcherToday` and `runsCodingAgents`.
+## Deploying (GitHub Pages)
 
-## Deploying (Vercel)
+`.github/workflows/deploy.yml` builds and publishes on every push to `main`.
 
-1. Import the repo in Vercel (framework: Astro; `vercel.json` sets the rest).
-2. Set the environment variables above for Production (and Preview, with a test list).
-3. Add `addhopper.com` and `www.addhopper.com`; `www` redirects to the apex.
-4. Turn on **Web Analytics** and **Speed Insights** in the project (cookieless; already wired for the live domain).
-5. After each production deploy: load the page, join with a real address, check it in Loops, check the OG preview.
+One-time setup in the repo on GitHub:
 
-Security headers (CSP with `script-src 'self'`, HSTS, frame-ancestors, etc.) are in `vercel.json`; `npm run serve`
-sends the same CSP so the tests enforce it.
+1. **Settings → Pages → Source**: GitHub Actions.
+2. **Custom domain**: `addhopper.com`, then Save. (`public/CNAME` holds the same.)
+3. Once the DNS check passes, tick **Enforce HTTPS**.
+
+DNS (at the registrar): four `A` records on the apex to GitHub Pages' IPs, and `www` as a `CNAME` to
+`herwigwill.github.io`. GitHub redirects `www` to the apex.
+
+GitHub Pages can't send custom headers, so the CSP (`script-src 'self'`, no third-party requests) is a meta tag in
+`layouts/Base.astro`, built pages only. `npm run serve` serves `dist/` like Pages does, so the tests enforce it.
 
 ## Swapping in real assets
 

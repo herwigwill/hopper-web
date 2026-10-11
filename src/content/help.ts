@@ -228,7 +228,7 @@ export const helpTopics: HelpTopic[] = [
       {
         id: "leave-waitlist",
         q: "How do I leave the waitlist?",
-        a: `Use the unsubscribe link in any email from us, or email ${site.contact} and we’ll remove you.`,
+        a: `Reply to any email from us, or email ${site.contact}, and we’ll remove you.`,
         words: "unsubscribe remove delete email",
       },
       {
