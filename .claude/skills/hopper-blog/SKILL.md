@@ -9,6 +9,8 @@ A post is one Markdown file in `src/content/blog/`. Its file name is its URL: `b
 `/blog/back-button-for-your-whole-mac`. Everything else (page, cover, structured data, RSS, sitemap, llms.txt and the
 `.md` copy for AI agents) is generated from it. Don't edit the templates to publish a post.
 
+Voice and visual rules: the `hopper-design` skill. Site mechanics: `hopper-site`.
+
 ## 1. Pick the topic
 
 - **One question per post**, the one a person would type into Google or ask ChatGPT ("how do I find an open tab on

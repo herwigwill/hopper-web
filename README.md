@@ -1,8 +1,8 @@
 # Hopper — addhopper.com
 
 The landing page for Hopper, the Mac app that takes you straight back to the tab, doc, chat or coding session you were in.
-A landing page plus feature pages (`/features`, `/features/search`, `/features/navigation`, `/features/agents`, `/features/windows`), built to be fast, accessible and honest about
-what Hopper does today.
+A landing page, feature pages (`/features/*`), About, Blog, Getting Started, Help, Privacy and Terms, built to be fast,
+accessible and honest about what Hopper does today. Agents working here: start with `CLAUDE.md`.
 
 ## Run it
 
@@ -86,7 +86,7 @@ sends the same CSP so the tests enforce it.
 
 ## Swapping in real assets
 
-- **Hopper's icon:** replace the SVG in `src/components/Wordmark.astro`, `public/favicon.svg`, then `npm run og`
+- **Hopper's icon:** replace the SVG in `src/components/HopperMark.astro`, `public/favicon.svg`, then `npm run og`
   (regenerates `public/og.png` and `apple-touch-icon.png`).
 - **App icons:** drop a 128×128 WebP into `public/icons/` with the same name. See `ASSETS.md`.
 - **Real recordings:** the demos are recreations calibrated to Hopper's real launcher (760×480 panel, row and footer
