@@ -1,15 +1,21 @@
 import { defineConfig, devices } from "@playwright/test";
 
-/** Tests run against the production build served like GitHub Pages serves it (scripts/serve.mjs). */
+/**
+ * Tests run against the production build served like GitHub Pages serves it (scripts/serve.mjs).
+ * Port 4399 stays clear of dev servers (Astro steps up from 4321 when it's taken). TEST_PORT runs two suites at once.
+ */
+const port = Number(process.env.TEST_PORT) || 4399;
+
 export default defineConfig({
   testDir: "tests",
   timeout: 30_000,
   fullyParallel: true,
   reporter: [["list"]],
-  use: { baseURL: "http://localhost:4322", trace: "retain-on-failure" },
+  use: { baseURL: `http://localhost:${port}`, trace: "retain-on-failure" },
   webServer: {
     command: "node scripts/serve.mjs",
-    url: "http://localhost:4322",
+    env: { PORT: String(port) },
+    url: `http://localhost:${port}`,
     reuseExistingServer: false,
   },
   projects: [

@@ -13,6 +13,8 @@
     "serve": "node --env-file-if-exists=.env scripts/serve.mjs",
     "check": "astro check",
     "test": "playwright test",
+    "test:quick": "playwright test --project=chromium",
+    "test:failed": "playwright test --last-failed",
     "verify": "npm run check && npm run build && npm test",
     "og": "node scripts/og.mjs",
     "blog:covers": "astro build && node scripts/blog-covers.mjs"

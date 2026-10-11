@@ -8,6 +8,15 @@ interface Props {
 }
 const { current } = Astro.props;
 const others = pillars.filter((p) => p.id !== current);
+
+/** Each pillar's piece of brand art (public/art; originals and notes in the hopper-design skill). */
+const art: Record<(typeof pillars)[number]["id"], string> = {
+  search: "/art/orbit.webp",
+  navigation: "/art/flow.webp",
+  agents: "/art/rays.webp",
+  windows: "/art/stack.webp",
+  toolkit: "/art/dunes.webp",
+};
 ---
 <nav class="more" aria-labelledby="more-title">
   <div class="wrap">
@@ -15,13 +24,16 @@ const others = pillars.filter((p) => p.id !== current);
       <h2 id="more-title">There’s more where that came from.</h2>
       <a class="all" href="/features">All features<span aria-hidden="true">←</span></a>
     </div>
-    <ul>
+    <ul class:list={[`n${others.length}`]}>
       {others.map((p) => (
         <li>
-          <a href={"href" in p ? p.href : `/features#${p.id}`}>
+          <a class="card" href={"href" in p ? p.href : `/features#${p.id}`}>
+            <img src={art[p.id]} alt="" width="720" height="900" loading="lazy" decoding="async" />
             <span class="ic" set:html={featureIcons[p.id]} />
-            <b>{p.name}</b>
-            <small>{p.line}</small>
+            <span class="text">
+              <b>{p.name}<span class="go" aria-hidden="true">→</span></b>
+              <small>{p.line}</small>
+            </span>
           </a>
         </li>
       ))}
@@ -64,45 +76,149 @@ const others = pillars.filter((p) => p.id !== current);
     grid-template-columns: repeat(4, minmax(0, 1fr));
     gap: 1rem;
   }
-  a:not(.all) {
-    display: grid;
-    align-content: start;
-    gap: 0.35rem;
-    height: 100%;
-    padding: 1.25rem;
-    border-radius: 18px;
-    border: 1px solid var(--line);
-    background: var(--white);
-    text-decoration: none;
-    transition: border-color 150ms ease, transform 300ms var(--ease-hop);
+  ul.n5 {
+    grid-template-columns: repeat(5, minmax(0, 1fr));
   }
-  a:not(.all):hover {
-    border-color: var(--blue);
-    transform: translateY(-4px);
+
+  /* A card is the art, with the feature written on its dark corner. */
+  .card {
+    position: relative;
+    isolation: isolate;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    aspect-ratio: 4 / 5;
+    padding: 1.25rem;
+    border-radius: 22px;
+    overflow: hidden;
+    background: var(--blue-deep);
+    color: var(--white);
+    text-decoration: none;
+    transition: transform 300ms var(--ease-hop), box-shadow 300ms ease;
+  }
+  .card img {
+    position: absolute;
+    inset: 0;
+    z-index: -2;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: top right;
+    transition: transform 1200ms var(--ease-out);
+  }
+  /* Keeps the words readable wherever the light falls. */
+  .card::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    background: linear-gradient(to top, rgb(8 12 90 / 0.7) 0%, rgb(8 12 90 / 0.25) 40%, transparent 65%);
+  }
+  .card:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 24px 48px -24px rgb(27 38 181 / 0.55);
+  }
+  .card:hover img {
+    transform: scale(1.08) rotate(-1deg);
+  }
+  .card:focus-visible {
+    outline-offset: 4px;
   }
   .ic {
     display: grid;
     place-items: center;
-    width: 2.25rem;
-    height: 2.25rem;
-    margin-bottom: 0.5rem;
-    border-radius: 10px;
-    background: var(--blue-soft);
-    color: var(--blue);
+    width: 2.5rem;
+    height: 2.5rem;
+    border-radius: 12px;
+    border: 1px solid rgb(255 255 255 / 0.28);
+    background: rgb(255 255 255 / 0.14);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+  }
+  .text {
+    display: grid;
+    gap: 0.35rem;
+  }
+  b {
+    display: flex;
+    align-items: baseline;
+    gap: 0.4rem;
+    font-family: var(--display);
+    font-size: var(--step-2);
+    font-weight: 800;
+    line-height: 1;
+    letter-spacing: -0.01em;
+  }
+  .go {
+    font-size: 0.7em;
+    opacity: 0;
+    transform: translateX(-0.4em);
+    transition: opacity 200ms ease, transform 300ms var(--ease-hop);
+  }
+  .card:hover .go,
+  .card:focus-visible .go {
+    opacity: 1;
+    transform: none;
   }
   small {
-    color: var(--ink-2);
+    color: rgb(255 255 255 / 0.84);
     font-size: var(--step--1);
     line-height: 1.4;
+    min-height: 2lh;
+    text-wrap: pretty;
+  }
+
+  /* Narrower: a row you swipe, the next card peeking in. Five cards need the room sooner than four. */
+  @media (max-width: 72rem) {
+    ul.n5 {
+      display: flex;
+      overflow-x: auto;
+      scroll-snap-type: x mandatory;
+      scroll-padding-inline: var(--gutter);
+      margin-inline: calc(-1 * var(--gutter));
+      padding: 0.5rem var(--gutter) 1rem;
+      scrollbar-width: none;
+    }
+    ul.n5 li {
+      flex: 0 0 clamp(14rem, 30%, 18rem);
+      scroll-snap-align: start;
+    }
   }
   @media (max-width: 56rem) {
     ul {
-      grid-template-columns: repeat(2, minmax(0, 1fr));
+      display: flex;
+      overflow-x: auto;
+      scroll-snap-type: x mandatory;
+      scroll-padding-inline: var(--gutter);
+      margin-inline: calc(-1 * var(--gutter));
+      padding: 0.5rem var(--gutter) 1rem;
+      scrollbar-width: none;
+    }
+    ul li,
+    ul.n5 li {
+      flex: 0 0 clamp(14rem, 42%, 18rem);
+      scroll-snap-align: start;
     }
   }
   @media (max-width: 30rem) {
-    ul {
-      grid-template-columns: 1fr;
+    ul li,
+    ul.n5 li {
+      flex-basis: 78%;
+    }
+  }
+  ul::-webkit-scrollbar {
+    display: none;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .card,
+    .card img,
+    .go {
+      transition: none;
+    }
+    .card:hover,
+    .card:hover img {
+      transform: none;
     }
   }
 </style>

@@ -9,7 +9,8 @@ accessible and honest about what Hopper does today. Agents working here: start w
 ```bash
 npm install
 npm run dev        # http://localhost:4321
-npm run verify     # type checks, production build, all browser tests
+npm run verify     # type checks, production build, all browser tests (served on :4399)
+npm run test:quick # desktop browser tests only; npm run test:failed reruns the last failures
 npm run build && npm run serve   # the production build at http://localhost:4322, served like GitHub Pages serves it
 ```
 

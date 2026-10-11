@@ -28,6 +28,18 @@ description: Design and copy principles for the Hopper marketing site, including
 - Signature object: keycaps (`.key`, `.keys`). Signature motion: the hop (`--ease-hop`).
 - Section stage: blue rounded panel, `radial-gradient(120% 90% at 85% 0%, #4a58ff 0%, transparent 55%), var(--blue)`,
   with a `.lx` launcher inside.
+- Brand art: five abstract glow pieces (deep blue, one violet-to-sun light source, film grain). Originals in
+  `art/` next to this file; web copies (720px webp) in `public/art/`. Use them as full-bleed card or panel backgrounds,
+  words on the dark lower-left corner over a soft blue scrim. One piece per feature, never reassigned:
+  | Art | Feature | Why |
+  | --- | --- | --- |
+  | `orbit` | Search | a ring and handle, a loose magnifier |
+  | `flow` | Navigation | a winding path back and forth |
+  | `rays` | Agents | many lines meeting at one point |
+  | `stack` | Windows | stacked rounded panes |
+  | `dunes` | Toolkit | layered folds, many tools in one |
+  New art must match this set (same palette, grain, single light source), not a new style. To make web copies:
+  `sharp(src).resize({ width: 720 }).webp({ quality: 74 })` (~10-18 KB each).
 - Page head pattern: breadcrumb (`.crumbs`), big h1 left, lede right (`.intro` 1.3fr / 1fr grid), aligned to the bottom.
 
 ## Reusable parts
@@ -35,7 +47,7 @@ description: Design and copy principles for the Hopper marketing site, including
 | --- | --- |
 | App UI | `launcher.css` `.lx` panel; `components/Launcher.astro`; `MacWindow.astro`; `desk.css` |
 | Simple feature page | `NotePage.astro` |
-| End of feature page | `features/MoreFeatures.astro` |
+| End of feature page | `features/MoreFeatures.astro` (art cards: 4 on a feature page, 5 elsewhere; swipe row when narrow) |
 | Waitlist | `moments/Join.astro`, `Waitlist.astro` |
 | Brand mark | `HopperMark.astro` (inherits color) |
 | Picture for a post | `components/blog/Cover.astro` (keys, launcher, windows, mac) |
