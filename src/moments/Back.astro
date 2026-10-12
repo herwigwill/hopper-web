@@ -1,61 +1,119 @@
 ---
-import { apps, trail, site } from "../content/facts";
-const last = trail.length - 1;
+/**
+ * The Back moment: the detour. When it scrolls into view, a Slack ping pulls you out of a Claude Code session and
+ * through a dashboard, a pull request and the launch plan, each window landing on the pile and each hop drawn on the
+ * trail below. Then you press Back (the button or the real ⌃⌥←) and it retraces your steps, one place at a time:
+ * between the two Chrome tabs only the tab changes, because Back goes to places, not apps.
+ */
+import { apps, detour, site } from "../content/facts";
+
+const tabs = detour.map((d, i) => ({ ...d, i })).filter((d) => d.app === "chrome");
 ---
 <section class="back" aria-labelledby="back-title" data-back>
-  <div class="wrap grid">
-    <div class="copy">
-      <h2 id="back-title">A Back button for your whole Mac.</h2>
-      <p class="lede">Like Back in your browser, but it works across all your apps. One press takes you to whatever you had open before.</p>
-      <div class="controls" role="group" aria-label="Try Back and Forward">
-        <button type="button" class="step" data-step="-1" aria-label="Back">
-          <span class="keys" aria-hidden="true"><span class="key">{site.back[0]}</span><span class="key">{site.back[1]}</span><span class="key">{site.back[2]}</span></span>
-          <span class="step-label">Back</span>
-        </button>
-        <button type="button" class="step" data-step="1" aria-label="Forward" disabled>
-          <span class="keys" aria-hidden="true"><span class="key">{site.forward[0]}</span><span class="key">{site.forward[1]}</span><span class="key">{site.forward[2]}</span></span>
-          <span class="step-label">Forward</span>
-        </button>
-      </div>
-      <p class="try">Try it: press Back.</p>
-    </div>
+  <div class="wrap intro">
+    <h2 id="back-title">Got pulled away? Press&nbsp;Back.</h2>
+    <p class="lede">Like Back in a browser, but for your whole Mac: it retraces your steps to the exact tab, doc or session you&nbsp;left.</p>
+  </div>
 
-    <div class="scene" aria-hidden="true">
-      <ol class="path" data-path>
-        {trail.map((t, i) => (
-          <li class:list={["stop", { here: i === last }]} data-i={i}>
-            <img src={apps[t.app].icon} alt="" width="56" height="56" loading="lazy" />
-            <span class="stop-t">{t.title}</span>
-          </li>
-        ))}
-      </ol>
-      <svg class="hops" viewBox="0 0 1000 120" preserveAspectRatio="none" data-hops>
-        {trail.slice(1).map((_, i) => {
-          const x1 = 100 + i * 200, x2 = x1 + 200;
-          return <path d={`M${x1},100 Q${(x1 + x2) / 2},10 ${x2},100`} pathLength="1" data-hop={i} />;
-        })}
-      </svg>
-      <div class="now" data-now>
-        {trail.map((t, i) => (
-          <article class:list={["card", `c-${t.app}`]} data-card={i} hidden={i !== last}>
-            <header><img src={apps[t.app].icon} alt="" width="40" height="40" loading="lazy" /><span><b>{t.title}</b><small>{t.detail}</small></span></header>
-            <div class="peek">
-              {t.app === "notion" && (<><p class="pk-h">Goals</p><ul><li>Ship the new checkout to every plan</li><li>Lift paid conversion from 39% to 45%</li><li>Pricing page live a week before launch</li></ul></>)}
-              {t.app === "slack" && (<><p><b>Sam Ito</b> Can we ship the checkout fix before Thursday?</p><p><b>Priya Raman</b> Yes if the auth refresh bug is fixed.</p></>)}
-              {t.app === "chrome" && (<div class="pk-bars"><span style="--v:1">12,480</span><span style="--v:.71">8,902</span><span style="--v:.49">6,115</span><span style="--v:.39">4,870</span></div>)}
-              {t.app === "cursor" && (<pre><code>{`export async function onEvent(e: Event) {
-  if (e.type === "invoice.paid") {
-    await markPaid(e.data.invoice)
-  }
-}`}</code></pre>)}
-              {t.app === "claude" && (<><p class="pk-you">Tokens expire mid-request on slow networks.</p><p>Found it. I’ll refresh anything expiring in the next 30 seconds before sending.</p></>)}
+  <div class="wrap">
+    <div class="stage on-blue" data-back-stage>
+      <div class="screen" aria-hidden="true">
+        <div class="menubar"><span class="mb-apple"></span><b data-mb-app>{apps.claude.short}</b><span>File</span><span>Edit</span><span>View</span><span class="clock">10:12 AM</span></div>
+        <div class="desk">
+          <article class="win w-claude is-front" data-app="claude">
+            <header><i></i><i></i><i></i><span><img src={apps.claude.icon} alt="" width="14" height="14" />Claude</span></header>
+            <div class="body split">
+              <aside><p class="ws">Code</p><p class="on">Fix auth token refresh</p><p>Write onboarding copy</p><p>Flaky signup test</p></aside>
+              <div class="chat">
+                <b>Fix auth token refresh</b>
+                <p class="me">Tokens expire mid-request on slow networks.</p>
+                <p>Found it. I’ll refresh anything expiring in the next 30 seconds before sending.</p>
+                <p class="compose">Also retry once if the refresh fails<span class="caret"></span></p>
+              </div>
             </div>
           </article>
-        ))}
+          <article class="win w-slack" data-app="slack">
+            <header><i></i><i></i><i></i><span><img src={apps.slack.icon} alt="" width="14" height="14" />#launch</span></header>
+            <div class="body split">
+              <aside><p class="ws">Northwind</p><p># general</p><p class="on"># launch</p><p># design</p></aside>
+              <div class="msgs">
+                <p><b>Sam Ito</b>Funnel dropped after the deploy. Can you look?<span class="link">analytics.internal/checkout</span></p>
+                <p><b>Priya Raman</b>That deploy was #482.</p>
+              </div>
+            </div>
+          </article>
+          <article class="win w-chrome" data-app="chrome">
+            <header class="tabs">
+              <i></i><i></i><i></i>
+              {tabs.map((t) => <span class="tab" data-tab={t.i}><img src={apps.chrome.icon} alt="" width="12" height="12" />{t.title}</span>)}
+            </header>
+            <div class="body">
+              <p class="omni" data-omni>analytics.internal/checkout?range=q4</p>
+              <div class="page on" data-page={tabs[0].i}>
+                <b>Checkout funnel</b>
+                <div class="bars"><span style="--v:1"></span><span style="--v:.71"></span><span style="--v:.38"></span><span style="--v:.27"></span></div>
+              </div>
+              <div class="page" data-page={tabs[1].i}>
+                <b>Fix token refresh race <em>Merged</em></b>
+                <s style="--w:78%"></s><s style="--w:60%"></s>
+                <code>- if (isExpired(token))</code>
+              </div>
+            </div>
+          </article>
+          <article class="win w-notion" data-app="notion">
+            <header><i></i><i></i><i></i><span><img src={apps.notion.icon} alt="" width="14" height="14" />Q4 Launch Plan</span></header>
+            <div class="body split">
+              <aside><p class="on">Q4 Launch Plan</p><p>Roadmap</p><p>Meeting notes</p></aside>
+              <div class="doc">
+                <b>Q4 Launch Plan</b>
+                <p class="meta">Launch&ensp;<del>Nov 18</del> Nov 25</p>
+                <s style="--w:72%"></s><s style="--w:88%"></s><s style="--w:56%"></s>
+              </div>
+            </div>
+          </article>
+          <div class="toast" data-toast>
+            <img src={apps.slack.icon} alt="" width="28" height="28" />
+            <span><b>Sam Ito in #launch</b>Funnel dropped after the deploy. Can you look?</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="trail" aria-hidden="true">
+        <svg class="hops" viewBox="0 0 1000 60" preserveAspectRatio="none">
+          {detour.slice(1).map((_, i) => {
+            const x1 = 100 + i * 200, x2 = x1 + 200;
+            return <path d={`M${x1},56 Q${(x1 + x2) / 2},-4 ${x2},56`} pathLength="1" data-hop={i} />;
+          })}
+        </svg>
+        <ol>
+          {detour.map((d, i) => (
+            <li class:list={["stop", { here: i === 0, unseen: i > 0 }]} data-stop={i}>
+              <span class="tile"><img src={apps[d.app].icon} alt="" width="40" height="40" loading="lazy" /></span>
+              <span class="stop-t">{d.title}</span>
+            </li>
+          ))}
+        </ol>
+      </div>
+
+      <div class="controls" role="group" aria-label="Back and Forward">
+        <button type="button" class="step step-back" data-step="-1" disabled>
+          <span class="keys" aria-hidden="true">{site.back.map((k) => <span class="key">{k}</span>)}</span>
+          Back
+        </button>
+        <button type="button" class="step" data-step="1" disabled>
+          <span class="keys" aria-hidden="true">{site.forward.map((k) => <span class="key">{k}</span>)}</span>
+          Forward
+        </button>
+        <button type="button" class="replay" data-replay hidden>Play it again</button>
       </div>
     </div>
+    <p class="say" aria-hidden="true" data-say>{detour[0].went}</p>
+    <p class="visually-hidden">
+      In the demo, a Slack message pulls you out of a Claude Code session, into a Chrome dashboard, a pull request in
+      another tab, and a Notion page. Back takes you through those places in reverse, one at a time.
+    </p>
+    <p class="visually-hidden" aria-live="polite" data-back-live></p>
   </div>
-  <p class="visually-hidden" aria-live="polite" data-back-live></p>
 </section>
 
 <style>
@@ -64,62 +122,421 @@ const last = trail.length - 1;
     background: var(--white);
     border-block: 1px solid var(--line);
   }
-  .grid {
+  .intro {
     display: grid;
-    grid-template-columns: minmax(0, 0.85fr) minmax(0, 1.15fr);
-    gap: 3rem clamp(2rem, 5vw, 6rem);
-    align-items: center;
+    grid-template-columns: minmax(0, 1.3fr) minmax(0, 1fr);
+    gap: 1.5rem clamp(2rem, 5vw, 5rem);
+    align-items: end;
   }
   h2 {
-    max-width: 11ch;
+    max-width: 12ch;
   }
   .lede {
-    margin-top: 1.5rem;
-  }
-  .controls {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.75rem;
-    margin-top: 2.25rem;
-  }
-  .step {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.75rem;
-    padding: 0.5rem 1rem 0.5rem 0.5rem;
-    border: 1px solid var(--line);
-    border-radius: 14px;
-    background: var(--paper);
-    cursor: pointer;
-    font-weight: 600;
-    font-size: var(--step-0);
-  }
-  .step:hover:not(:disabled) {
-    border-color: var(--blue);
-  }
-  .step:disabled {
-    opacity: 0.45;
-    cursor: default;
-  }
-  .step .key {
-    font-size: 0.85rem;
-  }
-  .try {
-    margin-top: 0.9rem;
-    font-size: var(--step--1);
-    color: var(--ink-2);
+    padding-bottom: 0.4rem;
   }
 
-  .scene {
-    position: relative;
-    display: grid;
-    gap: 1.5rem;
+  .stage {
+    margin-top: clamp(2rem, 1.5rem + 2.5vw, 3.5rem);
+    padding: clamp(1rem, 3vw, 2.75rem) clamp(1rem, 5vw, 5rem) clamp(1.25rem, 3vw, 2.5rem);
+    border-radius: clamp(18px, 2vw, 28px);
+    background:
+      radial-gradient(120% 90% at 85% 0%, #4a58ff 0%, transparent 55%),
+      var(--blue);
   }
-  .path {
+
+  /* The little Mac */
+  .screen {
+    container-type: inline-size;
+    /* Small enough that the screen, trail and buttons fit in one view on a laptop. */
+    max-width: min(58rem, (100svh - 22rem) * 1.75);
+    margin-inline: auto;
+    border-radius: 12px;
+    overflow: hidden;
+    background:
+      radial-gradient(90% 80% at 20% 100%, #6a3df0 0%, transparent 60%),
+      radial-gradient(80% 70% at 100% 0%, #31c0ff 0%, transparent 55%),
+      #2534c9;
+    box-shadow: 0 0 0 1px rgb(255 255 255 / 0.18), 0 30px 60px -30px rgb(6 8 40 / 0.7);
+  }
+  .menubar {
+    display: flex;
+    gap: 0.9rem;
+    align-items: center;
+    height: 1.5rem;
+    padding: 0 0.8rem;
+    font: 0.72rem var(--mac);
+    color: #fff;
+    background: rgb(12 18 90 / 0.3);
+  }
+  .mb-apple {
+    width: 0.65rem;
+    height: 0.75rem;
+    border-radius: 40% 40% 45% 45%;
+    background: rgb(255 255 255 / 0.9);
+  }
+  .clock {
+    margin-left: auto;
+  }
+  .desk {
     position: relative;
-    z-index: 1;
+    aspect-ratio: 16 / 8.6;
+    font: clamp(8px, 1.45cqw, 13px) / 1.4 var(--mac);
+  }
+
+  /* Windows pile up where real ones would: each app has its own spot, the most recent on top. */
+  .win {
+    position: absolute;
+    display: flex;
+    flex-direction: column;
+    border-radius: 0.8em;
+    overflow: hidden;
+    background: #fff;
+    color: #1d2033;
+    box-shadow: 0 0 0 0.5px rgb(0 0 0 / 0.2), 0 1em 2.4em -0.8em rgb(6 8 40 / 0.55);
+    transition: filter 250ms ease, opacity 300ms ease, transform 300ms var(--ease-out);
+  }
+  .w-claude { left: 3%; top: 8%; width: 56%; height: 82%; }
+  .w-slack { left: 38%; top: 5%; width: 52%; height: 64%; }
+  .w-chrome { left: 14%; top: 17%; width: 60%; height: 76%; }
+  .w-notion { left: 43%; top: 12%; width: 53%; height: 80%; }
+  .win:not(.is-front) {
+    filter: saturate(0.75) brightness(0.9);
+  }
+  .win.is-front {
+    box-shadow: 0 0 0 0.5px rgb(0 0 0 / 0.25), 0 1.6em 3.4em -1em rgb(6 8 40 / 0.7);
+  }
+  .win.closed {
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(6%) scale(0.94);
+    transition: none;
+  }
+  .win.hop {
+    animation: win-hop 480ms var(--ease-hop);
+  }
+  @keyframes win-hop {
+    0% { transform: translateY(5%) scale(0.95); }
+    55% { transform: translateY(-1.5%) scale(1.01); }
+    100% { transform: none; }
+  }
+  .win header {
+    display: flex;
+    align-items: center;
+    gap: 0.45em;
+    min-height: 2.4em;
+    padding: 0 0.9em;
+    background: #f1f2f6;
+    border-bottom: 1px solid #e2e4ec;
+    white-space: nowrap;
+  }
+  .win header i {
+    width: 0.8em;
+    height: 0.8em;
+    border-radius: 50%;
+    background: #ff5f57;
+    flex: none;
+  }
+  .win header i:nth-child(2) {
+    background: #febc2e;
+  }
+  .win header i:nth-child(3) {
+    background: #28c840;
+    margin-right: 0.6em;
+  }
+  .win header > span:not(.tab) {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45em;
+    margin-inline: auto;
+    font-weight: 600;
+    transform: translateX(-2em);
+  }
+  .win img {
+    width: 1.15em;
+    height: 1.15em;
+  }
+  .tabs {
+    gap: 0.3em;
+    overflow: hidden;
+  }
+  .tab {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4em;
+    min-width: 0;
+    max-width: 14em;
+    padding: 0.35em 0.8em;
+    border-radius: 0.5em 0.5em 0 0;
+    color: #4a4f68;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    transition: background 200ms ease, color 200ms ease;
+  }
+  .tab.on {
+    background: #fff;
+    color: #1d2033;
+    font-weight: 600;
+    box-shadow: 0 -1px 0 #e2e4ec inset;
+  }
+  .tab.flash {
+    animation: tab-flash 700ms ease;
+  }
+  @keyframes tab-flash {
+    0%, 40% { box-shadow: 0 0 0 0.18em var(--sun) inset; }
+  }
+  .body {
+    flex: 1;
+    min-height: 0;
+    padding: 1em 1.2em;
+  }
+  .body.split {
     display: grid;
-    grid-template-columns: repeat(5, 1fr);
+    grid-template-columns: 11em 1fr;
+    padding: 0;
+  }
+  aside {
+    padding: 0.9em 0.6em;
+    background: #f6f6f9;
+    border-right: 1px solid #ececf2;
+    color: #4a4f68;
+  }
+  aside p {
+    padding: 0.3em 0.55em;
+    border-radius: 0.4em;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  aside .ws {
+    font-weight: 700;
+    color: #1d2033;
+  }
+  aside .on {
+    background: #e3e6ff;
+    color: #1b26b5;
+    font-weight: 600;
+  }
+  .w-slack aside {
+    background: #3f0e40;
+    color: #d8c8d8;
+  }
+  .w-slack aside .ws {
+    color: #fff;
+  }
+  .w-slack aside .on {
+    background: #1164a3;
+    color: #fff;
+  }
+  .w-claude aside {
+    background: #f4f1ea;
+  }
+  .w-claude aside .on {
+    background: #e8dfcf;
+    color: #3b2a12;
+  }
+  .doc,
+  .chat,
+  .msgs {
+    display: flex;
+    flex-direction: column;
+    gap: 0.7em;
+    padding: 1.1em 1.3em;
+    min-width: 0;
+  }
+  .doc b,
+  .chat b,
+  .page b {
+    font-size: 1.35em;
+    line-height: 1.15;
+  }
+  .chat p {
+    max-width: 85%;
+    padding: 0.5em 0.8em;
+    border-radius: 0.8em;
+    background: #f1ede4;
+  }
+  .chat .me {
+    align-self: flex-end;
+    background: #e3e6ff;
+  }
+  .compose {
+    margin-top: auto;
+    align-self: stretch;
+    max-width: none !important;
+    background: #fff !important;
+    border: 1px solid #e2ddd2;
+    color: #4a4f68;
+  }
+  .caret {
+    display: inline-block;
+    width: 1px;
+    height: 1.1em;
+    margin-left: 1px;
+    vertical-align: -0.2em;
+    background: #1d2033;
+    animation: blink 1s steps(1) infinite;
+  }
+  @keyframes blink {
+    50% { opacity: 0; }
+  }
+  .msgs p {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  .msgs b {
+    font-size: 0.95em;
+  }
+  .link {
+    margin-top: 0.3em;
+    color: #1264a3;
+    text-decoration: underline;
+  }
+  .meta del {
+    color: #8a8fa6;
+  }
+  s {
+    display: block;
+    width: var(--w);
+    height: 0.6em;
+    border-radius: 1em;
+    background: #e3e5ee;
+    text-decoration: none;
+  }
+  .omni {
+    padding: 0.35em 0.8em;
+    border-radius: 1em;
+    background: #f1f2f6;
+    color: #4a4f68;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .page {
+    display: none;
+    flex-direction: column;
+    gap: 0.7em;
+    padding-top: 1em;
+  }
+  .page.on {
+    display: flex;
+    animation: fade 260ms ease;
+  }
+  @keyframes fade {
+    from { opacity: 0; }
+  }
+  .page em {
+    margin-left: 0.4em;
+    padding: 0.1em 0.6em;
+    border-radius: 1em;
+    background: #8250df;
+    color: #fff;
+    font: 600 0.55em var(--mac);
+    font-style: normal;
+    vertical-align: middle;
+  }
+  .page code {
+    align-self: flex-start;
+    padding: 0.3em 0.6em;
+    border-radius: 0.4em;
+    background: #ffebe9;
+    color: #82071e;
+    font-size: 0.95em;
+  }
+  .bars {
+    display: flex;
+    align-items: flex-end;
+    gap: 0.8em;
+    height: 7em;
+  }
+  .bars span {
+    flex: 1;
+    height: calc(var(--v) * 100%);
+    border-radius: 0.3em 0.3em 0 0;
+    background: #4f5cff;
+  }
+  .bars span:nth-child(n + 3) {
+    background: #f0616d;
+  }
+
+  /* The notification that starts it all */
+  .toast {
+    position: absolute;
+    top: 4%;
+    right: 2.5%;
+    z-index: 50;
+    display: flex;
+    gap: 0.8em;
+    align-items: center;
+    width: 32%;
+    padding: 0.8em 1em;
+    border-radius: 1.1em;
+    background: rgb(246 246 250 / 0.92);
+    backdrop-filter: blur(12px);
+    color: #1d2033;
+    box-shadow: 0 1em 2.4em -0.8em rgb(6 8 40 / 0.6);
+    opacity: 0;
+    transform: translateX(110%);
+    transition: transform 420ms var(--ease-hop), opacity 250ms ease;
+    pointer-events: none;
+  }
+  .toast.in {
+    opacity: 1;
+    transform: none;
+  }
+  .toast img {
+    width: 2.2em;
+    height: 2.2em;
+    flex: none;
+  }
+  .toast span {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+  }
+
+  /* The trail: every place you passed through, the hops between them drawn as you go. */
+  .trail {
+    position: relative;
+    max-width: 46rem;
+    margin: 1.75rem auto 0;
+    padding-top: 1.6rem;
+  }
+  .hops {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 2.4rem;
+    overflow: visible;
+  }
+  .hops path {
+    fill: none;
+    stroke: rgb(255 255 255 / 0.4);
+    stroke-width: 2;
+    stroke-linecap: round;
+    stroke-dasharray: 1;
+    stroke-dashoffset: 1;
+    vector-effect: non-scaling-stroke;
+    transition: stroke 250ms ease;
+  }
+  .hops path.drawn {
+    stroke-dashoffset: 0;
+    transition: stroke-dashoffset 500ms var(--ease-out), stroke 250ms ease;
+  }
+  .hops path.lit {
+    stroke: var(--sun);
+    stroke-width: 3;
+  }
+  .hops path.rev {
+    animation: draw-back 480ms var(--ease-out);
+  }
+  @keyframes draw-back {
+    from { stroke-dashoffset: -1; }
+  }
+  .trail ol {
+    display: grid;
+    grid-template-columns: repeat(5, minmax(0, 1fr));
     list-style: none;
     margin: 0;
     padding: 0;
@@ -127,234 +544,360 @@ const last = trail.length - 1;
   .stop {
     display: grid;
     justify-items: center;
-    gap: 0.5rem;
+    gap: 0.45rem;
     text-align: center;
-    transition: transform 350ms var(--ease-hop);
+    transition: opacity 300ms ease, transform 400ms var(--ease-hop);
   }
-  /* Faded stops dim their icon only, so their names keep readable contrast. */
-  .stop img {
-    opacity: 0.45;
-    transition: opacity 250ms ease, transform 350ms var(--ease-hop);
+  .stop.unseen {
+    opacity: 0;
+    transform: translateY(0.5rem) scale(0.7);
   }
-  .stop img {
-    width: clamp(2.5rem, 4.5vw, 3.75rem);
-    height: auto;
+  .tile {
+    display: grid;
+    place-items: center;
+    width: 3rem;
+    height: 3rem;
+    border-radius: 14px;
+    background: rgb(255 255 255 / 0.14);
+    transition: background 200ms ease, transform 400ms var(--ease-hop), box-shadow 200ms ease;
+  }
+  .tile img {
+    width: 2rem;
+    height: 2rem;
   }
   .stop-t {
-    font-size: 0.8rem;
+    max-width: 11ch;
+    font-size: 0.78rem;
+    font-weight: 600;
     line-height: 1.25;
-    color: var(--ink-2);
-    max-width: 10ch;
+    color: #dfe3ff;
   }
-  .stop.past img {
-    opacity: 0.8;
+  .stop.ahead {
+    opacity: 0.5;
   }
-  .stop.here img {
-    opacity: 1;
-  }
-  .stop.here img {
-    transform: translateY(-6px) scale(1.12);
+  .stop.here .tile {
+    background: var(--white);
+    box-shadow: 0 0 0 3px var(--sun);
+    transform: translateY(-0.35rem) scale(1.12);
   }
   .stop.here .stop-t {
-    color: var(--ink);
-    font-weight: 600;
-  }
-  .hops {
-    position: absolute;
-    left: 0;
-    right: 0;
-    top: -2.2rem;
-    width: 100%;
-    height: 3.5rem;
-    overflow: visible;
-  }
-  .hops path {
-    fill: none;
-    stroke: var(--line);
-    stroke-width: 2;
-    stroke-dasharray: 0.02 0.02;
-    vector-effect: non-scaling-stroke;
-  }
-  .hops path.lit {
-    stroke: var(--blue);
-    stroke-dasharray: none;
+    color: #fff;
   }
 
-  .now {
-    position: relative;
-    min-height: 15rem;
-  }
-  .card {
-    border-radius: 16px;
-    background: var(--paper);
-    border: 1px solid var(--line);
-    padding: 1.25rem;
-    min-height: 15rem;
-    animation: card-in 380ms var(--ease-hop) both;
-  }
-  .card.from-right {
-    animation-name: card-in-right;
-  }
-  @keyframes card-in {
-    from {
-      opacity: 0;
-      transform: translateX(-28px) scale(0.98);
-    }
-  }
-  @keyframes card-in-right {
-    from {
-      opacity: 0;
-      transform: translateX(28px) scale(0.98);
-    }
-  }
-  .card header {
+  .controls {
     display: flex;
-    gap: 0.9rem;
+    flex-wrap: wrap;
+    justify-content: center;
     align-items: center;
+    gap: 0.6rem;
+    margin-top: 1.75rem;
   }
-  .card header img {
-    width: 2.5rem;
-    height: 2.5rem;
-  }
-  .card header span {
-    display: grid;
-  }
-  .card b {
-    font-size: var(--step-1);
-    font-stretch: 90%;
-    line-height: 1.2;
-  }
-  .card small {
-    color: var(--ink-2);
-    font-size: var(--step--1);
-  }
-  .peek {
-    margin-top: 1.1rem;
-    padding: 1rem 1.1rem;
-    border-radius: 12px;
-    background: var(--white);
-    border: 1px solid var(--line);
-    font-family: var(--mac);
-    font-size: 0.92rem;
-    line-height: 1.5;
-    display: grid;
-    gap: 0.5rem;
-    min-height: 8.5rem;
-    align-content: start;
-  }
-  .peek ul {
-    margin: 0;
-    padding-left: 1.1rem;
-  }
-  .pk-h {
-    font-weight: 700;
-  }
-  .pk-you {
-    justify-self: end;
-    padding: 0.4rem 0.75rem;
-    border-radius: 12px;
-    background: #ece8dd;
-  }
-  .c-cursor .peek {
-    background: #181818;
-    border-color: #181818;
-    color: #d4d4d4;
-  }
-  .peek pre {
-    margin: 0;
-    font: 0.82rem/1.6 ui-monospace, "SF Mono", Menlo, monospace;
-    white-space: pre-wrap;
-  }
-  .pk-bars {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
+  .step {
+    display: inline-flex;
+    align-items: center;
     gap: 0.75rem;
-    align-items: end;
-    height: 7rem;
+    min-height: 3rem;
+    padding: 0.45rem 1.1rem 0.45rem 0.5rem;
+    border: 0;
+    border-radius: 14px;
+    background: rgb(255 255 255 / 0.14);
+    color: #fff;
+    font-size: var(--step-0);
+    font-weight: 700;
+    cursor: pointer;
+    transition: background 150ms ease, opacity 200ms ease;
   }
-  .pk-bars span {
-    display: grid;
-    align-content: end;
+  .step:hover:not(:disabled) {
+    background: rgb(255 255 255 / 0.24);
+  }
+  .step-back {
+    background: var(--white);
+    color: var(--blue-deep);
+  }
+  .step-back:hover:not(:disabled) {
+    background: #eef0ff;
+  }
+  .step:disabled {
+    opacity: 0.4;
+    cursor: default;
+  }
+  .step .keys {
     font-size: 0.8rem;
-    font-weight: 600;
   }
-  .pk-bars span::after {
-    content: "";
-    height: calc(var(--v) * 5rem);
-    border-radius: 6px 6px 2px 2px;
-    background: #5865f2;
-    margin-top: 0.3rem;
+  .step-back.nudge {
+    animation: nudge 1.6s var(--ease-hop) 2;
+  }
+  @keyframes nudge {
+    0%, 100% { box-shadow: 0 0 0 0 rgb(255 201 60 / 0); }
+    30% { box-shadow: 0 0 0 6px rgb(255 201 60 / 0.9); }
+  }
+  .replay {
+    min-height: 3rem;
+    padding: 0 1rem;
+    border: 0;
+    background: none;
+    color: #fff;
+    font-weight: 600;
+    text-decoration: underline;
+    text-underline-offset: 3px;
+    cursor: pointer;
+  }
+  .say {
+    margin-top: 1.25rem;
+    min-height: 1.6em;
+    text-align: center;
+    color: var(--ink-2);
+    font-size: var(--step-0);
   }
 
   @media (max-width: 56rem) {
-    .grid {
+    .intro {
       grid-template-columns: 1fr;
     }
-    .scene {
-      margin-top: 2rem;
+    .body.split {
+      grid-template-columns: 8em 1fr;
+    }
+    .toast {
+      width: 44%;
     }
   }
-  @media (max-width: 30rem) {
+  @media (max-width: 36rem) {
+    .desk {
+      aspect-ratio: 4 / 3.4;
+    }
+    .w-claude { left: 3%; top: 6%; width: 82%; height: 86%; }
+    .w-slack { left: 15%; top: 4%; width: 82%; height: 70%; }
+    .w-chrome { left: 6%; top: 14%; width: 86%; height: 80%; }
+    .w-notion { left: 12%; top: 10%; width: 85%; height: 84%; }
+    .body.split {
+      grid-template-columns: 1fr;
+    }
+    aside {
+      display: none;
+    }
+    .toast {
+      width: 70%;
+    }
     .stop-t {
       display: none;
+    }
+    .tile {
+      width: 2.5rem;
+      height: 2.5rem;
+    }
+    .tile img {
+      width: 1.6rem;
+      height: 1.6rem;
+    }
+    .step .keys {
+      display: none;
+    }
+    .step {
+      padding-inline: 1.1rem;
+    }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .win.hop,
+    .page.on,
+    .tab.flash,
+    .hops path.rev,
+    .step-back.nudge,
+    .caret {
+      animation: none;
+    }
+    .win,
+    .toast,
+    .stop,
+    .tile,
+    .hops path.drawn {
+      transition: none;
     }
   }
 </style>
 
 <script>
-  import { trail, apps } from "../content/facts";
+  import { apps, detour } from "../content/facts";
+
   const root = document.querySelector<HTMLElement>("[data-back]");
   if (root) {
-    let at = trail.length - 1;
-    const stops = [...root.querySelectorAll<HTMLElement>(".stop")];
-    const cards = [...root.querySelectorAll<HTMLElement>("[data-card]")];
+    const last = detour.length - 1;
+    const stage = root.querySelector<HTMLElement>("[data-back-stage]")!;
+    const wins = new Map([...root.querySelectorAll<HTMLElement>(".win")].map((w) => [w.dataset.app!, w]));
+    const stops = [...root.querySelectorAll<HTMLElement>("[data-stop]")];
     const hops = [...root.querySelectorAll<SVGPathElement>("[data-hop]")];
+    const toast = root.querySelector<HTMLElement>("[data-toast]")!;
+    const mbApp = root.querySelector<HTMLElement>("[data-mb-app]")!;
+    const omni = root.querySelector<HTMLElement>("[data-omni]")!;
     const back = root.querySelector<HTMLButtonElement>('[data-step="-1"]')!;
     const fwd = root.querySelector<HTMLButtonElement>('[data-step="1"]')!;
+    const replay = root.querySelector<HTMLButtonElement>("[data-replay]")!;
+    const say = root.querySelector<HTMLElement>("[data-say]")!;
     const live = root.querySelector<HTMLElement>("[data-back-live]")!;
+    const still = matchMedia("(prefers-reduced-motion: reduce)").matches;
+    const keyboard = matchMedia("(hover: hover)").matches;
+    const urls: Record<string, string> = { "Checkout funnel, Q4": "analytics.internal/checkout?range=q4", "Pull request #482": "github.com/northwind/web/pull/482" };
+
+    /** How far the detour has gone (the end of history), where you are in it, and the apps from back to front. */
+    let reached = 0;
+    let at = 0;
+    let pile: string[] = ["claude"];
+    let timers: number[] = [];
+    let playing = false;
+
+    const restart = (el: Element, cls: string) => {
+      el.classList.remove(cls);
+      void (el as HTMLElement).offsetWidth;
+      el.classList.add(cls);
+    };
+
+    const tell = (msg: string, announce = true) => {
+      say.textContent = msg;
+      if (announce) live.textContent = msg;
+    };
+
+    const draw = (dir: number, animate: boolean) => {
+      const p = detour[at];
+      // The place's app comes to the top of the pile; apps you haven't been to yet aren't open.
+      const front = pile[pile.length - 1];
+      pile = [...pile.filter((a) => a !== p.app), p.app];
+      const open = new Set<string>(detour.slice(0, reached + 1).map((d) => d.app));
+      wins.forEach((w, app) => {
+        w.classList.toggle("closed", !open.has(app));
+        w.classList.toggle("is-front", app === p.app);
+        w.style.zIndex = String(pile.indexOf(app) + 1);
+      });
+      if (animate && front !== p.app) restart(wins.get(p.app)!, "hop");
+      mbApp.textContent = apps[p.app].short;
+      if (p.app === "chrome") {
+        omni.textContent = urls[p.title];
+        root.querySelectorAll<HTMLElement>("[data-tab]").forEach((t) => {
+          const on = Number(t.dataset.tab) === at;
+          t.classList.toggle("on", on);
+          if (on && animate && front === "chrome") restart(t, "flash");
+        });
+        root.querySelectorAll<HTMLElement>("[data-page]").forEach((pg) => pg.classList.toggle("on", Number(pg.dataset.page) === at));
+      }
+      stops.forEach((s, i) => {
+        s.classList.toggle("unseen", i > reached);
+        s.classList.toggle("here", i === at);
+        s.classList.toggle("ahead", i > at && i <= reached);
+      });
+      const hop = dir ? Math.min(at, at - dir) : -1;
+      hops.forEach((h, i) => {
+        h.classList.toggle("drawn", i < reached);
+        h.classList.toggle("lit", i === hop);
+        h.classList.remove("rev");
+      });
+      if (dir < 0 && animate && hops[hop]) restart(hops[hop], "rev");
+      back.disabled = at === 0;
+      fwd.disabled = at === reached || playing;
+      replay.hidden = playing || at !== 0 || reached === 0;
+    };
+
+    const stop = () => {
+      timers.forEach(clearTimeout);
+      timers = [];
+      playing = false;
+      toast.classList.remove("in");
+    };
+
+    const arrived = () =>
+      tell(`${["One", "Two", "Three", "Four", "Five"][last - 1]} places later. Where were you? Press Back${keyboard ? ", or ⌃⌥← on your keyboard" : ""}.`);
+
+    const play = () => {
+      stop();
+      reached = 0;
+      at = 0;
+      pile = ["claude"];
+      if (still) {
+        reached = at = last;
+        pile = [...new Set(detour.map((d) => d.app))];
+        draw(0, false);
+        return arrived();
+      }
+      playing = true;
+      draw(0, false);
+      tell(detour[0].went, false);
+      const beat = 1300;
+      const later = (ms: number, fn: () => void) => timers.push(window.setTimeout(fn, ms));
+      later(beat, () => {
+        toast.classList.add("in");
+        tell(detour[1].went, false);
+      });
+      for (let i = 1; i <= last; i++) {
+        later(beat * (i + 1) + 200, () => {
+          if (i === 1) toast.classList.remove("in");
+          reached = at = i;
+          draw(1, true);
+          if (i > 1) tell(detour[i].went, false);
+        });
+      }
+      later(beat * (last + 2) + 200, () => {
+        playing = false;
+        draw(0, false);
+        arrived();
+        restart(back, "nudge");
+      });
+    };
 
     const go = (to: number, source?: HTMLButtonElement) => {
-      if (to < 0 || to >= trail.length || to === at) return;
+      if (to < 0 || to > reached || to === at) return;
+      if (playing) {
+        stop();
+        if (to > at) return;
+      }
       const dir = to < at ? -1 : 1;
+      const from = detour[at];
       at = to;
-      stops.forEach((s, i) => {
-        s.classList.toggle("here", i === at);
-        s.classList.toggle("past", i < at);
-      });
-      cards.forEach((c, i) => {
-        c.hidden = i !== at;
-        c.classList.toggle("from-right", dir > 0);
-        if (i === at) {
-          c.style.animation = "none";
-          void c.offsetWidth;
-          c.style.animation = "";
-        }
-      });
-      const from = at - dir;
-      hops.forEach((h, i) => h.classList.toggle("lit", i === Math.min(from, at)));
-      back.disabled = at === 0;
-      fwd.disabled = at === trail.length - 1;
+      draw(dir, !still);
+      back.classList.remove("nudge");
       const keys = (source ?? (dir < 0 ? back : fwd)).querySelectorAll(".key");
       keys.forEach((k) => k.classList.add("is-down"));
       setTimeout(() => keys.forEach((k) => k.classList.remove("is-down")), 160);
-      const t = trail[at];
-      live.textContent = `${dir < 0 ? "Back" : "Forward"} to ${t.title}, ${apps[t.app].name}.`;
+      const p = detour[at];
+      if (dir > 0) tell(`Forward to ${p.title}.`);
+      else if (at === 0) tell(`Back in your ${p.kind}, right where you left it.`);
+      else if (p.app === from.app) tell(`Back to ${p.title}. Same ${apps[p.app].short} window, the tab before.`);
+      else tell(`Back to ${p.title}, in ${apps[p.app].short}.`);
       // Keep focus on a button that still works.
-      if (document.activeElement === back && back.disabled) fwd.focus();
+      if (document.activeElement === back && back.disabled) (replay.hidden ? fwd : replay).focus();
       if (document.activeElement === fwd && fwd.disabled) back.focus();
     };
+
     back.addEventListener("click", () => go(at - 1, back));
     fwd.addEventListener("click", () => go(at + 1, fwd));
+    replay.addEventListener("click", () => {
+      play();
+      back.focus();
+    });
     root.querySelector(".controls")!.addEventListener("keydown", (e) => {
       const k = (e as KeyboardEvent).key;
-      if (k === "ArrowLeft") {
+      if (k === "ArrowLeft" || k === "ArrowRight") {
         e.preventDefault();
-        go(at - 1);
-      } else if (k === "ArrowRight") {
-        e.preventDefault();
-        go(at + 1);
+        go(at + (k === "ArrowLeft" ? -1 : 1));
       }
     });
-    stops.forEach((s, i) => s.classList.toggle("past", i < at));
+
+    // The detour plays the first time the stage comes into view; the real keys work while it's on screen.
+    let inView = false;
+    let started = false;
+    new IntersectionObserver(
+      ([e]) => {
+        inView = e.isIntersecting;
+        if (inView && !started) {
+          started = true;
+          play();
+        }
+      },
+      { threshold: 0.45 },
+    ).observe(stage);
+    document.addEventListener("keydown", (e) => {
+      if (!inView || !e.ctrlKey || !e.altKey || e.metaKey) return;
+      if (e.key !== "ArrowLeft" && e.key !== "ArrowRight") return;
+      e.preventDefault();
+      go(at + (e.key === "ArrowLeft" ? -1 : 1));
+    });
+
+    draw(0, false);
   }
 </script>

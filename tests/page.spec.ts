@@ -7,7 +7,7 @@ test.describe("landing page", () => {
     const problems = watchConsole(page);
     await page.goto("/");
     await expect(page.getByRole("heading", { level: 1 })).toHaveText(/Never lose your\splace\./);
-    await expect(page.getByRole("heading", { name: "A Back button for your whole Mac." })).toBeVisible();
+    await expect(page.getByRole("heading", { name: "Got pulled away? Press Back." })).toBeVisible();
     await expect(page.getByRole("heading", { name: /Go straight to the one that needs you/ })).toBeAttached();
     await expect(page.getByRole("heading", { name: "Be the first to try Hopper." })).toBeAttached();
     // Scroll through everything so every moment's script runs.
