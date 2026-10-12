@@ -55,19 +55,37 @@ test.describe("hero demo", () => {
 });
 
 test.describe("back moment", () => {
-  test("Back and Forward step through the trail", async ({ page }) => {
+  test("the detour plays, then Back retraces it place by place", async ({ page }) => {
     await page.goto("/");
+    await page.locator("[data-back-stage]").scrollIntoViewIfNeeded();
+    const live = page.locator("[data-back-live]");
+    await expect(live).toHaveText(/^Four places later\./, { timeout: 12000 });
     const back = page.getByRole("button", { name: "Back", exact: true });
     const forward = page.getByRole("button", { name: "Forward", exact: true });
     await expect(forward).toBeDisabled();
     await back.click();
-    await expect(page.locator("[data-back-live]")).toHaveText("Back to billing/webhooks.ts, Cursor.");
+    await expect(live).toHaveText("Back to Pull request #482, in Chrome.");
     await back.click();
-    await expect(page.locator("[data-back-live]")).toHaveText("Back to Checkout funnel, Q4, Google Chrome.");
+    // Same app, other tab: Back goes to places, not apps.
+    await expect(live).toHaveText("Back to Checkout funnel, Q4. Same Chrome window, the tab before.");
+    await expect(page.locator('[data-back] [data-app="chrome"]')).toHaveClass(/is-front/);
     await expect(forward).toBeEnabled();
     await forward.focus();
     await page.keyboard.press("ArrowRight");
-    await expect(page.locator("[data-back-live]")).toHaveText("Forward to billing/webhooks.ts, Cursor.");
+    await expect(live).toHaveText("Forward to Pull request #482.");
+    await page.keyboard.press("Control+Alt+ArrowLeft");
+    await page.keyboard.press("Control+Alt+ArrowLeft");
+    await page.keyboard.press("Control+Alt+ArrowLeft");
+    await expect(live).toHaveText("Back in your Claude Code session, right where you left it.");
+    await expect(page.getByRole("button", { name: "Play it again" })).toBeVisible();
+  });
+
+  test("with reduced motion it starts at the end of the detour", async ({ page }) => {
+    await page.emulateMedia({ reducedMotion: "reduce" });
+    await page.goto("/");
+    await page.locator("[data-back-stage]").scrollIntoViewIfNeeded();
+    await expect(page.locator("[data-back-live]")).toHaveText(/^Four places later\./);
+    await expect(page.locator('[data-back] [data-app="notion"]')).toHaveClass(/is-front/);
   });
 });
 

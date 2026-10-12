@@ -87,14 +87,17 @@ export const heroScript = [
   { query: "checkout", pick: "chrome-checkout" },
 ] as const;
 
-/** The Back moment: where you've been, oldest first. The last is where you are now. */
-export const trail = [
-  { app: "notion", title: "Q4 Launch Plan", detail: "Notion page" },
-  { app: "slack", title: "#launch", detail: "Slack channel" },
-  { app: "chrome", title: "Checkout funnel, Q4", detail: "Chrome tab" },
-  { app: "cursor", title: "billing/webhooks.ts", detail: "Cursor window" },
-  { app: "claude", title: "Fix auth token refresh", detail: "Claude Code session" },
-] as const satisfies readonly { app: AppId; title: string; detail: string }[];
+/**
+ * The Back moment: a detour, oldest first. A Slack ping pulls you out of a Claude Code session; Back retraces it.
+ * Two tabs of one Chrome window show that Back is place-level, not app-level (ADR-026). `went` narrates the detour.
+ */
+export const detour = [
+  { app: "claude", title: "Fix auth token refresh", kind: "Claude Code session", went: "You’re deep in a Claude Code session." },
+  { app: "slack", title: "#launch", kind: "Slack channel", went: "Then Slack pings you." },
+  { app: "chrome", title: "Checkout funnel, Q4", kind: "Chrome tab", went: "You open the dashboard it links to," },
+  { app: "chrome", title: "Pull request #482", kind: "Chrome tab", went: "then the pull request behind it," },
+  { app: "notion", title: "Q4 Launch Plan", kind: "Notion page", went: "then the launch plan, to move a date." },
+] as const satisfies readonly { app: AppId; title: string; kind: string; went: string }[];
 
 /** The Agents moment (ADR-046's Agents tab). Only Claude Code reports Needs You (ADR-006). */
 export const agents: Place[] = [
