@@ -10,15 +10,15 @@ import { apps, detour, site } from "../content/facts";
 const tabs = detour.map((d, i) => ({ ...d, i })).filter((d) => d.app === "chrome");
 ---
 <section class="back" aria-labelledby="back-title" data-back>
-  <div class="wrap intro">
-    <h2 id="back-title">Got pulled away? Press&nbsp;Back.</h2>
-    <p class="lede">Like Back in a browser, but for your whole Mac: it retraces your steps to the exact tab, doc or session you&nbsp;left.</p>
-  </div>
+  <div class="wrap grid">
+    <div class="head">
+      <h2 id="back-title">Got pulled away? Press&nbsp;Back.</h2>
+      <p class="lede">Like Back in a browser, but for your whole Mac: it retraces your steps to the exact tab, doc or session you&nbsp;left.</p>
+    </div>
 
-  <div class="wrap">
-    <div class="stage on-blue" data-back-stage>
+    <div class="stage" data-back-stage>
       <div class="screen" aria-hidden="true">
-        <div class="menubar"><span class="mb-apple"></span><b data-mb-app>{apps.claude.short}</b><span>File</span><span>Edit</span><span>View</span><span class="clock">10:12 AM</span></div>
+        <div class="menubar"><b data-mb-app>{apps.claude.short}</b><span>File</span><span>Edit</span><span>View</span><span class="clock">10:12 AM</span></div>
         <div class="desk">
           <article class="win w-claude is-front" data-app="claude">
             <header><i></i><i></i><i></i><span><img src={apps.claude.icon} alt="" width="14" height="14" />Claude</span></header>
@@ -94,7 +94,9 @@ const tabs = detour.map((d, i) => ({ ...d, i })).filter((d) => d.app === "chrome
           ))}
         </ol>
       </div>
+    </div>
 
+    <div class="act">
       <div class="controls" role="group" aria-label="Back and Forward">
         <button type="button" class="step step-back" data-step="-1" disabled>
           <span class="keys" aria-hidden="true">{site.back.map((k) => <span class="key">{k}</span>)}</span>
@@ -106,8 +108,8 @@ const tabs = detour.map((d, i) => ({ ...d, i })).filter((d) => d.app === "chrome
         </button>
         <button type="button" class="replay" data-replay hidden>Play it again</button>
       </div>
+      <p class="say" aria-hidden="true" data-say>{detour[0].went}</p>
     </div>
-    <p class="say" aria-hidden="true" data-say>{detour[0].went}</p>
     <p class="visually-hidden">
       In the demo, a Slack message pulls you out of a Claude Code session, into a Chrome dashboard, a pull request in
       another tab, and a Notion page. Back takes you through those places in reverse, one at a time.
@@ -122,22 +124,32 @@ const tabs = detour.map((d, i) => ({ ...d, i })).filter((d) => d.app === "chrome
     background: var(--white);
     border-block: 1px solid var(--line);
   }
-  .intro {
+  /* The demo on the left, the words and the buttons on the right; on a phone the words come first. */
+  .grid {
     display: grid;
-    grid-template-columns: minmax(0, 1.3fr) minmax(0, 1fr);
-    gap: 1.5rem clamp(2rem, 5vw, 5rem);
-    align-items: end;
+    grid-template-columns: minmax(0, 1.5fr) minmax(0, 0.8fr);
+    grid-template-areas: "stage head" "stage act";
+    gap: 2rem clamp(2rem, 5vw, 5rem);
+  }
+  .head {
+    grid-area: head;
+    align-self: end;
+  }
+  .act {
+    grid-area: act;
+    align-self: start;
   }
   h2 {
-    max-width: 12ch;
+    max-width: 10ch;
   }
   .lede {
-    padding-bottom: 0.4rem;
+    margin-top: 1.25rem;
   }
 
   .stage {
-    margin-top: clamp(2rem, 1.5rem + 2.5vw, 3.5rem);
-    padding: clamp(1rem, 3vw, 2.75rem) clamp(1rem, 5vw, 5rem) clamp(1.25rem, 3vw, 2.5rem);
+    grid-area: stage;
+    align-self: center;
+    padding: clamp(0.75rem, 2.5vw, 2rem);
     border-radius: clamp(18px, 2vw, 28px);
     background:
       radial-gradient(120% 90% at 85% 0%, #4a58ff 0%, transparent 55%),
@@ -147,9 +159,6 @@ const tabs = detour.map((d, i) => ({ ...d, i })).filter((d) => d.app === "chrome
   /* The little Mac */
   .screen {
     container-type: inline-size;
-    /* Small enough that the screen, trail and buttons fit in one view on a laptop. */
-    max-width: min(58rem, (100svh - 22rem) * 1.75);
-    margin-inline: auto;
     border-radius: 12px;
     overflow: hidden;
     background:
@@ -167,12 +176,6 @@ const tabs = detour.map((d, i) => ({ ...d, i })).filter((d) => d.app === "chrome
     font: 0.72rem var(--mac);
     color: #fff;
     background: rgb(12 18 90 / 0.3);
-  }
-  .mb-apple {
-    width: 0.65rem;
-    height: 0.75rem;
-    border-radius: 40% 40% 45% 45%;
-    background: rgb(255 255 255 / 0.9);
   }
   .clock {
     margin-left: auto;
@@ -498,9 +501,8 @@ const tabs = detour.map((d, i) => ({ ...d, i })).filter((d) => d.app === "chrome
   /* The trail: every place you passed through, the hops between them drawn as you go. */
   .trail {
     position: relative;
-    max-width: 46rem;
-    margin: 1.75rem auto 0;
-    padding-top: 1.6rem;
+    margin-top: clamp(0.9rem, 2vw, 1.4rem);
+    padding-top: 1.4rem;
   }
   .hops {
     position: absolute;
@@ -555,19 +557,19 @@ const tabs = detour.map((d, i) => ({ ...d, i })).filter((d) => d.app === "chrome
   .tile {
     display: grid;
     place-items: center;
-    width: 3rem;
-    height: 3rem;
-    border-radius: 14px;
+    width: 2.6rem;
+    height: 2.6rem;
+    border-radius: 12px;
     background: rgb(255 255 255 / 0.14);
     transition: background 200ms ease, transform 400ms var(--ease-hop), box-shadow 200ms ease;
   }
   .tile img {
-    width: 2rem;
-    height: 2rem;
+    width: 1.75rem;
+    height: 1.75rem;
   }
   .stop-t {
     max-width: 11ch;
-    font-size: 0.78rem;
+    font-size: 0.74rem;
     font-weight: 600;
     line-height: 1.25;
     color: #dfe3ff;
@@ -587,10 +589,8 @@ const tabs = detour.map((d, i) => ({ ...d, i })).filter((d) => d.app === "chrome
   .controls {
     display: flex;
     flex-wrap: wrap;
-    justify-content: center;
     align-items: center;
     gap: 0.6rem;
-    margin-top: 1.75rem;
   }
   .step {
     display: inline-flex;
@@ -598,24 +598,25 @@ const tabs = detour.map((d, i) => ({ ...d, i })).filter((d) => d.app === "chrome
     gap: 0.75rem;
     min-height: 3rem;
     padding: 0.45rem 1.1rem 0.45rem 0.5rem;
-    border: 0;
+    border: 1px solid var(--line);
     border-radius: 14px;
-    background: rgb(255 255 255 / 0.14);
-    color: #fff;
+    background: var(--paper);
+    color: var(--ink);
     font-size: var(--step-0);
     font-weight: 700;
     cursor: pointer;
     transition: background 150ms ease, opacity 200ms ease;
   }
   .step:hover:not(:disabled) {
-    background: rgb(255 255 255 / 0.24);
+    border-color: var(--blue);
   }
   .step-back {
-    background: var(--white);
-    color: var(--blue-deep);
+    border-color: var(--blue);
+    background: var(--blue);
+    color: #fff;
   }
   .step-back:hover:not(:disabled) {
-    background: #eef0ff;
+    background: var(--blue-deep);
   }
   .step:disabled {
     opacity: 0.4;
@@ -636,23 +637,23 @@ const tabs = detour.map((d, i) => ({ ...d, i })).filter((d) => d.app === "chrome
     padding: 0 1rem;
     border: 0;
     background: none;
-    color: #fff;
+    color: var(--blue);
     font-weight: 600;
     text-decoration: underline;
     text-underline-offset: 3px;
     cursor: pointer;
   }
   .say {
-    margin-top: 1.25rem;
-    min-height: 1.6em;
-    text-align: center;
+    margin-top: 1rem;
+    min-height: 3em;
     color: var(--ink-2);
-    font-size: var(--step-0);
   }
 
   @media (max-width: 56rem) {
-    .intro {
-      grid-template-columns: 1fr;
+    .grid {
+      grid-template-columns: minmax(0, 1fr);
+      grid-template-areas: "head" "stage" "act";
+      gap: 1.75rem;
     }
     .body.split {
       grid-template-columns: 8em 1fr;
@@ -663,12 +664,16 @@ const tabs = detour.map((d, i) => ({ ...d, i })).filter((d) => d.app === "chrome
   }
   @media (max-width: 36rem) {
     .desk {
-      aspect-ratio: 4 / 3.4;
+      aspect-ratio: 16 / 11;
     }
-    .w-claude { left: 3%; top: 6%; width: 82%; height: 86%; }
-    .w-slack { left: 15%; top: 4%; width: 82%; height: 70%; }
-    .w-chrome { left: 6%; top: 14%; width: 86%; height: 80%; }
-    .w-notion { left: 12%; top: 10%; width: 85%; height: 84%; }
+    .w-claude { left: 3%; top: 6%; width: 80%; height: 88%; }
+    .w-slack { left: 17%; top: 4%; width: 80%; height: 72%; }
+    .w-chrome { left: 7%; top: 12%; width: 84%; height: 84%; }
+    .w-notion { left: 13%; top: 9%; width: 84%; height: 86%; }
+    .trail {
+      margin-top: 0.75rem;
+      padding-top: 1.2rem;
+    }
     .body.split {
       grid-template-columns: 1fr;
     }
@@ -694,6 +699,9 @@ const tabs = detour.map((d, i) => ({ ...d, i })).filter((d) => d.app === "chrome
     }
     .step {
       padding-inline: 1.1rem;
+    }
+    .say {
+      min-height: 0;
     }
   }
   @media (prefers-reduced-motion: reduce) {
@@ -818,21 +826,23 @@ const tabs = detour.map((d, i) => ({ ...d, i })).filter((d) => d.app === "chrome
       playing = true;
       draw(0, false);
       tell(detour[0].went, false);
-      const beat = 1300;
+      // Quick: the ping, then a hop about every two thirds of a second.
       const later = (ms: number, fn: () => void) => timers.push(window.setTimeout(fn, ms));
-      later(beat, () => {
+      const ping = 450;
+      const hopAt = (i: number) => 1250 + 650 * (i - 1);
+      later(ping, () => {
         toast.classList.add("in");
         tell(detour[1].went, false);
       });
       for (let i = 1; i <= last; i++) {
-        later(beat * (i + 1) + 200, () => {
+        later(hopAt(i), () => {
           if (i === 1) toast.classList.remove("in");
           reached = at = i;
           draw(1, true);
           if (i > 1) tell(detour[i].went, false);
         });
       }
-      later(beat * (last + 2) + 200, () => {
+      later(hopAt(last) + 900, () => {
         playing = false;
         draw(0, false);
         arrived();
