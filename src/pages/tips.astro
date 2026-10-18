@@ -1,0 +1,191 @@
+---
+/**
+ * Hopper Tips: every tip video the app shows on its Tips pages, here too, grouped as the app groups them. Each shows
+ * its poster and one play button; a click plays it with its narration and brings in the player's own controls.
+ * Nothing loads before that. Made and published from hopper-studio (content/tips.ts says how).
+ */
+import Base from "../layouts/Base.astro";
+import Join from "../moments/Join.astro";
+import { tipId, tipSections, tips } from "../content/tips";
+
+/** Keys short enough to show as keycaps ("⌃⌥↓"); a way in with words ("⌘Space, then “clip”") stays as text. */
+const keyish = (s: string) => s.length <= 7 && !/[a-z]{3}/i.test(s.replace("Space", ""));
+const caps = (s: string) => (s.includes("Space") ? [...s.replace("Space", "").split(""), "Space"] : s.split(""));
+---
+<Base title="Hopper Tips · Hopper" description={`${tips.length} short videos of what Hopper can do, about ten seconds each: search, Back, agents, clipboard, windows, screenshots and more.`} path="/tips">
+  <section class="tp-hero">
+    <div class="wrap">
+      <h1>Hopper&nbsp;Tips</h1>
+      <p class="lede">{tips.length} short videos of what Hopper can do, about ten seconds each. The same ones you’ll find in the app.</p>
+      <nav class="tp-jump" aria-label="Sections">
+        {tipSections.map((s) => <a href={`#${s.title.toLowerCase().replace(/[^a-z]+/g, "-")}`}>{s.title}</a>)}
+      </nav>
+    </div>
+  </section>
+
+  {tipSections.map((s) => {
+    const id = s.title.toLowerCase().replace(/[^a-z]+/g, "-");
+    return (
+      <section class="tp-section" id={id} aria-labelledby={`t-${id}`}>
+        <div class="wrap">
+          <h2 id={`t-${id}`}>{s.title}</h2>
+          <ul class="tp-grid">
+            {s.tips.map((t) => (
+              <li class="tp-card" id={tipId(t)}>
+                <div class="tp-media">
+                  <video playsinline preload="none" poster={`/tips/${t.poster}`} aria-label={`${t.title}: ${t.tip}`} data-tip-video>
+                    <source src={`/tips/${t.video}`} type="video/mp4" />
+                  </video>
+                  <button class="tp-play" type="button" data-tip-play aria-label={`Play ${t.title}`}>
+                    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5.5v13l10.5-6.5z" fill="currentColor" /></svg>
+                  </button>
+                </div>
+                <div class="tp-text">
+                  <h3>{t.title}</h3>
+                  <p class="tp-line">{t.tip}.</p>
+                  <p class="tp-body">{t.body}</p>
+                  <p class="tp-open">
+                    {keyish(t.open) ? <span class="keys">{caps(t.open).map((k) => <kbd class="key">{k}</kbd>)}</span> : <span>{t.open}</span>}
+                  </p>
+                </div>
+              </li>
+            ))}
+          </ul>
+        </div>
+      </section>
+    );
+  })}
+
+  <Join />
+</Base>
+
+<script>
+  // Play on click: the poster's button gives way to the video and its controls.
+  for (const button of document.querySelectorAll<HTMLButtonElement>("[data-tip-play]")) {
+    button.addEventListener("click", () => {
+      const video = button.parentElement?.querySelector<HTMLVideoElement>("[data-tip-video]");
+      if (!video) return;
+      button.hidden = true;
+      video.controls = true;
+      video.play().catch(() => {});
+      video.focus();
+    });
+  }
+</script>
+
+<style>
+  .tp-hero {
+    padding: clamp(3rem, 2rem + 4vw, 6rem) 0 1rem;
+  }
+  .tp-hero h1 {
+    font-size: var(--step-4);
+  }
+  .tp-hero .lede {
+    max-width: 40rem;
+  }
+  .tp-jump {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem 1.25rem;
+    margin-top: 1.5rem;
+    font-weight: 600;
+  }
+  .tp-jump a {
+    color: var(--ink-2);
+    text-decoration: none;
+  }
+  .tp-jump a:hover,
+  .tp-jump a:focus-visible {
+    color: var(--blue);
+  }
+  .tp-section {
+    padding: 2.5rem 0 1rem;
+  }
+  .tp-section h2 {
+    font-size: var(--step-2);
+    margin: 0 0 1.25rem;
+  }
+  .tp-grid {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(min(100%, 20rem), 1fr));
+    gap: 1.5rem;
+  }
+  .tp-card {
+    display: flex;
+    flex-direction: column;
+    border-radius: 1.1rem;
+    overflow: hidden;
+    background: var(--white);
+    border: 1px solid var(--line);
+    scroll-margin-top: 6rem;
+  }
+  .tp-media {
+    position: relative;
+  }
+  .tp-card video {
+    display: block;
+    width: 100%;
+    aspect-ratio: 16 / 10;
+    background: var(--night);
+    object-fit: cover;
+  }
+  .tp-play {
+    position: absolute;
+    inset: 0;
+    display: grid;
+    place-items: center;
+    border: 0;
+    padding: 0;
+    background: transparent;
+    cursor: pointer;
+    color: var(--white);
+  }
+  .tp-play svg {
+    width: 3.5rem;
+    height: 3.5rem;
+    padding: 0.9rem 0.8rem 0.9rem 1rem;
+    border-radius: 50%;
+    background: rgb(15 20 51 / 0.55);
+    backdrop-filter: blur(8px);
+    transition: transform 160ms var(--ease-hop), background 160ms ease;
+  }
+  .tp-play:hover svg,
+  .tp-play:focus-visible svg {
+    transform: scale(1.08);
+    background: var(--blue);
+  }
+  .tp-play:focus-visible {
+    outline: 3px solid var(--sun);
+    outline-offset: -3px;
+  }
+  .tp-text {
+    padding: 1rem 1.1rem 1.2rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.35rem;
+    flex: 1;
+  }
+  .tp-text h3 {
+    font-size: var(--step-1);
+    margin: 0;
+  }
+  .tp-line {
+    margin: 0;
+    color: var(--ink-2);
+    font-weight: 500;
+  }
+  .tp-body {
+    margin: 0;
+    color: var(--ink-2);
+    font-size: var(--step--1);
+  }
+  .tp-open {
+    margin: auto 0 0;
+    padding-top: 0.6rem;
+    font-size: var(--step--1);
+    color: var(--ink-2);
+  }
+</style>

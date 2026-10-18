@@ -14,6 +14,7 @@ const pages = [
   { loc: "https://addhopper.com/compare", priority: "0.6" },
   { loc: "https://addhopper.com/getting-started", priority: "0.6" },
   { loc: "https://addhopper.com/help", priority: "0.6" },
+  { loc: "https://addhopper.com/tips", priority: "0.6" },
   { loc: "https://addhopper.com/blog", priority: "0.6" },
   { loc: "https://addhopper.com/about", priority: "0.5" },
   { loc: "https://addhopper.com/privacy", priority: "0.3" },

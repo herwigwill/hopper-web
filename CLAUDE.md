@@ -13,4 +13,8 @@ Skills (load when relevant):
 - `hopper-design`: design and copy principles, owner's taste, reusable components.
 - `hopper-blog`: writing and publishing blog posts.
 
+Hopper Tips (`/tips`): the app's tip videos, made in `~/hopper-studio` with its `hopper-tips` skill
+(`.claude/skills/hopper-tips/SKILL.md`), which publishes them to the app and here at once (`npm run publish-tips` there).
+`src/content/tips.json` and `public/tips/` come from that step: don't edit them here.
+
 Architecture and deploy details: `README.md`.
