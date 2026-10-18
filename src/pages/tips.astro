@@ -1,6 +1,6 @@
 ---
 /**
- * Hopper Tips: every tip video the app shows on its Tips pages, here too, grouped as the app groups them. Each shows
+ * Tips: every tip video the app shows on its Tips pages, here too, grouped as the app groups them. Each shows
  * its poster and one play button; a click plays it with its narration and brings in the player's own controls.
  * Nothing loads before that. Made and published from hopper-studio (content/tips.ts says how).
  */
@@ -12,11 +12,13 @@ import { tipId, tipSections, tips } from "../content/tips";
 const keyish = (s: string) => s.length <= 7 && !/[a-z]{3}/i.test(s.replace("Space", ""));
 const caps = (s: string) => (s.includes("Space") ? [...s.replace("Space", "").split(""), "Space"] : s.split(""));
 ---
-<Base title="Hopper Tips · Hopper" description={`${tips.length} short videos of what Hopper can do, about ten seconds each: search, Back, agents, clipboard, windows, screenshots and more.`} path="/tips">
+<Base title="Tips · Hopper" description={`${tips.length} short videos of what Hopper can do, about ten seconds each: search, Back, agents, clipboard, windows, screenshots and more.`} path="/tips">
   <section class="tp-hero">
     <div class="wrap">
-      <h1>Hopper&nbsp;Tips</h1>
-      <p class="lede">{tips.length} short videos of what Hopper can do, about ten seconds each. The same ones you’ll find in the app.</p>
+      <div class="intro">
+        <h1>Tips.</h1>
+        <p class="lede">{tips.length} short videos of what Hopper can do, about ten seconds each. The same ones you’ll find in the app.</p>
+      </div>
       <nav class="tp-jump" aria-label="Sections">
         {tipSections.map((s) => <a href={`#${s.title.toLowerCase().replace(/[^a-z]+/g, "-")}`}>{s.title}</a>)}
       </nav>
@@ -74,20 +76,32 @@ const caps = (s: string) => (s.includes("Space") ? [...s.replace("Space", "").sp
 </script>
 
 <style>
+  /* The page head pattern: big title left, the one sentence right, bottoms aligned. */
   .tp-hero {
-    padding: clamp(3rem, 2rem + 4vw, 6rem) 0 1rem;
+    padding: clamp(1.5rem, 1rem + 2.5vw, 3.5rem) 0 1rem;
+  }
+  .intro {
+    display: grid;
+    grid-template-columns: minmax(0, 1.3fr) minmax(0, 1fr);
+    gap: 1.25rem clamp(2rem, 5vw, 5rem);
+    align-items: end;
   }
   .tp-hero h1 {
-    font-size: var(--step-4);
+    font-size: clamp(2.75rem, 1.6rem + 4.4vw, 5.5rem);
   }
   .tp-hero .lede {
-    max-width: 40rem;
+    padding-bottom: 0.5rem;
+  }
+  @media (max-width: 56rem) {
+    .intro {
+      grid-template-columns: 1fr;
+    }
   }
   .tp-jump {
     display: flex;
     flex-wrap: wrap;
     gap: 0.5rem 1.25rem;
-    margin-top: 1.5rem;
+    margin-top: clamp(2rem, 1.5rem + 2vw, 3rem);
     font-weight: 600;
   }
   .tp-jump a {

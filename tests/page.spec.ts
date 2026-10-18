@@ -6,7 +6,7 @@ test.describe("landing page", () => {
   test("loads with no console errors and the key content", async ({ page }) => {
     const problems = watchConsole(page);
     await page.goto("/");
-    await expect(page.getByRole("heading", { level: 1 })).toHaveText(/Never lose your\splace\./);
+    await expect(page.getByRole("heading", { level: 1 })).toHaveText(/Built for context\sswitchers\./);
     await expect(page.getByRole("heading", { name: "Got pulled away? Press Back." })).toBeVisible();
     await expect(page.getByRole("heading", { name: /Go straight to the one that needs you/ })).toBeAttached();
     await expect(page.getByRole("heading", { name: "Be the first to try Hopper." })).toBeAttached();
