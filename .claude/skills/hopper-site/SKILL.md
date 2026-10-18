@@ -22,7 +22,7 @@ File map, deploy and waitlist: `README.md`. This file is what the README doesn't
 | Feature with demos | `src/pages/features/x.astro` composing sections in `src/features/x/*.astro` (one section per file, own script) |
 | Feature, no demo | `components/NotePage.astro` (crumb, title, lede, points), e.g. `on-device.astro` |
 | Doc-like | `privacy.astro` / `terms.astro` style (`.policy`) |
-| Data-driven | Help (`help.ts`), Blog (content collection) |
+| Data-driven | Help (`help.ts`), Blog (content collection), Hopper Tips (`tips.ts` over `tips.json` and `public/tips/`, published from hopper-studio's `hopper-tips` skill: never edit them here) |
 
 Feature pages end with `<MoreFeatures current="id" />`; marketing pages end with `<Join />`.
 
