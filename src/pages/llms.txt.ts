@@ -23,7 +23,7 @@ export const GET: APIRoute = async () => {
 
 - [Getting started](${u("/getting-started")}): setup in about two minutes, and five keys to try.
 - [Help](${u("/help")}): answers about permissions, shortcuts, search, agents, windows and privacy.
-- [Hopper Tips](${u("/tips")}): short narrated videos of each feature and shortcut, the same ones the app shows.
+- [Tips](${u("/tips")}): short narrated videos of each feature and shortcut, the same ones the app shows.
 ${pillars.map((p) => `- [${p.name}](${u("href" in p ? p.href : `/features#${p.id}`)}): ${p.line}`).join("\n")}
 - [Hotkeys & Gestures](${u("/features/hotkeys")}): every default shortcut.
 - [On-Device Only](${u("/features/on-device")}): what stays on your Mac, and the one exception.

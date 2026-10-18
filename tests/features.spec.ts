@@ -63,9 +63,9 @@ test.describe("features pages", () => {
     await expect(page.getByRole("navigation", { name: "Main" }).getByRole("link", { name: "Features" })).toHaveAttribute("aria-current", "page");
   });
 
-  test("the header has Home on every page, current on the landing page", async ({ page }) => {
+  test("the header's icon goes home from every page, current on the landing page", async ({ page }) => {
     await page.goto("/");
-    const home = page.getByRole("navigation", { name: "Main" }).getByRole("link", { name: "Home" });
+    const home = page.getByRole("navigation", { name: "Main" }).getByRole("link", { name: "Hopper home" });
     await expect(home).toHaveAttribute("aria-current", "page");
     await page.goto("/features/navigation");
     await expect(home).not.toHaveAttribute("aria-current", "page");

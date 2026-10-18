@@ -6,7 +6,8 @@ const tips = JSON.parse(readFileSync(new URL("../src/content/tips.json", import.
 test.describe("tips page", () => {
   test("lists every tip by section and plays one on click", async ({ page }) => {
     await page.goto("/tips");
-    await expect(page.getByRole("heading", { level: 1 })).toHaveText(/Hopper\sTips/);
+    await expect(page.getByRole("navigation", { name: "Main" }).getByRole("link", { name: "Tips" })).toHaveAttribute("aria-current", "page");
+    await expect(page.getByRole("heading", { level: 1 })).toHaveText(/^Tips\.?$/);
     await expect(page.locator(".tp-card")).toHaveCount(tips.tips.length);
     await expect(page.getByRole("heading", { level: 2, name: "Basics" })).toBeVisible();
     const card = page.locator(".tp-card").first();

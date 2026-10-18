@@ -1,17 +1,20 @@
 ---
+import HopperIcon from "./HopperIcon.astro";
 // With build.format "file", the built home page reports "/index.html", so normalize before comparing.
 const path = Astro.url.pathname.replace(/(index)?\.html$/, "");
 const onHome = path === "/" || path === "";
 const onFeatures = path.startsWith("/features");
 const onCompare = path.startsWith("/compare");
+const onTips = path.startsWith("/tips");
 const onBlog = path.startsWith("/blog");
 ---
 <header class="site-header">
   <div class="wrap bar">
     <nav class="nav" aria-label="Main">
-      <a class="link" href="/" aria-current={onHome ? "page" : undefined}>Home</a>
+      <a class="link home" href="/" aria-current={onHome ? "page" : undefined}><HopperIcon class="icon" /><span class="visually-hidden">Hopper home</span></a>
       <a class="link" href="/features" aria-current={onFeatures ? "page" : undefined}>Features</a>
       <a class="link" href="/compare" aria-current={onCompare ? "page" : undefined}>Compare</a>
+      <a class="link" href="/tips" aria-current={onTips ? "page" : undefined}>Tips</a>
       <a class="link" href="/blog" aria-current={onBlog ? "page" : undefined}>Blog</a>
     </nav>
     <a class="join" href="/#join">Join<span class="join-more">&nbsp;the waitlist</span></a>
@@ -56,6 +59,30 @@ const onBlog = path.startsWith("/blog");
     text-decoration-thickness: 2px;
     text-underline-offset: 0.45em;
   }
+  /* The app icon stands in for "Home"; it hops on hover instead of turning blue. */
+  .home {
+    margin-right: clamp(0rem, 1vw, 0.5rem);
+  }
+  .home :global(.icon) {
+    display: block;
+    width: 1.875rem;
+    height: 1.875rem;
+    transition: transform 300ms var(--ease-hop);
+  }
+  .home:hover :global(.icon) {
+    transform: translateY(-3px) rotate(-4deg);
+  }
+  .link.home[aria-current="page"] {
+    text-decoration: none;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .home :global(.icon) {
+      transition: none;
+    }
+    .home:hover :global(.icon) {
+      transform: none;
+    }
+  }
   .bar {
     display: flex;
     align-items: center;
@@ -79,7 +106,7 @@ const onBlog = path.startsWith("/blog");
   .join:hover {
     background: var(--blue);
   }
-  /* Four nav links leave no room for the full label on phones. */
+  /* The icon and four nav links leave no room for the full label on phones. */
   @media (max-width: 30rem) {
     .join-more {
       display: none;
